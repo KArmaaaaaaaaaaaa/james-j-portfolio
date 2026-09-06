@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Webs para negocios de calle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,8 +226,19 @@
   .revelar.visible{ opacity:1; transform:none; }
   :focus-visible{ outline:2px solid var(--naranja); outline-offset:3px; border-radius:6px; }
 
+  @media (max-width:760px){
+    .barra{ top:10px; padding:5px 5px 5px 16px; }
+    .barra .marca{ font-size:16px; margin-right:0; }
+    .barra .cta{ padding:9px 15px; font-size:13.5px; }
+    .barra .ocultar-movil{ display:none; }
+    .entradilla{ font-size:18px; margin-top:26px; }
+    .franja .n{ font-size:42px; }
+    .trabajo{ padding:22px; } .angulo{ padding:26px 20px; }
+    .demo{ padding:16px; } .contacto{ padding:34px 22px; }
+    .muestra .tit{ font-size:26px; }
+  }
   @media (max-width:640px){
-    .env{ padding:0 18px; } body{ font-size:16px; }
+    .env{ padding:0 18px; } body{ font-size:16.5px; }
     .portada{ padding-top:104px; } section{ padding:80px 0; }
     .angulo{ padding:32px 24px; border-radius:20px; }
     .contacto{ padding:40px 26px; border-radius:22px; }
@@ -250,12 +263,18 @@
   .prueba{ margin-top:0; border-bottom:1px solid var(--borde); padding:56px 0 60px; }
   .prueba-caja{ display:grid; gap:34px; align-items:center; }
   @media (min-width:880px){ .prueba-caja{ grid-template-columns:1.15fr .85fr; gap:56px; } }
-  .cuenta-svg{ width:100%; height:auto; display:block; overflow:visible; }
-  .cuenta-svg .trazo{ stroke:var(--tinta); stroke-width:5.5; stroke-linecap:round; fill:none;
-    stroke-dasharray:96; stroke-dashoffset:96; }
-  .cuenta-svg .cruz{ stroke:var(--naranja); }
-  .revelar.visible .cuenta-svg .trazo{ animation:trazar 340ms var(--curva-larga) both; }
-  @keyframes trazar{ to{ stroke-dashoffset:0; } }
+  .jornadas{ background:var(--superficie); border:1px solid var(--borde-fino);
+    border-radius:18px; padding:26px 26px 22px; }
+  .malla-j{ display:grid; grid-template-columns:repeat(7,1fr); gap:9px; max-width:330px; }
+  .malla-j i{ display:block; aspect-ratio:1; border-radius:6px; background:var(--naranja);
+    opacity:0; transform:scale(.6); }
+  .revelar.visible .malla-j i{ animation:brotar 380ms var(--curva-suave) both; }
+  .malla-j i:nth-child(7n+1){animation-delay:0ms} .malla-j i:nth-child(7n+2){animation-delay:45ms}
+  .malla-j i:nth-child(7n+3){animation-delay:90ms} .malla-j i:nth-child(7n+4){animation-delay:135ms}
+  .malla-j i:nth-child(7n+5){animation-delay:180ms} .malla-j i:nth-child(7n+6){animation-delay:225ms}
+  .malla-j i:nth-child(7n+7){animation-delay:270ms}
+  @keyframes brotar{ to{ opacity:1; transform:none; } }
+  .pie-j{ margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--tinta-3); letter-spacing:.04em; }
   .prueba .lectura .k{ font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
     text-transform:uppercase; color:var(--tinta-3); display:block; margin-bottom:10px; }
   .prueba .grandota{ font-family:var(--display); font-size:clamp(52px,8vw,96px); line-height:.86;
@@ -267,7 +286,7 @@
 
   @media (prefers-reduced-motion:reduce){
     .rueda{ animation:none!important; }
-    .cuenta-svg .trazo{ stroke-dashoffset:0!important; animation:none!important; }
+    .malla-j i{ opacity:1!important; transform:none!important; animation:none!important; }
   }
 
   /* ---------- trabajo ancho con gráficos ---------- */
@@ -343,10 +362,10 @@
 
 <nav class="barra">
   <span class="marca">JAMES&nbsp;J&nbsp;BENAVIDES</span>
-  <a class="oculto" href="#estilos">Estilos</a><a class="oculto" href="precios.html">Precios</a>
-  <a class="oculto" href="ficha-google.html">Ficha de Google</a>
-  <a class="oculto" href="caso-factura.html">Un caso</a>
-  <a class="oculto" href="panel-demo.html">Demo</a>
+  <a class="ocultar-movil" href="#estilos">Estilos</a><a class="ocultar-movil" href="precios.html">Precios</a>
+  <a class="ocultar-movil" href="ficha-google.html">Ficha de Google</a>
+  <a class="ocultar-movil" href="caso-factura.html">Un caso</a>
+  <a class="ocultar-movil" href="panel-demo.html">Demo</a>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
 
@@ -396,35 +415,11 @@
   </div>
 
 
-  <section class="prueba revelar">
-    <div class="prueba-caja">
-      <svg class="cuenta-svg" viewBox="0 0 540 92" role="img" aria-label="Veintiuna jornadas contadas a mano"><path class="trazo" d="M6 16 L6 74" style="animation-delay:0ms"/><path class="trazo" d="M21 16 L21 74" style="animation-delay:46ms"/><path class="trazo" d="M36 16 L36 74" style="animation-delay:92ms"/><path class="trazo" d="M51 16 L51 74" style="animation-delay:138ms"/><path class="trazo cruz" d="M-1 72 L58 18" style="animation-delay:184ms"/><path class="trazo" d="M114 16 L114 74" style="animation-delay:230ms"/><path class="trazo" d="M129 16 L129 74" style="animation-delay:276ms"/><path class="trazo" d="M144 16 L144 74" style="animation-delay:322ms"/><path class="trazo" d="M159 16 L159 74" style="animation-delay:368ms"/><path class="trazo cruz" d="M107 72 L166 18" style="animation-delay:414ms"/><path class="trazo" d="M222 16 L222 74" style="animation-delay:460ms"/><path class="trazo" d="M237 16 L237 74" style="animation-delay:506ms"/><path class="trazo" d="M252 16 L252 74" style="animation-delay:552ms"/><path class="trazo" d="M267 16 L267 74" style="animation-delay:598ms"/><path class="trazo cruz" d="M215 72 L274 18" style="animation-delay:644ms"/><path class="trazo" d="M330 16 L330 74" style="animation-delay:690ms"/><path class="trazo" d="M345 16 L345 74" style="animation-delay:736ms"/><path class="trazo" d="M360 16 L360 74" style="animation-delay:782ms"/><path class="trazo" d="M375 16 L375 74" style="animation-delay:828ms"/><path class="trazo cruz" d="M323 72 L382 18" style="animation-delay:874ms"/><path class="trazo" d="M438 16 L438 74" style="animation-delay:920ms"/></svg>
-      <div class="lectura">
-        <span class="k">Agosto de 2026</span>
-        <div class="grandota">5.574,00&nbsp;€</div>
-        <span class="cero">0,00 € de diferencia</span>
-        <p class="glosa">Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano.</p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="cabecera revelar">
-      <span class="rotulo">Por qué yo y no el sobrino de alguien</span>
-      <h2>El problema no es técnico</h2>
-    </div>
-    <div class="angulo revelar">
-      <p class="grande">Casi ningún negocio de barrio necesita una web mejor. Necesita que <em>alguien le entienda el negocio</em> y luego le haga la web.</p>
-      <p>Trabajo de técnico de farmacia. Ocho horas al día atendiendo a gente que llega con una caja, una duda y ninguna paciencia para tecnicismos. Esa es la misma persona que entra en tu local, y es la misma que va a abrir tu web en el móvil, con prisa y a contraluz.</p>
-      <p>Por eso mis páginas se leen grandes, cargan rápido y ponen el teléfono donde se ve. <strong>Sin menús que descifrar, sin animaciones que estorben, sin una sola palabra en inglés.</strong> Lo bonito viene después de que funcione, no antes.</p>
-    </div>
-  </section>
-
   <section id="servicios">
     <div class="cabecera revelar">
       <span class="rotulo">Qué hago y cuánto cuesta</span>
-      <h2>Los precios, por delante</h2>
-      <p>Van escritos aquí porque preguntar el precio y que te digan «depende» es la parte que a todo el mundo le da pereza. Presupuesto cerrado antes de empezar: lo que se dice es lo que se paga.</p>
+      <h2>Lo que hago</h2>
+      <p>Tres cosas, y el precio va escrito porque preguntar y que te digan «depende» es la parte que a todo el mundo le da pereza. Presupuesto cerrado antes de empezar: lo que se dice es lo que se paga. <a href="precios.html">Todo el detalle y las preguntas frecuentes</a>.</p>
     </div>
     <div class="servicios">
       <div class="servicio revelar">
@@ -463,6 +458,31 @@
       </div>
     </div>
   </section>
+
+  <section class="prueba revelar">
+    <div class="prueba-caja">
+      <div class="jornadas"><div class="malla-j" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pie-j">21 jornadas trabajadas en agosto</div></div>
+      <div class="lectura">
+        <span class="k">Agosto de 2026</span>
+        <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
+        <span class="cero">0,00 € de diferencia</span>
+        <p class="glosa">Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cabecera revelar">
+      <span class="rotulo">Por qué yo y no el sobrino de alguien</span>
+      <h2>El problema no es técnico</h2>
+    </div>
+    <div class="angulo revelar">
+      <p class="grande">Casi ningún negocio de barrio necesita una web mejor. Necesita que <em>alguien le entienda el negocio</em> y luego le haga la web.</p>
+      <p>Trabajo de técnico de farmacia. Ocho horas al día atendiendo a gente que llega con una caja, una duda y ninguna paciencia para tecnicismos. Esa es la misma persona que entra en tu local, y es la misma que va a abrir tu web en el móvil, con prisa y a contraluz.</p>
+      <p>Por eso mis páginas se leen grandes, cargan rápido y ponen el teléfono donde se ve. <strong>Sin menús que descifrar, sin animaciones que estorben, sin una sola palabra en inglés.</strong> Lo bonito viene después de que funcione, no antes.</p>
+    </div>
+  </section>
+
 
   <section id="trabajos">
     <div class="cabecera revelar">
@@ -712,5 +732,18 @@
     }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
     elementos.forEach(function(el){ observador.observe(el); });
     setTimeout(function(){ elementos.forEach(function(el){ el.classList.add('visible'); }); }, 3000);
+
+    // El número sube: se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
+    document.querySelectorAll('.contar').forEach(function(n){
+      var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
+      function paso(t){ if(!ini) ini=t; var pr=Math.min((t-ini)/dur,1), e=1-Math.pow(1-pr,3);
+        n.textContent=Math.round(fin*e).toLocaleString('es-ES');
+        if(pr<1) requestAnimationFrame(paso); }
+      var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
+        if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
+        {threshold:.4});
+      ob.observe(n);
+      setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=fin.toLocaleString('es-ES'); } },3000);
+    });
   })();
 </script>

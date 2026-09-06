@@ -15,6 +15,20 @@ JS = """
     {threshold:.15,rootMargin:'0px 0px -10% 0px'});
   els.forEach(function(el){ o.observe(el); });
   setTimeout(function(){ els.forEach(function(el){ el.classList.add('visible'); }); },3000);
+
+  // Números que suben. Se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
+  document.querySelectorAll('.contar').forEach(function(n){
+    var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
+    function paso(t){ if(!ini) ini=t; var p=Math.min((t-ini)/dur,1);
+      var e=1-Math.pow(1-p,3);
+      n.textContent=Math.round(fin*e).toLocaleString('es-ES');
+      if(p<1) requestAnimationFrame(paso); }
+    var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
+      {threshold:.4});
+    ob.observe(n);
+    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=fin.toLocaleString('es-ES'); } },3000);
+  });
 })();
 </script>
 """
@@ -26,10 +40,12 @@ def pagina(archivo, titulo, cuerpo, extra_css="", extra_js=""):
     partes=[]
     for i,(h,t) in enumerate(NAV):
         cur = " aria-current='page'" if h==archivo else ""
-        oc  = " oculto" if i>2 else ""
+        oc  = " oculto"
         partes.append(f'<a class="nav{oc}" href="{h}"{cur}>{t}</a>')
     nav="".join(partes)
-    html = f"""<title>{titulo}</title>
+    html = f"""<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{titulo}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -276,21 +292,29 @@ pagina("ficha-google.html","Ficha de Google en condiciones", """
 print("ficha-google.html")
 
 # ═══════════════════════ 3. CASO: LA FACTURA ═══════════════════════
-sem_marcas=[]; x=6
-for gi,n in enumerate([5,5,5,5,1]):
-    for i in range(min(n,4)):
-        sem_marcas.append(f'<path class="trazo" d="M{x+i*15} 16 L{x+i*15} 74" style="animation-delay:{(gi*5+i)*46}ms"/>')
-    if n==5: sem_marcas.append(f'<path class="trazo cruz" d="M{x-7} 72 L{x+52} 18" style="animation-delay:{(gi*5+4)*46}ms"/>')
-    x+=108
-TALLY='<svg class="cuenta-svg" viewBox="0 0 540 92" role="img" aria-label="Veintiuna jornadas contadas a mano">'+"".join(sem_marcas)+'</svg>'
+CUADROS = "".join('<i></i>' for _ in range(21))
+TALLY = f'''<div class="jornadas">
+  <div class="malla-j" aria-hidden="true">{CUADROS}</div>
+  <div class="pie-j">21 jornadas trabajadas en agosto</div>
+</div>'''
 
 CSS_CASO = """
-  .cuenta-svg{ width:100%; height:auto; display:block; overflow:visible; }
-  .cuenta-svg .trazo{ stroke:var(--tinta); stroke-width:5.5; stroke-linecap:round; fill:none;
-    stroke-dasharray:96; stroke-dashoffset:96; }
-  .cuenta-svg .cruz{ stroke:var(--naranja); }
-  .revelar.visible .cuenta-svg .trazo{ animation:trazar 340ms var(--curva) both; }
-  @keyframes trazar{ to{ stroke-dashoffset:0; } }
+  .jornadas{ background:var(--superficie); border:1px solid var(--borde-fino);
+    border-radius:18px; padding:26px 26px 22px; }
+  .malla-j{ display:grid; grid-template-columns:repeat(7,1fr); gap:9px; max-width:340px; }
+  .malla-j i{ display:block; aspect-ratio:1; border-radius:6px; background:var(--naranja);
+    opacity:0; transform:scale(.6); }
+  .revelar.visible .malla-j i{ animation:brotar 380ms var(--expo) both; }
+  .malla-j i:nth-child(7n+1){ animation-delay:0ms }
+  .malla-j i:nth-child(7n+2){ animation-delay:45ms }
+  .malla-j i:nth-child(7n+3){ animation-delay:90ms }
+  .malla-j i:nth-child(7n+4){ animation-delay:135ms }
+  .malla-j i:nth-child(7n+5){ animation-delay:180ms }
+  .malla-j i:nth-child(7n+6){ animation-delay:225ms }
+  .malla-j i:nth-child(7n+7){ animation-delay:270ms }
+  @keyframes brotar{ to{ opacity:1; transform:none; } }
+  .pie-j{ margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--tinta-3);
+    letter-spacing:.04em; }
   .prueba-caja{ display:grid; gap:34px; align-items:center; }
   @media (min-width:880px){ .prueba-caja{ grid-template-columns:1.1fr .9fr; gap:52px; } }
   .grandota{ font-family:var(--display); font-size:clamp(52px,8vw,104px); line-height:.86;
@@ -333,7 +357,7 @@ pagina("caso-factura.html","De la libreta a la factura", f"""
       {TALLY}
       <div>
         <span class="rotulo">La factura de agosto</span>
-        <div class="grandota">5.574,00&nbsp;€</div>
+        <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
         <span class="cero">0,00 € de diferencia</span>
         <p style="margin-top:16px;color:var(--tinta-2);font-weight:300;max-width:30rem">Veintiuna jornadas. La factura que sacó el sistema salió <strong>idéntica al céntimo</strong> a la que se había emitido a mano. Esa comprobación es la única forma honesta de saber que funciona.</p>
       </div>

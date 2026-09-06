@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>El panel de tu negocio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,10 +99,19 @@
   .revelar.visible{ opacity:1; transform:none; }
   :focus-visible{ outline:2px solid var(--naranja); outline-offset:3px; border-radius:6px; }
 
-  @media (max-width:640px){
-    .env{ padding:0 18px; } body{ font-size:16px; }
-    .cabeza{ padding-top:100px; } section{ padding:64px 0; } .caja{ padding:22px; }
+  @media (max-width:760px){
+    .env{ padding:0 18px; } body{ font-size:16.5px; line-height:1.6; }
+    .cabeza{ padding-top:96px; } section{ padding:56px 0; } .caja{ padding:20px; }
+    .barra{ top:10px; padding:5px 5px 5px 16px; gap:8px; }
+    .barra .marca{ font-size:16px; margin-right:0; }
+    .barra .cta{ padding:9px 15px; font-size:13.5px; }
+    .bajada{ font-size:17.5px; margin-top:22px; }
+    .titulo{ margin-bottom:26px; }
+    .titulo p{ font-size:16.5px; }
+    .acciones{ gap:9px; } .boton{ padding:13px 20px; font-size:15px; }
+    .pie .env{ gap:12px; } .pie .der{ margin-left:0; width:100%; }
   }
+  @media (max-width:400px){ .boton{ width:100%; justify-content:center; } }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important;
       transition-duration:.01ms!important; }
@@ -186,7 +197,7 @@
 
 <nav class="barra">
   <a class="marca" href="index.html">JAMES&nbsp;J&nbsp;BENAVIDES</a>
-  <a class="nav" href="index.html">Inicio</a><a class="nav" href="precios.html">Precios</a><a class="nav" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html">Un caso</a><a class="nav oculto" href="panel-demo.html" aria-current='page'>Demo</a>
+  <a class="nav oculto" href="index.html">Inicio</a><a class="nav oculto" href="precios.html">Precios</a><a class="nav oculto" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html">Un caso</a><a class="nav oculto" href="panel-demo.html" aria-current='page'>Demo</a>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
 
@@ -311,6 +322,20 @@
     {threshold:.15,rootMargin:'0px 0px -10% 0px'});
   els.forEach(function(el){ o.observe(el); });
   setTimeout(function(){ els.forEach(function(el){ el.classList.add('visible'); }); },3000);
+
+  // Números que suben. Se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
+  document.querySelectorAll('.contar').forEach(function(n){
+    var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
+    function paso(t){ if(!ini) ini=t; var p=Math.min((t-ini)/dur,1);
+      var e=1-Math.pow(1-p,3);
+      n.textContent=Math.round(fin*e).toLocaleString('es-ES');
+      if(p<1) requestAnimationFrame(paso); }
+    var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
+      {threshold:.4});
+    ob.observe(n);
+    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=fin.toLocaleString('es-ES'); } },3000);
+  });
 })();
 </script>
 

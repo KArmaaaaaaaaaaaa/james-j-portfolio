@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>De la libreta a la factura</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,22 +99,41 @@
   .revelar.visible{ opacity:1; transform:none; }
   :focus-visible{ outline:2px solid var(--naranja); outline-offset:3px; border-radius:6px; }
 
-  @media (max-width:640px){
-    .env{ padding:0 18px; } body{ font-size:16px; }
-    .cabeza{ padding-top:100px; } section{ padding:64px 0; } .caja{ padding:22px; }
+  @media (max-width:760px){
+    .env{ padding:0 18px; } body{ font-size:16.5px; line-height:1.6; }
+    .cabeza{ padding-top:96px; } section{ padding:56px 0; } .caja{ padding:20px; }
+    .barra{ top:10px; padding:5px 5px 5px 16px; gap:8px; }
+    .barra .marca{ font-size:16px; margin-right:0; }
+    .barra .cta{ padding:9px 15px; font-size:13.5px; }
+    .bajada{ font-size:17.5px; margin-top:22px; }
+    .titulo{ margin-bottom:26px; }
+    .titulo p{ font-size:16.5px; }
+    .acciones{ gap:9px; } .boton{ padding:13px 20px; font-size:15px; }
+    .pie .env{ gap:12px; } .pie .der{ margin-left:0; width:100%; }
   }
+  @media (max-width:400px){ .boton{ width:100%; justify-content:center; } }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important;
       transition-duration:.01ms!important; }
     .revelar{ opacity:1!important; transform:none!important; }
   }
 
-  .cuenta-svg{ width:100%; height:auto; display:block; overflow:visible; }
-  .cuenta-svg .trazo{ stroke:var(--tinta); stroke-width:5.5; stroke-linecap:round; fill:none;
-    stroke-dasharray:96; stroke-dashoffset:96; }
-  .cuenta-svg .cruz{ stroke:var(--naranja); }
-  .revelar.visible .cuenta-svg .trazo{ animation:trazar 340ms var(--curva) both; }
-  @keyframes trazar{ to{ stroke-dashoffset:0; } }
+  .jornadas{ background:var(--superficie); border:1px solid var(--borde-fino);
+    border-radius:18px; padding:26px 26px 22px; }
+  .malla-j{ display:grid; grid-template-columns:repeat(7,1fr); gap:9px; max-width:340px; }
+  .malla-j i{ display:block; aspect-ratio:1; border-radius:6px; background:var(--naranja);
+    opacity:0; transform:scale(.6); }
+  .revelar.visible .malla-j i{ animation:brotar 380ms var(--expo) both; }
+  .malla-j i:nth-child(7n+1){ animation-delay:0ms }
+  .malla-j i:nth-child(7n+2){ animation-delay:45ms }
+  .malla-j i:nth-child(7n+3){ animation-delay:90ms }
+  .malla-j i:nth-child(7n+4){ animation-delay:135ms }
+  .malla-j i:nth-child(7n+5){ animation-delay:180ms }
+  .malla-j i:nth-child(7n+6){ animation-delay:225ms }
+  .malla-j i:nth-child(7n+7){ animation-delay:270ms }
+  @keyframes brotar{ to{ opacity:1; transform:none; } }
+  .pie-j{ margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--tinta-3);
+    letter-spacing:.04em; }
   .prueba-caja{ display:grid; gap:34px; align-items:center; }
   @media (min-width:880px){ .prueba-caja{ grid-template-columns:1.1fr .9fr; gap:52px; } }
   .grandota{ font-family:var(--display); font-size:clamp(52px,8vw,104px); line-height:.86;
@@ -154,7 +175,7 @@
 
 <nav class="barra">
   <a class="marca" href="index.html">JAMES&nbsp;J&nbsp;BENAVIDES</a>
-  <a class="nav" href="index.html">Inicio</a><a class="nav" href="precios.html">Precios</a><a class="nav" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html" aria-current='page'>Un caso</a><a class="nav oculto" href="panel-demo.html">Demo</a>
+  <a class="nav oculto" href="index.html">Inicio</a><a class="nav oculto" href="precios.html">Precios</a><a class="nav oculto" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html" aria-current='page'>Un caso</a><a class="nav oculto" href="panel-demo.html">Demo</a>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
 
@@ -169,10 +190,13 @@
 
   <section class="revelar">
     <div class="prueba-caja">
-      <svg class="cuenta-svg" viewBox="0 0 540 92" role="img" aria-label="Veintiuna jornadas contadas a mano"><path class="trazo" d="M6 16 L6 74" style="animation-delay:0ms"/><path class="trazo" d="M21 16 L21 74" style="animation-delay:46ms"/><path class="trazo" d="M36 16 L36 74" style="animation-delay:92ms"/><path class="trazo" d="M51 16 L51 74" style="animation-delay:138ms"/><path class="trazo cruz" d="M-1 72 L58 18" style="animation-delay:184ms"/><path class="trazo" d="M114 16 L114 74" style="animation-delay:230ms"/><path class="trazo" d="M129 16 L129 74" style="animation-delay:276ms"/><path class="trazo" d="M144 16 L144 74" style="animation-delay:322ms"/><path class="trazo" d="M159 16 L159 74" style="animation-delay:368ms"/><path class="trazo cruz" d="M107 72 L166 18" style="animation-delay:414ms"/><path class="trazo" d="M222 16 L222 74" style="animation-delay:460ms"/><path class="trazo" d="M237 16 L237 74" style="animation-delay:506ms"/><path class="trazo" d="M252 16 L252 74" style="animation-delay:552ms"/><path class="trazo" d="M267 16 L267 74" style="animation-delay:598ms"/><path class="trazo cruz" d="M215 72 L274 18" style="animation-delay:644ms"/><path class="trazo" d="M330 16 L330 74" style="animation-delay:690ms"/><path class="trazo" d="M345 16 L345 74" style="animation-delay:736ms"/><path class="trazo" d="M360 16 L360 74" style="animation-delay:782ms"/><path class="trazo" d="M375 16 L375 74" style="animation-delay:828ms"/><path class="trazo cruz" d="M323 72 L382 18" style="animation-delay:874ms"/><path class="trazo" d="M438 16 L438 74" style="animation-delay:920ms"/></svg>
+      <div class="jornadas">
+  <div class="malla-j" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pie-j">21 jornadas trabajadas en agosto</div>
+</div>
       <div>
         <span class="rotulo">La factura de agosto</span>
-        <div class="grandota">5.574,00&nbsp;€</div>
+        <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
         <span class="cero">0,00 € de diferencia</span>
         <p style="margin-top:16px;color:var(--tinta-2);font-weight:300;max-width:30rem">Veintiuna jornadas. La factura que sacó el sistema salió <strong>idéntica al céntimo</strong> a la que se había emitido a mano. Esa comprobación es la única forma honesta de saber que funciona.</p>
       </div>
@@ -244,5 +268,19 @@
     {threshold:.15,rootMargin:'0px 0px -10% 0px'});
   els.forEach(function(el){ o.observe(el); });
   setTimeout(function(){ els.forEach(function(el){ el.classList.add('visible'); }); },3000);
+
+  // Números que suben. Se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
+  document.querySelectorAll('.contar').forEach(function(n){
+    var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
+    function paso(t){ if(!ini) ini=t; var p=Math.min((t-ini)/dur,1);
+      var e=1-Math.pow(1-p,3);
+      n.textContent=Math.round(fin*e).toLocaleString('es-ES');
+      if(p<1) requestAnimationFrame(paso); }
+    var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
+      {threshold:.4});
+    ob.observe(n);
+    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=fin.toLocaleString('es-ES'); } },3000);
+  });
 })();
 </script>
