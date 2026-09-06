@@ -250,17 +250,18 @@
   setTimeout(function(){ els.forEach(function(el){ el.classList.add('visible'); }); },3000);
 
   // Números que suben. Se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
-  document.querySelectorAll('.contar').forEach(function(n){
+  function mil(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+    document.querySelectorAll('.contar').forEach(function(n){
     var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
     function paso(t){ if(!ini) ini=t; var p=Math.min((t-ini)/dur,1);
       var e=1-Math.pow(1-p,3);
-      n.textContent=Math.round(fin*e).toLocaleString('es-ES');
+      n.textContent=mil(Math.round(fin*e));
       if(p<1) requestAnimationFrame(paso); }
     var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
       if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
       {threshold:.4});
     ob.observe(n);
-    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=fin.toLocaleString('es-ES'); } },3000);
+    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=mil(fin); } },3000);
   });
 })();
 </script>
