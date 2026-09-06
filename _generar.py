@@ -52,7 +52,7 @@ def pagina(archivo, titulo, cuerpo, extra_css="", extra_js=""):
 <style>{CSS}{extra_css}</style>
 
 <nav class="barra">
-  <a class="marca" href="index.html">JAMES&nbsp;J&nbsp;BENAVIDES</a>
+  <a class="marca" href="index.html">Inicio</a>
   {nav}
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
@@ -130,7 +130,7 @@ pagina("precios.html","Precios sin depender", f"""
         <ul class="listado">
           <li>Diseño a medida, sin plantilla</li>
           <li>Textos escritos, no rellenados</li>
-          <li>Se ve bien en un móvil de 2018</li>
+          <li>Carga rápido aunque haya poca cobertura</li>
           <li>Aparecer en Google y botón de WhatsApp</li>
           <li>Dominio y alojamiento resueltos</li>
           <li>Dos rondas de cambios incluidas</li>

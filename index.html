@@ -73,7 +73,7 @@
     padding:6px 6px 6px 20px; box-shadow:0 6px 24px rgba(30,20,10,.09);
     max-width:calc(100vw - 32px);
   }
-  .barra .marca{ font-family:var(--display); font-size:21px; letter-spacing:.02em; margin-right:12px; white-space:nowrap; }
+  .barra .marca{ font-family:var(--display); font-size:21px; color:var(--tinta); text-decoration:none; letter-spacing:.02em; margin-right:12px; white-space:nowrap; }
   .barra a{ font-size:14.5px; font-weight:500; color:var(--tinta-2); text-decoration:none;
     padding:8px 13px; border-radius:999px; white-space:nowrap; transition:color var(--rapido) var(--curva-salida), background var(--rapido) var(--curva-salida); }
   .barra a:hover{ color:var(--tinta); background:var(--hueco); }
@@ -212,7 +212,7 @@
     background:rgba(255,129,46,.14); border:1px solid rgba(255,129,46,.3);
     color:#ffbf9d; font-family:var(--mono); font-size:12.5px; line-height:1.6; }
 
-  footer{ padding:40px 0 72px; }
+  footer{ padding:36px 0 44px; }
   footer p{ font-family:var(--mono); font-size:11.5px; color:var(--tinta-3); letter-spacing:.04em; }
 
   /* ---------- movimiento ---------- */
@@ -227,6 +227,8 @@
   :focus-visible{ outline:2px solid var(--naranja); outline-offset:3px; border-radius:6px; }
 
   @media (max-width:760px){
+    footer{ padding:24px 0 26px; }
+    #contacto{ padding-bottom:34px; }
     .barra{ top:10px; padding:5px 5px 5px 16px; }
     .barra .marca{ font-size:16px; margin-right:0; }
     .barra .cta{ padding:9px 15px; font-size:13.5px; }
@@ -263,18 +265,21 @@
   .prueba{ margin-top:0; border-bottom:1px solid var(--borde); padding:56px 0 60px; }
   .prueba-caja{ display:grid; gap:34px; align-items:center; }
   @media (min-width:880px){ .prueba-caja{ grid-template-columns:1.15fr .85fr; gap:56px; } }
-  .jornadas{ background:var(--superficie); border:1px solid var(--borde-fino);
-    border-radius:18px; padding:26px 26px 22px; }
-  .malla-j{ display:grid; grid-template-columns:repeat(7,1fr); gap:9px; max-width:330px; }
-  .malla-j i{ display:block; aspect-ratio:1; border-radius:6px; background:var(--naranja);
-    opacity:0; transform:scale(.6); }
-  .revelar.visible .malla-j i{ animation:brotar 380ms var(--curva-suave) both; }
-  .malla-j i:nth-child(7n+1){animation-delay:0ms} .malla-j i:nth-child(7n+2){animation-delay:45ms}
-  .malla-j i:nth-child(7n+3){animation-delay:90ms} .malla-j i:nth-child(7n+4){animation-delay:135ms}
-  .malla-j i:nth-child(7n+5){animation-delay:180ms} .malla-j i:nth-child(7n+6){animation-delay:225ms}
-  .malla-j i:nth-child(7n+7){animation-delay:270ms}
-  @keyframes brotar{ to{ opacity:1; transform:none; } }
-  .pie-j{ margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--tinta-3); letter-spacing:.04em; }
+  .deco-factura{ position:relative; height:230px; display:grid; place-items:center; }
+  .tik{ position:absolute; width:min(74%,270px); border-radius:14px; display:block; }
+  .tik-atras{ height:180px; background:var(--fuego); transform:rotate(-7deg) translate(-14px,10px);
+    box-shadow:0 14px 34px rgba(254,74,35,.26); animation:flotar 7s ease-in-out infinite; }
+  .tik-frente{ height:196px; background:var(--superficie); border:1px solid var(--borde);
+    box-shadow:0 12px 30px rgba(40,25,15,.12); transform:rotate(2.5deg) translate(12px,-6px);
+    padding:24px 22px; display:flex; flex-direction:column; gap:13px;
+    animation:flotar 7s ease-in-out infinite reverse; }
+  .tik-frente .l{ height:9px; border-radius:5px; background:var(--hueco); width:100%; }
+  .tik-frente .l.corta{ width:58%; }
+  .tik-frente .corte{ margin-top:auto; border-top:2px dashed var(--borde); }
+  .tik-frente .total{ height:15px; border-radius:6px; background:var(--fuego); width:64%; }
+  @keyframes flotar{ 0%,100%{ translate:0 0 } 50%{ translate:0 -7px } }
+  @media (max-width:760px){ .deco-factura{ height:186px; }
+    .tik-atras{ height:146px } .tik-frente{ height:160px; padding:18px 16px; gap:10px } }
   .prueba .lectura .k{ font-family:var(--mono); font-size:11.5px; letter-spacing:.13em;
     text-transform:uppercase; color:var(--tinta-3); display:block; margin-bottom:10px; }
   .prueba .grandota{ font-family:var(--display); font-size:clamp(52px,8vw,96px); line-height:.86;
@@ -286,7 +291,7 @@
 
   @media (prefers-reduced-motion:reduce){
     .rueda{ animation:none!important; }
-    .malla-j i{ opacity:1!important; transform:none!important; animation:none!important; }
+    .tik{ animation:none!important; }
   }
 
   /* ---------- trabajo ancho con gráficos ---------- */
@@ -472,7 +477,7 @@
 </style>
 
 <nav class="barra">
-  <span class="marca">JAMES&nbsp;J&nbsp;BENAVIDES</span>
+  <a class="marca" href="index.html">Inicio</a>
   <a class="ocultar-movil" href="#estilos">Estilos</a><a class="ocultar-movil" href="precios.html">Precios</a>
   <a class="ocultar-movil" href="ficha-google.html">Ficha de Google</a>
   <a class="ocultar-movil" href="caso-factura.html">Un caso</a>
@@ -596,7 +601,7 @@
         <span class="rotulo">El grueso</span>
         <div class="precio">400–900 € <small>precio cerrado</small></div>
         <h3>Web completa del negocio</h3>
-        <p>Una página bien hecha, no seis mal hechas. Qué haces, dónde estás, cuánto cuesta y cómo se te llama. Se ve igual de bien en un móvil de 2018.</p>
+        <p>Una página bien hecha, no seis mal hechas. Qué haces, dónde estás, cuánto cuesta y cómo se te llama. Carga rápido aunque estés en la calle con poca cobertura.</p>
         <ul class="incluye">
           <li>Diseño hecho a medida, sin plantilla</li>
           <li>Textos escritos, no rellenados</li>
@@ -629,7 +634,14 @@
 
   <section class="prueba revelar">
     <div class="prueba-caja">
-      <div class="jornadas"><div class="malla-j" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pie-j">21 jornadas trabajadas en agosto</div></div>
+      <div class="deco-factura" aria-hidden="true">
+          <span class="tik tik-atras"></span>
+          <span class="tik tik-frente">
+            <span class="l"></span><span class="l corta"></span><span class="l"></span>
+            <span class="corte"></span>
+            <span class="total"></span>
+          </span>
+        </div>
       <div class="lectura">
         <span class="k">Agosto de 2026</span>
         <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
