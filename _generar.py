@@ -4,7 +4,7 @@ import pathlib
 BASE = pathlib.Path(__file__).parent
 
 CSS = open(BASE/"_estilo.css", encoding="utf-8").read()
-JS = """
+JS = r"""
 <script>
 (function(){
   var els=document.querySelectorAll('.revelar'), c=new Map();
