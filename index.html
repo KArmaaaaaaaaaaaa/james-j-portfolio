@@ -358,6 +358,64 @@
     letter-spacing:.06em; display:flex; align-items:center; gap:7px; }
   .muestra .ir span{ transition:transform var(--rapido) var(--curva-salida); }
   .muestra:hover .ir span{ transform:translateX(4px); }
+
+  /* ---------- portada nueva ---------- */
+  .portada{ padding:142px 0 0; }
+  h1 .fina{ -webkit-text-stroke:2px var(--tinta); color:transparent; }
+  .firma{ margin-top:34px; display:grid; gap:10px; max-width:36rem;
+    border-left:2px solid var(--naranja); padding-left:20px; }
+  .firma .yo{ font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--tinta); }
+  .firma .que{ font-size:20px; line-height:1.48; color:var(--tinta-2); font-weight:300; }
+
+  /* ---------- lo que hago, en imagen ---------- */
+  .quehago{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(268px,1fr));
+    padding:52px 0 0; }
+  .oficio{ background:var(--superficie); border:1px solid var(--borde-fino); border-radius:20px;
+    padding:26px 24px 24px; text-decoration:none; color:var(--tinta); display:flex;
+    flex-direction:column; gap:12px;
+    transition:transform var(--medio) var(--curva-larga), box-shadow var(--medio) var(--curva-larga),
+               border-color var(--medio) var(--curva-larga); }
+  .oficio:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(40,25,15,.10);
+    border-color:var(--c); }
+  @media (hover:none){ .oficio:hover{ transform:none; box-shadow:none; border-color:var(--borde-fino); } }
+  .dib{ width:64px; height:64px; border-radius:16px; display:grid; place-items:center;
+    background:color-mix(in srgb, var(--c) 11%, #fff); color:var(--c); margin-bottom:2px; }
+  @supports not (background: color-mix(in srgb, red 10%, #fff)){ .dib{ background:var(--hueco); } }
+  .dib svg{ width:34px; height:34px; }
+  .oficio h3{ font-size:20px; font-weight:600; letter-spacing:-.015em; }
+  .oficio p{ font-size:15px; line-height:1.55; color:var(--tinta-2); font-weight:300; }
+  .oficio .ir{ margin-top:auto; padding-top:6px; font-family:var(--mono); font-size:11.5px;
+    font-weight:600; letter-spacing:.06em; color:var(--c); display:flex; align-items:center; gap:7px; }
+  .oficio .ir span{ transition:transform var(--rapido) var(--curva-salida); }
+  .oficio:hover .ir span{ transform:translateX(4px); }
+
+  /* ---------- menú de móvil ---------- */
+  .menu-btn{ display:none; align-items:center; justify-content:center; width:38px; height:38px;
+    border-radius:999px; border:1px solid var(--borde); background:var(--superficie);
+    color:var(--tinta); cursor:pointer; padding:0;
+    transition:background var(--rapido) var(--curva-salida); }
+  .menu-btn svg{ width:19px; height:19px; }
+  .menu-btn[aria-expanded="true"]{ background:var(--tinta); color:#fff; border-color:var(--tinta); }
+  .menu-panel{ position:fixed; z-index:49; top:64px; left:50%; transform:translateX(-50%);
+    width:calc(100vw - 28px); max-width:420px; background:rgba(255,255,255,.97);
+    backdrop-filter:blur(16px); border:1px solid var(--borde-fino); border-radius:20px;
+    padding:8px; box-shadow:0 16px 40px rgba(30,20,10,.16); display:grid; gap:2px; }
+  .menu-panel a{ display:block; padding:13px 16px; border-radius:13px; text-decoration:none;
+    color:var(--tinta); font-size:16px; font-weight:500;
+    transition:background var(--rapido) var(--curva-salida); }
+  .menu-panel a:active{ background:var(--hueco); }
+
+  @media (max-width:760px){
+    .menu-btn{ display:inline-flex; }
+    .portada{ padding-top:104px; }
+    .firma{ margin-top:26px; padding-left:16px; }
+    .firma .que{ font-size:17.5px; }
+    .quehago{ padding-top:38px; }
+    .oficio{ padding:22px 20px 20px; }
+    .dib{ width:54px; height:54px; border-radius:14px; } .dib svg{ width:29px; height:29px; }
+  }
+  @media (min-width:761px){ .menu-panel{ display:none !important; } }
 </style>
 
 <nav class="barra">
@@ -367,52 +425,58 @@
   <a class="ocultar-movil" href="caso-factura.html">Un caso</a>
   <a class="ocultar-movil" href="panel-demo.html">Demo</a>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel" aria-label="Ver las secciones">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
 </nav>
-
-<div class="env">
-  <header class="portada">
-    <div class="cinta carga">
-      <span class="rotulo">Barcelona · Baix Llobregat</span>
-      <span class="hilo"></span>
-      <span class="rotulo">Webs y fichas de Google</span>
-    </div>
-    <div class="titular carga">
-      <h1>Webs para<br>negocios<br><span class="fina">de calle</span></h1>
-    </div>
-    <p class="entradilla carga"><b>No vengo del diseño. Vengo de detrás de un mostrador.</b> Sé lo que es explicarle algo a alguien que no tiene por qué entenderlo, y eso es exactamente lo que le falta a la mayoría de webs de bares, talleres y tiendas de barrio.</p>
-    <div class="acciones carga">
-      <a class="boton boton--fuego" href="#contacto">Pedir presupuesto</a>
-      <a class="boton boton--linea" href="precios.html">Ver precios</a>
-    </div>
-      <div class="cinta-viva carga">
-    <div class="rueda">
-      <span class="pil pil--naranja">Ficha de Google</span>
-      <span class="pil pil--azul">Web del negocio</span>
-      <span class="pil pil--verde">Reseñas</span>
-      <span class="pil pil--rosa">Textos</span>
-      <span class="pil pil--violeta">Fotos</span>
-      <span class="pil pil--ambar">Dominio</span>
-      <span class="pil pil--cian">WhatsApp</span>
-      <span class="pil pil--tinta">Mantenimiento</span>
-      <span class="pil pil--naranja">Ficha de Google</span>
-      <span class="pil pil--azul">Web del negocio</span>
-      <span class="pil pil--verde">Reseñas</span>
-      <span class="pil pil--rosa">Textos</span>
-      <span class="pil pil--violeta">Fotos</span>
-      <span class="pil pil--ambar">Dominio</span>
-      <span class="pil pil--cian">WhatsApp</span>
-      <span class="pil pil--tinta">Mantenimiento</span>
-    </div>
-  </div>
-  </header>
+<div class="menu-panel" id="menuPanel" hidden>
+  <a href="#servicios">Lo que hago</a>
+  <a href="precios.html">Precios y preguntas</a>
+  <a href="ficha-google.html">Ficha de Google</a>
+  <a href="caso-factura.html">Un caso real</a>
+  <a href="panel-demo.html">Demo del panel</a>
+  <a href="#estilos">Estilos</a>
+  <a href="#contacto">Hablamos</a>
 </div>
 
 <div class="env">
-  <div class="franja">
-    <div><div class="n cifra"><em>400–900 €</em></div><div class="q">una web completa, precio cerrado y dicho de antemano</div></div>
-    <div><div class="n cifra">7 días</div><div class="q">de la primera conversación a la web publicada</div></div>
-    <div><div class="n cifra">0</div><div class="q">palabras raras: ni «plataforma», ni «IA», ni inglés</div></div>
-  </div>
+  <header class="portada">
+    <div class="titular carga">
+      <h1>Que te<br><span class="fina">encuentren</span></h1>
+    </div>
+    <div class="firma carga">
+      <span class="yo">James J Benavides</span>
+      <span class="que">Hago la web y pongo en orden la ficha de Google de bares, talleres y tiendas de barrio del Baix Llobregat.</span>
+    </div>
+    <div class="acciones carga">
+      <a class="boton boton--fuego" href="#contacto">Pedir presupuesto</a>
+      <a class="boton boton--linea" href="#servicios">Ver lo que hago</a>
+    </div>
+  </header>
+
+  <section class="quehago carga" id="que-hago">
+    <a class="oficio" href="ficha-google.html" style="--c:var(--naranja)">
+      <span class="dib"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="27" y="9" width="42" height="78" rx="7"/><path d="M41 9h14"/><path d="M48 33c-6.1 0-11 4.9-11 11 0 8.2 11 20 11 20s11-11.8 11-20c0-6.1-4.9-11-11-11z"/><circle cx="48" cy="44" r="3.6"/><path d="M37 76h22"/></svg></span>
+      <h3>Sales en Google como debes</h3>
+      <p>Fotos de verdad, el horario que es y las reseñas contestadas. Lo primero que ve alguien que te busca.</p>
+      <span class="ir">Cómo lo hago <span>→</span></span>
+    </a>
+    <a class="oficio" href="precios.html" style="--c:var(--p-azul)">
+      <span class="dib"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="19" width="78" height="58" rx="8"/><path d="M9 34h78"/><circle cx="20" cy="26.5" r="2"/><circle cx="28" cy="26.5" r="2"/><circle cx="36" cy="26.5" r="2"/><path d="M22 47h32M22 57h44M22 67h24"/></svg></span>
+      <h3>Tienes una web que se entiende</h3>
+      <p>Una página, no seis. Qué haces, dónde estás y cómo se te llama, con el teléfono donde se ve. Grande y rápida.</p>
+      <span class="ir">Precios cerrados <span>→</span></span>
+    </a>
+    <a class="oficio" href="panel-demo.html" style="--c:var(--p-verde)">
+      <span class="dib"><svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 27a6 6 0 0 1 6-6h58a6 6 0 0 1 6 6v30a6 6 0 0 1-6 6H41L25 77V63h-6a6 6 0 0 1-6-6z"/><path d="M48 29l4.7 9.5 10.5 1.5-7.6 7.4 1.8 10.4L48 53l-9.4 5 1.8-10.4-7.6-7.4 10.5-1.5z"/></svg></span>
+      <h3>Sabes si está funcionando</h3>
+      <p>Cuánta gente te ha buscado, cuántos han llamado y si vas a más. En una pantalla y sin palabras raras.</p>
+      <span class="ir">Ver la demo <span>→</span></span>
+    </a>
+  </section>
+</div>
+
+<div class="env">
 
 
   <section id="servicios">
@@ -459,17 +523,12 @@
     </div>
   </section>
 
-  <section class="prueba revelar">
-    <div class="prueba-caja">
-      <div class="jornadas"><div class="malla-j" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pie-j">21 jornadas trabajadas en agosto</div></div>
-      <div class="lectura">
-        <span class="k">Agosto de 2026</span>
-        <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
-        <span class="cero">0,00 € de diferencia</span>
-        <p class="glosa">Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano.</p>
-      </div>
-    </div>
-  </section>
+
+  <div class="franja">
+    <div><div class="n cifra"><em>400–900 €</em></div><div class="q">una web completa, precio cerrado y dicho de antemano</div></div>
+    <div><div class="n cifra">7 días</div><div class="q">de la primera conversación a la web publicada</div></div>
+    <div><div class="n cifra">0</div><div class="q">palabras raras: ni «plataforma», ni «IA», ni inglés</div></div>
+  </div>
 
   <section>
     <div class="cabecera revelar">
@@ -483,6 +542,18 @@
     </div>
   </section>
 
+
+  <section class="prueba revelar">
+    <div class="prueba-caja">
+      <div class="jornadas"><div class="malla-j" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pie-j">21 jornadas trabajadas en agosto</div></div>
+      <div class="lectura">
+        <span class="k">Agosto de 2026</span>
+        <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
+        <span class="cero">0,00 € de diferencia</span>
+        <p class="glosa">Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano.</p>
+      </div>
+    </div>
+  </section>
 
   <section id="trabajos">
     <div class="cabecera revelar">
@@ -714,6 +785,21 @@
       caja.addEventListener('mouseleave', function(){
         globo.style.opacity = 0; cruz.style.opacity = 0;
       });
+    })();
+
+
+    // Menú de móvil. El panel se cierra al elegir, al tocar fuera y con Escape.
+    (function(){
+      var b=document.getElementById('menuBtn'), m=document.getElementById('menuPanel');
+      if(!b||!m) return;
+      function abrir(v){ b.setAttribute('aria-expanded', v?'true':'false'); m.hidden=!v; }
+      b.addEventListener('click', function(e){
+        e.stopPropagation(); abrir(b.getAttribute('aria-expanded')!=='true'); });
+      m.addEventListener('click', function(e){ if(e.target.tagName==='A') abrir(false); });
+      document.addEventListener('click', function(e){
+        if(!m.hidden && !m.contains(e.target) && e.target!==b) abrir(false); });
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape') abrir(false); });
+      window.addEventListener('resize', function(){ if(innerWidth>760) abrir(false); });
     })();
 
   (function(){
