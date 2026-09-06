@@ -75,7 +75,7 @@
   }
   .barra .marca{ font-family:var(--display); font-size:21px; letter-spacing:.02em; margin-right:12px; white-space:nowrap; }
   .barra a{ font-size:14.5px; font-weight:500; color:var(--tinta-2); text-decoration:none;
-    padding:8px 13px; border-radius:999px; transition:color var(--rapido) var(--curva-salida), background var(--rapido) var(--curva-salida); }
+    padding:8px 13px; border-radius:999px; white-space:nowrap; transition:color var(--rapido) var(--curva-salida), background var(--rapido) var(--curva-salida); }
   .barra a:hover{ color:var(--tinta); background:var(--hueco); }
   .barra .cta{ background:var(--fuego); color:#fff; font-weight:600; padding:10px 19px; }
   .barra .cta:hover{ background:var(--naranja); color:#fff; }
@@ -419,29 +419,31 @@
   @media (min-width:761px){ .menu-panel{ display:none !important; } }
 
   /* ---------- comparador arrastrable ---------- */
-  .comparador{ position:relative; border-radius:20px; overflow:hidden;
+  .comparador{ position:relative; min-height:260px; border-radius:20px; overflow:hidden;
     border:1px solid var(--borde-fino); background:var(--hueco);
     display:grid; touch-action:pan-y; }
-  .capa{ grid-area:1/1; padding:24px; display:grid; place-items:center; }
+  .capa{ grid-area:1/1; padding:26px; display:grid; align-items:center; }
   .capa-antes{ background:#f0eeec; }
   .capa-desp{ background:#eef4f0; clip-path:inset(0 0 0 52%); }
-  .tarj{ width:100%; max-width:420px; background:var(--superficie);
-    border:1px solid var(--borde); border-radius:16px; padding:18px 20px 16px; }
-  .tit-g{ font-size:19px; font-weight:600; color:#1a0dab; }
-  .sub-g{ font-size:13.5px; color:var(--tinta-2); margin-top:2px; }
-  .est-g{ font-size:14px; margin-top:9px; font-weight:600; }
-  .est-g span{ font-weight:400; color:var(--tinta-2); }
-  .est-g.cerrado{ color:#c0392b; } .est-g.abierto{ color:#0f8a5f; }
-  .fot-g{ display:flex; gap:6px; margin-top:12px; }
-  .fot-g i{ width:52px; height:40px; border-radius:6px; display:block; }
-  .fot-g .gris{ background:#dcd9d5; }
-  .fot-g .buena{ background:linear-gradient(135deg,#c9a882,#8f6f4e); }
-  .acc-g{ display:flex; gap:6px; margin-top:12px; flex-wrap:wrap; }
-  .acc-g span{ font-size:12.5px; font-weight:600; color:#1a0dab;
+  .tarj{ width:100%; background:var(--superficie); border:1px solid var(--borde);
+    border-radius:16px; padding:20px 22px; display:grid; gap:16px; align-content:start; }
+  .fila-g{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .tit-g{ font-size:20px; font-weight:600; color:#1a0dab; white-space:nowrap; }
+  .sub-g{ font-size:13.5px; color:var(--tinta-2); margin-top:2px; white-space:nowrap; }
+  .chip-g{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; border-radius:999px; padding:6px 13px; white-space:nowrap; }
+  .chip-g.cerrado{ background:var(--rojo-piel); color:#c0392b; }
+  .chip-g.abierto{ background:var(--verde-piel); color:#0f8a5f; }
+  .fot-g{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .fot-g i{ display:block; aspect-ratio:4/3; border-radius:8px; }
+  .fot-g .gris{ background:#dedad6; }
+  .fot-g .buena{ background:linear-gradient(135deg,#d8b48a,#8a6a48); }
+  .pie-g{ align-items:center; border-top:1px solid var(--borde-fino); padding-top:14px; }
+  .res-g{ font-size:12.5px; color:var(--tinta-3); white-space:nowrap; }
+  .capa-desp .res-g{ color:var(--p-verde); font-weight:600; }
+  .acc-g{ display:flex; gap:6px; flex-wrap:nowrap; }
+  .acc-g span{ font-size:12.5px; font-weight:600; color:#1a0dab; white-space:nowrap;
     border:1px solid #c6d4f5; border-radius:999px; padding:5px 12px; }
-  .res-g{ font-size:12.5px; color:var(--tinta-3); margin-top:12px;
-    border-top:1px solid var(--borde-fino); padding-top:10px; }
-  .capa-desp .res-g{ color:var(--p-verde); }
 
   .raya{ grid-area:1/1; position:relative; width:2px; background:var(--tinta);
     justify-self:start; margin-left:52%; pointer-events:none; z-index:3; }
@@ -462,8 +464,9 @@
   .nota-comp{ margin-top:16px; max-width:44rem; font-size:14.5px; color:var(--tinta-2);
     font-weight:300; }
   @media (max-width:760px){
-    .capa{ padding:16px; } .tarj{ padding:15px 16px 14px; }
-    .fot-g i{ width:44px; height:34px; }
+    .capa{ padding:14px; } .tarj{ padding:15px 16px; gap:12px; }
+    .tit-g{ font-size:17px; } .fot-g{ gap:6px; }
+    .acc-g span{ font-size:11px; padding:4px 9px; } .res-g{ font-size:11.5px; }
     .rot-lado{ top:10px; } .rot-lado.izq{ left:10px; } .rot-lado.der{ right:10px; }
   }
 </style>
@@ -537,16 +540,29 @@
     </div>
     <div class="comparador revelar" id="comp">
       <div class="capa capa-antes"><div class="tarj">
-        <div class="tit-g">Bar Sant Ramon</div>
-        <div class="sub-g">Bar de tapas · Viladecans</div>
-        <div class="est-g cerrado">Cerrado
-          <span>abre a las 8:00</span></div>
-        <div class="fot-g"><i class="gris"></i><i class="gris"></i></div>
-        
-        <div class="res-g">Sin responder a 6 reseñas</div>
-      </div></div>
+          <div class="fila-g">
+            <div><div class="tit-g">Bar Sant Ramon</div>
+              <div class="sub-g">Bar de tapas · Viladecans</div></div>
+            <span class="chip-g cerrado">Cerrado</span>
+          </div>
+          <div class="fot-g"><i class="gris"></i><i class="gris"></i><i class="gris"></i><i class="gris"></i></div>
+          <div class="fila-g pie-g">
+            <span class="res-g">Sin responder a 6 reseñas</span>
+            <div class="acc-g"></div>
+          </div>
+        </div></div>
       <div class="capa capa-desp" id="capaD"><div class="tarj">
-        <div class="tit-g">Bar Sant Ramon</div>
+          <div class="fila-g">
+            <div><div class="tit-g">Bar Sant Ramon</div>
+              <div class="sub-g">Bar de tapas · Viladecans</div></div>
+            <span class="chip-g abierto">Abierto</span>
+          </div>
+          <div class="fot-g"><i class="buena"></i><i class="buena"></i><i class="buena"></i><i class="buena"></i></div>
+          <div class="fila-g pie-g">
+            <span class="res-g">6 reseñas contestadas</span>
+            <div class="acc-g"><span>Llamar</span><span>Cómo llegar</span><span>Web</span></div>
+          </div>
+        </div></div>
         <div class="sub-g">Bar de tapas · Viladecans</div>
         <div class="est-g abierto">Abierto
           <span>cierra a las 23:30</span></div>
