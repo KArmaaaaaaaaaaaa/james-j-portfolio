@@ -401,6 +401,7 @@
     width:calc(100vw - 28px); max-width:420px; background:rgba(255,255,255,.97);
     backdrop-filter:blur(16px); border:1px solid var(--borde-fino); border-radius:20px;
     padding:8px; box-shadow:0 16px 40px rgba(30,20,10,.16); display:grid; gap:2px; }
+  .menu-panel[hidden]{ display:none !important; }   /* sin esto, hidden no hace nada */
   .menu-panel a{ display:block; padding:13px 16px; border-radius:13px; text-decoration:none;
     color:var(--tinta); font-size:16px; font-weight:500;
     transition:background var(--rapido) var(--curva-salida); }
@@ -416,6 +417,55 @@
     .dib{ width:54px; height:54px; border-radius:14px; } .dib svg{ width:29px; height:29px; }
   }
   @media (min-width:761px){ .menu-panel{ display:none !important; } }
+
+  /* ---------- comparador arrastrable ---------- */
+  .comparador{ position:relative; border-radius:20px; overflow:hidden;
+    border:1px solid var(--borde-fino); background:var(--hueco);
+    display:grid; touch-action:pan-y; }
+  .capa{ grid-area:1/1; padding:24px; display:grid; place-items:center; }
+  .capa-antes{ background:#f0eeec; }
+  .capa-desp{ background:#eef4f0; clip-path:inset(0 0 0 52%); }
+  .tarj{ width:100%; max-width:420px; background:var(--superficie);
+    border:1px solid var(--borde); border-radius:16px; padding:18px 20px 16px; }
+  .tit-g{ font-size:19px; font-weight:600; color:#1a0dab; }
+  .sub-g{ font-size:13.5px; color:var(--tinta-2); margin-top:2px; }
+  .est-g{ font-size:14px; margin-top:9px; font-weight:600; }
+  .est-g span{ font-weight:400; color:var(--tinta-2); }
+  .est-g.cerrado{ color:#c0392b; } .est-g.abierto{ color:#0f8a5f; }
+  .fot-g{ display:flex; gap:6px; margin-top:12px; }
+  .fot-g i{ width:52px; height:40px; border-radius:6px; display:block; }
+  .fot-g .gris{ background:#dcd9d5; }
+  .fot-g .buena{ background:linear-gradient(135deg,#c9a882,#8f6f4e); }
+  .acc-g{ display:flex; gap:6px; margin-top:12px; flex-wrap:wrap; }
+  .acc-g span{ font-size:12.5px; font-weight:600; color:#1a0dab;
+    border:1px solid #c6d4f5; border-radius:999px; padding:5px 12px; }
+  .res-g{ font-size:12.5px; color:var(--tinta-3); margin-top:12px;
+    border-top:1px solid var(--borde-fino); padding-top:10px; }
+  .capa-desp .res-g{ color:var(--p-verde); }
+
+  .raya{ grid-area:1/1; position:relative; width:2px; background:var(--tinta);
+    justify-self:start; margin-left:52%; pointer-events:none; z-index:3; }
+  .tirador{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:44px; height:44px; border-radius:50%; background:var(--tinta); color:#fff;
+    display:grid; place-items:center; box-shadow:0 4px 16px rgba(0,0,0,.28); }
+  .tirador svg{ width:20px; height:20px; }
+  .mando{ grid-area:1/1; z-index:4; width:100%; height:100%; margin:0; opacity:0;
+    cursor:ew-resize; appearance:none; -webkit-appearance:none; background:transparent; }
+  .mando::-webkit-slider-thumb{ -webkit-appearance:none; width:56px; height:100%; }
+  .mando::-moz-range-thumb{ width:56px; height:200px; border:none; opacity:0; }
+  .mando:focus-visible + .rot-lado{ outline:none; }
+  .comparador:focus-within{ box-shadow:0 0 0 2px var(--naranja); }
+  .rot-lado{ position:absolute; top:14px; z-index:2; font-family:var(--mono); font-size:10.5px;
+    font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-3);
+    background:rgba(255,255,255,.86); border-radius:999px; padding:5px 11px; pointer-events:none; }
+  .rot-lado.izq{ left:14px; } .rot-lado.der{ right:14px; }
+  .nota-comp{ margin-top:16px; max-width:44rem; font-size:14.5px; color:var(--tinta-2);
+    font-weight:300; }
+  @media (max-width:760px){
+    .capa{ padding:16px; } .tarj{ padding:15px 16px 14px; }
+    .fot-g i{ width:44px; height:34px; }
+    .rot-lado{ top:10px; } .rot-lado.izq{ left:10px; } .rot-lado.der{ right:10px; }
+  }
 </style>
 
 <nav class="barra">
@@ -479,6 +529,42 @@
 <div class="env">
 
 
+  <section id="comparador">
+    <div class="cabecera revelar">
+      <span class="rotulo">Arrástralo</span>
+      <h2>La misma ficha, antes y después</h2>
+      <p>Esto es lo que ve alguien que busca tu negocio un sábado a las nueve de la noche. Mueve la barra y compara.</p>
+    </div>
+    <div class="comparador revelar" id="comp">
+      <div class="capa capa-antes"><div class="tarj">
+        <div class="tit-g">Bar Sant Ramon</div>
+        <div class="sub-g">Bar de tapas · Viladecans</div>
+        <div class="est-g cerrado">Cerrado
+          <span>abre a las 8:00</span></div>
+        <div class="fot-g"><i class="gris"></i><i class="gris"></i></div>
+        
+        <div class="res-g">Sin responder a 6 reseñas</div>
+      </div></div>
+      <div class="capa capa-desp" id="capaD"><div class="tarj">
+        <div class="tit-g">Bar Sant Ramon</div>
+        <div class="sub-g">Bar de tapas · Viladecans</div>
+        <div class="est-g abierto">Abierto
+          <span>cierra a las 23:30</span></div>
+        <div class="fot-g"><i class="buena"></i><i class="buena"></i><i class="buena"></i><i class="buena"></i></div>
+        <div class="acc-g"><span>Llamar</span><span>Cómo llegar</span><span>Web</span></div>
+        <div class="res-g">6 reseñas contestadas</div>
+      </div></div>
+      <div class="raya" id="raya"><span class="tirador">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 3 12l6 6M15 6l6 6-6 6"/></svg>
+      </span></div>
+      <input class="mando" id="mando" type="range" min="0" max="100" value="52" step="0.5"
+             aria-label="Comparar la ficha antes y después">
+      <span class="rot-lado izq">Antes</span>
+      <span class="rot-lado der">Después</span>
+    </div>
+    <p class="nota-comp revelar">Negocio de ejemplo. Lo que cambia no es el diseño: es que el horario sea el de verdad, que las fotos las hayas hecho tú y que las reseñas estén contestadas.</p>
+  </section>
+
   <section id="servicios">
     <div class="cabecera revelar">
       <span class="rotulo">Qué hago y cuánto cuesta</span>
@@ -530,17 +616,6 @@
     <div><div class="n cifra">0</div><div class="q">palabras raras: ni «plataforma», ni «IA», ni inglés</div></div>
   </div>
 
-  <section>
-    <div class="cabecera revelar">
-      <span class="rotulo">Por qué yo y no el sobrino de alguien</span>
-      <h2>El problema no es técnico</h2>
-    </div>
-    <div class="angulo revelar">
-      <p class="grande">Casi ningún negocio de barrio necesita una web mejor. Necesita que <em>alguien le entienda el negocio</em> y luego le haga la web.</p>
-      <p>Trabajo de técnico de farmacia. Ocho horas al día atendiendo a gente que llega con una caja, una duda y ninguna paciencia para tecnicismos. Esa es la misma persona que entra en tu local, y es la misma que va a abrir tu web en el móvil, con prisa y a contraluz.</p>
-      <p>Por eso mis páginas se leen grandes, cargan rápido y ponen el teléfono donde se ve. <strong>Sin menús que descifrar, sin animaciones que estorben, sin una sola palabra en inglés.</strong> Lo bonito viene después de que funcione, no antes.</p>
-    </div>
-  </section>
 
 
   <section class="prueba revelar">
@@ -555,108 +630,6 @@
     </div>
   </section>
 
-  <section id="trabajos">
-    <div class="cabecera revelar">
-      <span class="rotulo">Trabajos</span>
-      <h2>Lo que hay hecho</h2>
-      <p>Poco y real. No vas a encontrar aquí logotipos de empresas que no me han contratado ni testimonios inventados: cuando los haya, se pondrán.</p>
-    </div>
-    <div class="trabajos">
-
-      <article class="trabajo revelar">
-        <div>
-          <span class="rotulo">Servicio de facturación · 2026</span>
-          <h3><a href="caso-factura.html" style="color:inherit;text-decoration:none">De la libreta a la factura →</a></h3>
-          <p>Una transportista apuntaba sus jornadas a mano, con su propia taquigrafía: «1 BCN», «4 Calafell + 30». Cada fin de mes eran dos horas de Excel y un susto con el IRPF.</p>
-          <p>Monté el sistema que lee la foto de la libreta y saca la factura hecha, con las tarifas por destino, el IVA y la retención ya aplicados. <strong>La primera factura salió idéntica a la que se había emitido a mano.</strong></p>
-        </div>
-        <dl class="datos">
-          <div><dt>Jornadas</dt><dd>21</dd></div>
-          <div><dt>Importe</dt><dd>5.574,00 €</dd></div>
-          <div><dt>Diferencia</dt><dd>0,00 €</dd></div>
-          <div><dt>Tiempo del cliente</dt><dd>una foto</dd></div>
-          <div><dt>Estado</dt><dd><span class="sello">En uso</span></dd></div>
-        </dl>
-      </article>
-
-      <article class="trabajo revelar">
-        <div>
-          <span class="rotulo">Panel de control · 2026</span>
-          <h3>Centro de mando</h3>
-          <p>Un sistema con ocho formas de arrancarlo y ninguna pantalla principal. Lo convertí en un tablero de salidas de estación: se ordena por <em>cuándo</em>, la posición marca la urgencia, y cuando algo cambia la fila gira como una lámina y sube.</p>
-          <p>Lee el estado real de la máquina al abrirlo y los botones ejecutan de verdad. <strong>Lo que no tiene datos aún se queda vacío y lo dice</strong>, en vez de enseñar cifras de muestra que alguien pueda creerse.</p>
-        </div>
-        <dl class="datos">
-          <div><dt>Zonas</dt><dd>5</dd></div>
-          <div><dt>Acciones reales</dt><dd>7</dd></div>
-          <div><dt>Giro de fila</dt><dd>600 ms</dd></div>
-          <div><dt>Dependencias</dt><dd>0</dd></div>
-          <div><dt>Estado</dt><dd><span class="sello">En uso</span></dd></div>
-        </dl>
-      </article>
-
-      <article class="trabajo trabajo--ancho revelar">
-        <div>
-          <span class="rotulo">Demostración · 2026</span>
-          <h3><a href="panel-demo.html" style="color:inherit;text-decoration:none">El panel de tu negocio →</a></h3>
-          <p>Lo que ve un dueño de bar el lunes por la mañana: cuánta gente ha buscado su local, qué ha hecho al encontrarlo y si va a más o a menos. Sin palabras raras y sin tener que interpretar nada — la respuesta está escrita en la propia frase.</p>
-        </div>
-        <div class="demo">
-          <div class="demo-cabeza">
-            <span class="nom">Bar Sant Ramon · últimas 12 semanas</span>
-            <span class="marca-demo">Ejemplo</span>
-            <span class="aclara">Negocio inventado y cifras de muestra, para enseñar el formato</span>
-          </div>
-
-          <div class="fichas-dato">
-            <div class="ficha-dato"><div class="v">1.470</div><div class="l">veces que han visto tu ficha</div><div class="d">+117 % desde enero</div></div>
-            <div class="ficha-dato"><div class="v">197</div><div class="l">han hecho algo después</div><div class="d">1 de cada 7</div></div>
-            <div class="ficha-dato"><div class="v">4,6</div><div class="l">nota media de las reseñas</div><div class="d">sobre 38 opiniones</div></div>
-          </div>
-
-          <div class="graficos">
-            <div class="grafico">
-              <div class="tit">Cuánta gente te busca</div>
-              <div class="sub">Visitas a la ficha, por semana</div>
-              <div class="lienzo" id="lienzo-visitas">
-                <svg viewBox="0 0 460 150" role="img" aria-label="Las visitas suben de 84 a 182 por semana en doce semanas">
-                  <line class="rejilla" x1="8" y1="128.0" x2="452" y2="128.0"/><line class="rejilla" x1="8" y1="69.0" x2="452" y2="69.0"/><line class="rejilla" x1="8" y1="10.0" x2="452" y2="10.0"/>
-                  <path class="area" d="M8.0 73.5 L48.4 69.0 L88.7 77.4 L129.1 65.8 L169.5 56.7 L209.8 61.2 L250.2 45.0 L290.5 36.6 L330.9 41.8 L371.3 26.9 L411.6 19.1 L452.0 10.0 L452.0 128.0 L8.0 128.0 Z"/>
-                  <path class="linea" d="M8.0 73.5 L48.4 69.0 L88.7 77.4 L129.1 65.8 L169.5 56.7 L209.8 61.2 L250.2 45.0 L290.5 36.6 L330.9 41.8 L371.3 26.9 L411.6 19.1 L452.0 10.0"/>
-                  <line class="cruz" id="cruz" y1="10" y2="128"/>
-                  <circle class="punta" id="punta" r="4.5" cx="452.0" cy="10.0"/>
-                  <text class="eje" x="8" y="144">hace 12 sem.</text>
-                  <text class="eje" x="452" y="144" text-anchor="end">esta semana</text>
-                  <circle class="pt" cx="8.0" cy="73.5" r="9" fill="transparent" data-i="0" data-v="84"/><circle class="pt" cx="48.4" cy="69.0" r="9" fill="transparent" data-i="1" data-v="91"/><circle class="pt" cx="88.7" cy="77.4" r="9" fill="transparent" data-i="2" data-v="78"/><circle class="pt" cx="129.1" cy="65.8" r="9" fill="transparent" data-i="3" data-v="96"/><circle class="pt" cx="169.5" cy="56.7" r="9" fill="transparent" data-i="4" data-v="110"/><circle class="pt" cx="209.8" cy="61.2" r="9" fill="transparent" data-i="5" data-v="103"/><circle class="pt" cx="250.2" cy="45.0" r="9" fill="transparent" data-i="6" data-v="128"/><circle class="pt" cx="290.5" cy="36.6" r="9" fill="transparent" data-i="7" data-v="141"/><circle class="pt" cx="330.9" cy="41.8" r="9" fill="transparent" data-i="8" data-v="133"/><circle class="pt" cx="371.3" cy="26.9" r="9" fill="transparent" data-i="9" data-v="156"/><circle class="pt" cx="411.6" cy="19.1" r="9" fill="transparent" data-i="10" data-v="168"/><circle class="pt" cx="452.0" cy="10.0" r="9" fill="transparent" data-i="11" data-v="182"/>
-                </svg>
-                <div class="globo-dato" id="globo-visitas"></div>
-              </div>
-            </div>
-
-            <div class="grafico">
-              <div class="tit">Qué hacen al encontrarte</div>
-              <div class="sub">Acciones en las últimas 12 semanas</div>
-              <div class="barras">
-                <div class="barra-dato b-azul">
-                  <div class="top"><span class="nom">Piden cómo llegar</span><span class="num">112</span></div>
-                  <div class="canal"><div class="relleno" style="--w:100%"></div></div>
-                </div>
-                <div class="barra-dato b-naranja">
-                  <div class="top"><span class="nom">Te llaman</span><span class="num">47</span></div>
-                  <div class="canal"><div class="relleno" style="--w:42%"></div></div>
-                </div>
-                <div class="barra-dato b-verde">
-                  <div class="top"><span class="nom">Entran en tu web</span><span class="num">38</span></div>
-                  <div class="canal"><div class="relleno" style="--w:34%"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-    </div>
-  </section>
 
 
   <section id="estilos">
@@ -787,6 +760,18 @@
       });
     })();
 
+
+
+    // Comparador. El mando es un input range de verdad: va con dedo, ratón y teclado.
+    (function(){
+      var m=document.getElementById('mando'), c=document.getElementById('capaD'),
+          r=document.getElementById('raya');
+      if(!m||!c||!r) return;
+      function pinta(){ var v=m.value;
+        c.style.clipPath='inset(0 0 0 '+v+'%)'; r.style.marginLeft=v+'%'; }
+      m.addEventListener('input', pinta);
+      pinta();
+    })();
 
     // Menú de móvil. El panel se cierra al elegir, al tocar fuera y con Escape.
     (function(){
