@@ -17,6 +17,16 @@ TEMAS = {
    --naranja:#fe4a23; --fuego:linear-gradient(104deg,#fe4a23,#ff812e); --naranja-piel:#ffeae4;
    --p-azul:#2563eb; --p-verde:#007d55; --menta:#4edea3; --verde-piel:#e8f6ef;"""),
 
+ "carta-nfc.html": dict(
+   nombre="Editorial (la casa)",
+   fuentes="Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700",
+   display='"Oswald","Arial Narrow",sans-serif', texto='"Hanken Grotesk",-apple-system,sans-serif',
+   h1="clamp(34px,6.4vw,88px)", h2="clamp(30px,4.6vw,58px)", lh=".94", casa=True,
+   vars="""--fondo:#f2f2f0; --superficie:#fff; --hueco:#eaeae7; --borde:#0d0d0f; --borde-fino:#d8d7d3;
+   --tinta:#0d0d0f; --tinta-2:#4a4a50; --tinta-3:#8a8a92;
+   --naranja:#fe4a23; --fuego:linear-gradient(104deg,#fe4a23,#ff812e); --naranja-piel:#ffeae4;
+   --p-azul:#2563eb; --p-verde:#007d55; --menta:#4edea3; --verde-piel:#e8f6ef;"""),
+
  "ficha-google.html": dict(
    nombre="Azul señal", fuentes="Instrument+Serif:ital@0;1&family=Public+Sans:wght@300;400;500;600;700",
    display='"Instrument Serif",Georgia,serif', texto='"Public Sans",-apple-system,sans-serif',

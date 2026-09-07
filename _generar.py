@@ -34,6 +34,7 @@ JS = r"""
 </script>
 """
 NAV = [("index.html","Inicio"),("precios.html","Precios"),
+       ("carta-nfc.html","Carta en la mesa"),
        ("ficha-google.html","Ficha de Google"),("caso-factura.html","Un caso"),
        ("panel-demo.html","Demo")]
 
@@ -680,3 +681,123 @@ pagina("panel-demo.html","El panel de tu negocio", f"""
 </div>
 """, CSS_DEMO, JS_DEMO)
 print("panel-demo.html")
+
+# ═══════════════════════ 5. LA CARTA EN LA MESA ═══════════════════════
+# Toda la animación es CSS: un móvil que baja hasta la pegatina, las ondas del
+# chip y la carta que aparece. Cero ficheros, cero JS, no se pixela y se
+# cambia en un minuto. Solo se animan transform y opacity.
+CSS_NFC = """
+  .escena{ display:grid; place-items:end center; height:330px; position:relative;
+    padding-bottom:26px;
+    background:var(--hueco); border:1px solid var(--borde); border-radius:0;
+    overflow:hidden; margin:36px 0 8px; }
+  .mesa-d{ position:absolute; left:0; right:0; bottom:0; height:38%;
+    background:linear-gradient(180deg,#c8ab86,#a8875f); }
+  .mesa-d::before{ content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 26px); }
+  .pega{ position:absolute; left:62%; bottom:12%; transform:translateX(-50%);
+    width:66px; height:66px; z-index:1; border-radius:12px; background:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,.22); display:grid; place-items:center;
+    font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.1em;
+    color:var(--tinta-2); text-align:center; line-height:1.3; }
+  .pega b{ display:block; font-size:15px; letter-spacing:0; color:var(--tinta); }
+  /* Las ondas salen de la pegatina justo cuando el móvil llega. */
+  .onda{ position:absolute; left:62%; bottom:12%; width:66px; height:66px;
+    transform:translateX(-50%); border:2px solid var(--naranja); border-radius:14px;
+    opacity:0; animation:onda 4.4s var(--curva) infinite; }
+  .onda:nth-of-type(2){ animation-delay:.22s; }
+  @keyframes onda{
+    0%,32%{ transform:translateX(-50%) scale(1); opacity:0; }
+    40%{ opacity:.8; }
+    56%,100%{ transform:translateX(-50%) scale(2.4); opacity:0; } }
+
+  .movil{ position:relative; z-index:2; width:122px; height:226px; border-radius:20px;
+    background:var(--tinta); padding:7px; box-shadow:0 16px 40px rgba(0,0,0,.26);
+    animation:acercar 4.4s var(--curva) infinite; }
+  .pantalla{ width:100%; height:100%; border-radius:14px; background:var(--superficie);
+    overflow:hidden; position:relative; }
+  @keyframes acercar{
+    0%{ transform:translate(-46px,-84px) rotate(-9deg); }
+    30%,78%{ transform:translate(-64px,-16px) rotate(-3deg); }
+    100%{ transform:translate(-46px,-84px) rotate(-9deg); } }
+
+  /* Dentro de la pantalla: primero nada, luego la carta. */
+  .carta-d{ position:absolute; inset:0; padding:9px; opacity:0;
+    animation:aparece 4.4s var(--curva) infinite; }
+  @keyframes aparece{ 0%,40%{ opacity:0; transform:translateY(8px); }
+    50%,74%{ opacity:1; transform:none; } 84%,100%{ opacity:0; } }
+  .carta-d .cab{ height:34px; border-radius:6px; background:var(--naranja); margin-bottom:7px;
+    display:grid; place-items:center; color:#fff; font-family:var(--mono);
+    font-size:7px; letter-spacing:.14em; }
+  .carta-d .ln{ height:7px; border-radius:3px; background:var(--borde-fino); margin-bottom:5px; }
+  .carta-d .ln.corta{ width:58%; } .carta-d .ln.precio{ width:34%; background:var(--naranja); opacity:.55; }
+
+  .paso{ display:grid; grid-template-columns:34px 1fr; gap:16px; align-items:start;
+    padding:20px 0; border-bottom:1px solid var(--borde); }
+  .paso:last-child{ border-bottom:0; }
+  .paso .n{ font-family:var(--display); font-size:30px; line-height:.9; color:var(--tinta-3); }
+  .paso h3{ margin:0 0 6px; }
+  .paso p{ margin:0; font-size:15px; color:var(--tinta-2); font-weight:300; }
+  .cruz{ border:1px solid var(--borde); padding:24px; margin-top:36px; }
+  .cruz h3{ margin:0 0 10px; }
+  @media (prefers-reduced-motion:reduce){
+    .movil,.onda,.carta-d{ animation:none !important; }
+    .movil{ transform:translate(-64px,-16px); } .carta-d{ opacity:1; } }
+"""
+
+pagina("carta-nfc.html","La carta, pegada en la mesa", f"""
+<div class="env">
+  <header class="cabeza">
+    <div class="hilo carga"><span class="rotulo">Carta en la mesa</span><span></span>
+      <span class="rotulo">Sin papel, sin reimprimir</span></div>
+    <h1 class="carga">La carta,<br>pegada en la mesa</h1>
+    <p class="bajada carga"><b>Una pegatina en cada mesa. El cliente acerca el móvil y le sale tu carta.</b> Sin cámara, sin enfocar, sin descargar nada. Y cuando subes un precio lo cambias tú desde el móvil: no hay que reimprimir nada, porque no hay nada impreso.</p>
+  </header>
+
+  <div class="escena revelar" aria-hidden="true">
+    <div class="mesa-d"></div>
+    <div class="onda"></div><div class="onda"></div>
+    <div class="pega"><span>NFC<b>+QR</b></span></div>
+    <div class="movil"><div class="pantalla">
+      <div class="carta-d">
+        <div class="cab">MESA 7</div>
+        <div class="ln"></div><div class="ln corta"></div><div class="ln precio"></div>
+        <div class="ln" style="margin-top:9px"></div><div class="ln corta"></div><div class="ln precio"></div>
+        <div class="ln" style="margin-top:9px"></div><div class="ln corta"></div><div class="ln precio"></div>
+      </div>
+    </div></div>
+  </div>
+  <p class="nota-comp">La pegatina lleva el chip dentro <b>y el código impreso encima</b>: si el móvil no tiene antena o la lleva apagada, la cámara sirve igual. Nadie se queda fuera.</p>
+
+  <section>
+    <div class="titulo revelar"><span class="rotulo">Cómo va</span><h2>Cuatro pasos y ya está</h2></div>
+    <div class="revelar">
+      <div class="paso"><span class="n">01</span><div>
+        <h3>Me pasas la carta como la tengas</h3>
+        <p>Un papel, una foto, un PDF viejo. Yo la paso al sistema con sus precios, sus alérgenos y sus categorías.</p></div></div>
+      <div class="paso"><span class="n">02</span><div>
+        <h3>Haces las fotos con tu móvil</h3>
+        <p>Con luz de día y sin filtros. Nada de imágenes generadas por ordenador: Google las rechaza en la ficha y desde agosto de 2026 el reglamento europeo obliga a etiquetarlas. Una foto real evita las dos cosas y además es lo que hay en el plato.</p></div></div>
+      <div class="paso"><span class="n">03</span><div>
+        <h3>Pego una pegatina en cada mesa</h3>
+        <p>Cada una lleva su número dentro. Cuando alguien la usa desde la mesa 7, el botón de WhatsApp le sale ya escrito con «estoy en la mesa 7».</p></div></div>
+      <div class="paso"><span class="n">04</span><div>
+        <h3>A partir de ahí, la manejas tú</h3>
+        <p>Entras desde el móvil, cambias un precio y cambia en todas las mesas a la vez. Cartas de temporada sin tirar las viejas a la basura.</p></div></div>
+    </div>
+    <div class="acciones revelar" style="margin-top:26px">
+      <a class="boton boton--fuego" href="https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev/?mesa=7" target="_blank" rel="noopener">Abrir una carta de verdad</a>
+      <a class="boton boton--linea" href="precios.html">Cuánto cuesta</a>
+    </div>
+    <p class="nota-comp">Ese enlace es el de una mesa real: fíjate en la barra de arriba y en el botón de abajo.</p>
+
+    <div class="cruz revelar">
+      <span class="rotulo">Por qué va junto a la web</span>
+      <h3 style="margin-top:12px">La misma carta sirve para las dos cosas</h3>
+      <p style="font-size:15px;color:var(--tinta-2);font-weight:300">Lo que se abre al acercar el móvil <b>es tu web</b>. La misma que sale en Google cuando alguien te busca desde casa, y la misma que enseñas en tus redes. No son dos productos: es uno con dos puertas, una en el bolsillo del cliente y otra en la mesa.</p>
+      <p style="font-size:15px;color:var(--tinta-2);font-weight:300;margin-top:12px">Por eso sale más barato hacerlo junto que por separado, y por eso el precio de las pegatinas es tan bajo: el trabajo gordo ya está hecho cuando tienes la web.</p>
+    </div>
+  </section>
+</div>
+""", CSS_NFC)
+print("carta-nfc.html")

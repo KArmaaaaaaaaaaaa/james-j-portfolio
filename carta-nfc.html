@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Precios sin depender</title>
+<title>La carta, pegada en la mesa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -123,39 +123,62 @@
     .revelar{ opacity:1!important; transform:none!important; }
   }
 
-  .bento{ display:grid; gap:16px; grid-template-columns:repeat(4,1fr); }
-  .bento > *{ border-radius:20px; padding:26px; }
-  .b-ancho{ grid-column:span 2; } .b-alto{ grid-row:span 2; }
-  @media (max-width:900px){ .bento{ grid-template-columns:repeat(2,1fr); } }
-  @media (max-width:560px){ .bento{ grid-template-columns:1fr; }
-    .b-ancho,.b-alto{ grid-column:auto; grid-row:auto; } }
-  .b-claro{ background:var(--superficie); border:1px solid var(--borde-fino); }
-  .b-verde{ background:#dcf0a4; border:1px solid #c9e388; }
-  .b-papel{ background:#eaf1f1; border:1px solid #cbdcdc; }
-  .b-papel .rotulo{ color:#0f6e6e; }
-  .b-papel .listado li::before{ background:#0f6e6e; }
-  .b-papel .listado{ border-color:#cbdcdc; }
-  .b-papel .listado li{ color:#33484f; }
-  .precio .mas{ display:block; font-size:16px; font-weight:500;
-    letter-spacing:-.01em; margin-top:2px; color:var(--tinta-2); }
-  .b-negro{ background:var(--tinta); color:#fff; border:1px solid var(--tinta); }
-  .b-negro .rotulo{ color:#8b8890; }
-  .precio{ font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:34px;
-    font-weight:600; letter-spacing:-.03em; line-height:1.05; margin:14px 0 4px; }
-  .precio small{ font-size:12px; font-weight:400; color:var(--tinta-3); letter-spacing:0; }
-  .b-negro .precio small{ color:#8b8890; }
-  .listado{ list-style:none; padding:16px 0 0; margin:16px 0 0; border-top:1px solid var(--borde-fino);
-    display:grid; gap:8px; }
-  .b-negro .listado{ border-color:#33323a; }
-  .listado li{ font-size:14.5px; color:var(--tinta-2); padding-left:18px; position:relative; }
-  .b-negro .listado li{ color:#c9c6cf; }
-  .listado li::before{ content:""; position:absolute; left:0; top:8px; width:7px; height:7px;
-    border-radius:50%; background:var(--naranja); }
-  .b-verde .listado li::before{ background:#3d6b00; }
-  .b-verde .listado li{ color:#3f4a2c; } .b-verde .listado{ border-color:#c2dd7c; }
-  .pregunta{ border-bottom:1px solid var(--borde); padding:20px 0; }
-  .pregunta h3{ margin-bottom:7px; }
-  .pregunta p{ color:var(--tinta-2); font-weight:300; max-width:44rem; font-size:15.5px; }
+  .escena{ display:grid; place-items:end center; height:330px; position:relative;
+    padding-bottom:26px;
+    background:var(--hueco); border:1px solid var(--borde); border-radius:0;
+    overflow:hidden; margin:36px 0 8px; }
+  .mesa-d{ position:absolute; left:0; right:0; bottom:0; height:38%;
+    background:linear-gradient(180deg,#c8ab86,#a8875f); }
+  .mesa-d::before{ content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 26px); }
+  .pega{ position:absolute; left:62%; bottom:12%; transform:translateX(-50%);
+    width:66px; height:66px; z-index:1; border-radius:12px; background:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,.22); display:grid; place-items:center;
+    font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.1em;
+    color:var(--tinta-2); text-align:center; line-height:1.3; }
+  .pega b{ display:block; font-size:15px; letter-spacing:0; color:var(--tinta); }
+  /* Las ondas salen de la pegatina justo cuando el móvil llega. */
+  .onda{ position:absolute; left:62%; bottom:12%; width:66px; height:66px;
+    transform:translateX(-50%); border:2px solid var(--naranja); border-radius:14px;
+    opacity:0; animation:onda 4.4s var(--curva) infinite; }
+  .onda:nth-of-type(2){ animation-delay:.22s; }
+  @keyframes onda{
+    0%,32%{ transform:translateX(-50%) scale(1); opacity:0; }
+    40%{ opacity:.8; }
+    56%,100%{ transform:translateX(-50%) scale(2.4); opacity:0; } }
+
+  .movil{ position:relative; z-index:2; width:122px; height:226px; border-radius:20px;
+    background:var(--tinta); padding:7px; box-shadow:0 16px 40px rgba(0,0,0,.26);
+    animation:acercar 4.4s var(--curva) infinite; }
+  .pantalla{ width:100%; height:100%; border-radius:14px; background:var(--superficie);
+    overflow:hidden; position:relative; }
+  @keyframes acercar{
+    0%{ transform:translate(-46px,-84px) rotate(-9deg); }
+    30%,78%{ transform:translate(-64px,-16px) rotate(-3deg); }
+    100%{ transform:translate(-46px,-84px) rotate(-9deg); } }
+
+  /* Dentro de la pantalla: primero nada, luego la carta. */
+  .carta-d{ position:absolute; inset:0; padding:9px; opacity:0;
+    animation:aparece 4.4s var(--curva) infinite; }
+  @keyframes aparece{ 0%,40%{ opacity:0; transform:translateY(8px); }
+    50%,74%{ opacity:1; transform:none; } 84%,100%{ opacity:0; } }
+  .carta-d .cab{ height:34px; border-radius:6px; background:var(--naranja); margin-bottom:7px;
+    display:grid; place-items:center; color:#fff; font-family:var(--mono);
+    font-size:7px; letter-spacing:.14em; }
+  .carta-d .ln{ height:7px; border-radius:3px; background:var(--borde-fino); margin-bottom:5px; }
+  .carta-d .ln.corta{ width:58%; } .carta-d .ln.precio{ width:34%; background:var(--naranja); opacity:.55; }
+
+  .paso{ display:grid; grid-template-columns:34px 1fr; gap:16px; align-items:start;
+    padding:20px 0; border-bottom:1px solid var(--borde); }
+  .paso:last-child{ border-bottom:0; }
+  .paso .n{ font-family:var(--display); font-size:30px; line-height:.9; color:var(--tinta-3); }
+  .paso h3{ margin:0 0 6px; }
+  .paso p{ margin:0; font-size:15px; color:var(--tinta-2); font-weight:300; }
+  .cruz{ border:1px solid var(--borde); padding:24px; margin-top:36px; }
+  .cruz h3{ margin:0 0 10px; }
+  @media (prefers-reduced-motion:reduce){
+    .movil,.onda,.carta-d{ animation:none !important; }
+    .movil{ transform:translate(-64px,-16px); } .carta-d{ opacity:1; } }
 
   /* ── Tema «Editorial (la casa)» · solo esta página ── */
   :root{ --fondo:#f2f2f0; --superficie:#fff; --hueco:#eaeae7; --borde:#0d0d0f; --borde-fino:#d8d7d3;
@@ -199,137 +222,61 @@
 
 <nav class="barra">
   <a class="marca" href="index.html">James J Projects</a>
-  <a class="nav oculto" href="index.html">Inicio</a><a class="nav oculto" href="precios.html" aria-current='page'>Precios</a><a class="nav oculto" href="carta-nfc.html">Carta en la mesa</a><a class="nav oculto" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html">Un caso</a><a class="nav oculto" href="panel-demo.html">Demo</a>
+  <a class="nav oculto" href="index.html">Inicio</a><a class="nav oculto" href="precios.html">Precios</a><a class="nav oculto" href="carta-nfc.html" aria-current='page'>Carta en la mesa</a><a class="nav oculto" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html">Un caso</a><a class="nav oculto" href="panel-demo.html">Demo</a>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
 
 
 <div class="env">
   <header class="cabeza">
-    <div class="hilo carga"><span class="rotulo">Precios</span><span></span>
-      <span class="rotulo">Cerrados y por escrito</span></div>
-    <h1 class="carga">Lo que cuesta,<br>y por qué</h1>
-    <p class="bajada carga"><b>Preguntar el precio y que te digan «depende» es la parte que a todo el mundo le da pereza.</b> Aquí está escrito. El presupuesto se cierra antes de empezar: lo que se dice es lo que se paga, sin extras al final.</p>
+    <div class="hilo carga"><span class="rotulo">Carta en la mesa</span><span></span>
+      <span class="rotulo">Sin papel, sin reimprimir</span></div>
+    <h1 class="carga">La carta,<br>pegada en la mesa</h1>
+    <p class="bajada carga"><b>Una pegatina en cada mesa. El cliente acerca el móvil y le sale tu carta.</b> Sin cámara, sin enfocar, sin descargar nada. Y cuando subes un precio lo cambias tú desde el móvil: no hay que reimprimir nada, porque no hay nada impreso.</p>
   </header>
 
-  <section>
-    <div class="bento">
-      <div class="b-claro b-ancho revelar">
-        <span class="rotulo">Lo más pedido</span>
-        <div class="precio">150–300 € <small>una vez</small></div>
-        <h3>Ficha de Google en condiciones</h3>
-        <p style="font-size:15px;color:var(--tinta-2);font-weight:300;margin-top:8px">Lo primero que ve un cliente cuando busca tu negocio. Suele estar con el horario de hace dos veranos y sin una foto decente.</p>
-        <ul class="listado">
-          <li>Fotos, horarios y servicios al día</li>
-          <li>Respuesta escrita a las reseñas pendientes</li>
-          <li>Te enseño a contestarlas tú en diez minutos</li>
-        </ul>
+  <div class="escena revelar" aria-hidden="true">
+    <div class="mesa-d"></div>
+    <div class="onda"></div><div class="onda"></div>
+    <div class="pega"><span>NFC<b>+QR</b></span></div>
+    <div class="movil"><div class="pantalla">
+      <div class="carta-d">
+        <div class="cab">MESA 7</div>
+        <div class="ln"></div><div class="ln corta"></div><div class="ln precio"></div>
+        <div class="ln" style="margin-top:9px"></div><div class="ln corta"></div><div class="ln precio"></div>
+        <div class="ln" style="margin-top:9px"></div><div class="ln corta"></div><div class="ln precio"></div>
       </div>
-
-      <div class="b-verde b-alto revelar">
-        <span class="rotulo" style="color:#4a5a2a">El grueso</span>
-        <div class="precio" style="color:#26301a">400–900 € <small style="color:#4a5a2a">precio cerrado</small></div>
-        <h3 style="color:#26301a">Web completa del negocio</h3>
-        <p style="font-size:15px;color:#3f4a2c;font-weight:300;margin-top:8px">Una página bien hecha, no seis mal hechas. Qué haces, dónde estás, cuánto cuesta y cómo se te llama.</p>
-        <ul class="listado">
-          <li>Diseño a medida, sin plantilla</li>
-          <li>Textos escritos, no rellenados</li>
-          <li>Carga rápido aunque haya poca cobertura</li>
-          <li>Aparecer en Google y botón de WhatsApp</li>
-          <li>Dominio y alojamiento resueltos</li>
-          <li>Dos rondas de cambios incluidas</li>
-        </ul>
-      </div>
-
-      <div class="b-negro revelar">
-        <span class="rotulo">Opcional</span>
-        <div class="precio">30–50 € <small>al mes</small></div>
-        <h3>Que no se quede vieja</h3>
-        <ul class="listado">
-          <li>Cambios ilimitados en 48 h</li>
-          <li>Copia de seguridad</li>
-          <li>Sin permanencia</li>
-        </ul>
-      </div>
-
-      <div class="b-claro revelar">
-        <span class="rotulo">Siempre incluido</span>
-        <div class="precio">0 €</div>
-        <h3>Lo que no te cobro</h3>
-        <ul class="listado">
-          <li>La primera conversación</li>
-          <li>Decirte qué le falta a tu ficha</li>
-          <li>El presupuesto por escrito</li>
-        </ul>
-      </div>
-
-      <div class="b-papel b-ancho revelar">
-        <span class="rotulo">Para quien factura por jornadas</span>
-        <div class="precio" style="color:#123c3c">250 € <small style="color:#4d7373">montaje, una vez</small>
-          <span class="mas" style="color:#33484f">y 20 € al mes mientras lo uses</span></div>
-        <h3 style="color:#123c3c">De la foto de la libreta a la factura</h3>
-        <p style="font-size:15px;color:#33484f;font-weight:300;margin-top:8px">Si trabajas por rutas, por jornadas o por servicios y a fin de mes te toca sentarte a sumar la libreta, esto lo hace por ti. Mandas <b>una foto de la hoja</b> y sale la factura en PDF, con su número de serie, su IVA y su IRPF.</p>
-        <ul class="listado">
-          <li>Lee la letra a mano y te enseña línea por línea lo que ha entendido, incluidas las que no ha sabido leer</li>
-          <li>No emite nada hasta que tú confirmas el dinero</li>
-          <li>Tarifas distintas por tipo de servicio, y los extras aparte</li>
-          <li>Las fotos de gasoil, peajes y taller se guardan como gasto del mes</li>
-          <li>Aviso el día 28 para que no se te pase</li>
-          <li>Resumen en CSV para tu gestoría</li>
-        </ul>
-        <p style="font-size:13.5px;color:#4d7373;font-weight:300;margin-top:16px;border-top:1px solid #cbdcdc;padding-top:14px">No es una asesoría y no te dice qué declarar: hace la cuenta que ya haces tú, sin equivocarse y en un minuto. <a href="caso-factura.html" style="color:#0f6e6e">Un mes real, al céntimo →</a></p>
-      </div>
-
-      <div class="b-papel b-ancho revelar">
-        <span class="rotulo">Para bares y restaurantes</span>
-        <div class="precio" style="color:#123c3c">120 € <small style="color:#4d7373">hasta 20 mesas</small>
-          <span class="mas" style="color:#33484f">y 3 € por cada mesa de más</span></div>
-        <h3 style="color:#123c3c">La carta, pegada en la mesa</h3>
-        <p style="font-size:15px;color:#33484f;font-weight:300;margin-top:8px">Una pegatina en cada mesa. El cliente <b>acerca el móvil</b> y le sale tu carta con fotos, precios y alérgenos. Sin cámara, sin enfocar, sin app. Y cuando subes un precio, lo cambias tú desde el panel y ya está: <b>no hay que reimprimir nada</b>.</p>
-        <ul class="listado">
-          <li>Pegatina con chip dentro <b>y el código impreso encima</b>: funciona con cualquier móvil, tenga o no la antena</li>
-          <li>Aguanta la limpieza diaria y no se despega</li>
-          <li>Cambias la carta desde el móvil y cambia en todas las mesas a la vez</li>
-          <li>Cartas de temporada sin tirar las viejas a la basura</li>
-          <li>Alérgenos siempre al día, que es obligatorio</li>
-        </ul>
-        <p style="font-size:13.5px;color:#4d7373;font-weight:300;margin-top:16px;border-top:1px solid #cbdcdc;padding-top:14px">Las fotos las haces tú con el móvil: Google rechaza las generadas por ordenador y desde agosto de 2026 el reglamento europeo obliga a etiquetarlas. <a href="https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev/" style="color:#0f6e6e" target="_blank" rel="noopener">Ver una carta de verdad →</a></p>
-      </div>
-
-      <div class="b-claro b-ancho revelar">
-        <span class="rotulo">Cómo se paga</span>
-        <h3 style="margin-top:12px">La mitad al empezar, la mitad cuando te gusta</h3>
-        <p style="font-size:15px;color:var(--tinta-2);font-weight:300;margin-top:8px">Ves la web terminada y funcionando antes de pagar el resto, no un boceto. Si a la segunda ronda de cambios no te convence, te devuelvo la primera mitad y no nos debemos nada.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
-          <span class="pil pil--naranja">Transferencia</span>
-          <span class="pil pil--azul">Bizum</span>
-          <span class="pil pil--verde">Factura con IVA</span>
-        </div>
-      </div>
-    </div>
-  </section>
+    </div></div>
+  </div>
+  <p class="nota-comp">La pegatina lleva el chip dentro <b>y el código impreso encima</b>: si el móvil no tiene antena o la lleva apagada, la cámara sirve igual. Nadie se queda fuera.</p>
 
   <section>
-    <div class="titulo revelar"><h2>Lo que suelen preguntar</h2></div>
+    <div class="titulo revelar"><span class="rotulo">Cómo va</span><h2>Cuatro pasos y ya está</h2></div>
     <div class="revelar">
-      <div class="pregunta"><h3>¿Por qué tan barato comparado con una agencia?</h3>
-        <p>Porque no hay agencia. No pagas comerciales, ni oficina, ni al que le pasa el trabajo a otro. Trabajo solo y por las tardes, y por eso también tengo un límite: no puedo coger diez webs a la vez.</p></div>
-      <div class="pregunta"><h3>¿La web es mía de verdad?</h3>
-        <p>Sí. El dominio se pone a tu nombre y las claves quedan en tu mano. Si mañana quieres irte con otro, te vas con todo. No secuestro webs, que es la práctica que hace que tanta gente desconfíe.</p></div>
-      <div class="pregunta"><h3>¿Cuánto tarda?</h3>
-        <p>Una semana desde que me pasas las fotos y los textos. La ficha de Google, el mismo día. Lo que suele retrasar un encargo no soy yo: es que el material tarda en llegar.</p></div>
-      <div class="pregunta"><h3>No tengo fotos buenas del local.</h3>
-        <p>Voy y las hago. Va incluido en la web y en la ficha. Con un móvil actual y buena luz sale mejor que la mayoría de las fotos de banco de imágenes.</p></div>
-      <div class="pregunta"><h3>¿Y si el cliente no sabe usar la pegatina?</h3>
-        <p>La pegatina lleva las dos cosas: el chip para acercar el móvil y el código impreso encima para quien prefiera la cámara. Cualquier móvil de los últimos diez años entra por una vía o por la otra. Y si alguien no quiere ninguna, le sigues sacando la carta de papel: esto quita trabajo, no lo impone.</p></div>
-      <div class="pregunta"><h3>Lo de la factura, ¿vale para mi oficio?</h3>
-        <p>Vale para cualquiera que cobre por unidades repetidas: rutas, jornadas, servicios a domicilio, horas. Se configura una vez con tus tarifas y tu cliente, y a partir de ahí es mandar la foto. Lo que no cubre es facturar a cien clientes distintos cada mes: para eso ya hay programas y no te voy a vender el mío.</p></div>
-      <div class="pregunta"><h3>¿Y si no sé qué poner?</h3>
-        <p>Ese es mi trabajo, no el tuyo. De la conversación de veinte minutos salen los textos. Tú cuentas cómo se lo explicas a un cliente en el mostrador y yo lo escribo.</p></div>
+      <div class="paso"><span class="n">01</span><div>
+        <h3>Me pasas la carta como la tengas</h3>
+        <p>Un papel, una foto, un PDF viejo. Yo la paso al sistema con sus precios, sus alérgenos y sus categorías.</p></div></div>
+      <div class="paso"><span class="n">02</span><div>
+        <h3>Haces las fotos con tu móvil</h3>
+        <p>Con luz de día y sin filtros. Nada de imágenes generadas por ordenador: Google las rechaza en la ficha y desde agosto de 2026 el reglamento europeo obliga a etiquetarlas. Una foto real evita las dos cosas y además es lo que hay en el plato.</p></div></div>
+      <div class="paso"><span class="n">03</span><div>
+        <h3>Pego una pegatina en cada mesa</h3>
+        <p>Cada una lleva su número dentro. Cuando alguien la usa desde la mesa 7, el botón de WhatsApp le sale ya escrito con «estoy en la mesa 7».</p></div></div>
+      <div class="paso"><span class="n">04</span><div>
+        <h3>A partir de ahí, la manejas tú</h3>
+        <p>Entras desde el móvil, cambias un precio y cambia en todas las mesas a la vez. Cartas de temporada sin tirar las viejas a la basura.</p></div></div>
     </div>
-    <div class="acciones revelar">
-      <a class="boton boton--fuego" href="mailto:jamesjoelbenavides2004@gmail.com?subject=Presupuesto%20para%20mi%20negocio">Pedir presupuesto</a>
-      <a class="boton boton--linea" href="caso-factura.html">Ver un trabajo hecho</a>
+    <div class="acciones revelar" style="margin-top:26px">
+      <a class="boton boton--fuego" href="https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev/?mesa=7" target="_blank" rel="noopener">Abrir una carta de verdad</a>
+      <a class="boton boton--linea" href="precios.html">Cuánto cuesta</a>
+    </div>
+    <p class="nota-comp">Ese enlace es el de una mesa real: fíjate en la barra de arriba y en el botón de abajo.</p>
+
+    <div class="cruz revelar">
+      <span class="rotulo">Por qué va junto a la web</span>
+      <h3 style="margin-top:12px">La misma carta sirve para las dos cosas</h3>
+      <p style="font-size:15px;color:var(--tinta-2);font-weight:300">Lo que se abre al acercar el móvil <b>es tu web</b>. La misma que sale en Google cuando alguien te busca desde casa, y la misma que enseñas en tus redes. No son dos productos: es uno con dos puertas, una en el bolsillo del cliente y otra en la mesa.</p>
+      <p style="font-size:15px;color:var(--tinta-2);font-weight:300;margin-top:12px">Por eso sale más barato hacerlo junto que por separado, y por eso el precio de las pegatinas es tan bajo: el trabajo gordo ya está hecho cuando tienes la web.</p>
     </div>
   </section>
 </div>
