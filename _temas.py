@@ -5,13 +5,17 @@ import pathlib, re
 BASE = pathlib.Path(__file__).parent
 
 TEMAS = {
+ # precios.html deja de ser una muestra de estilo: habla de MI dinero y de mis
+ # condiciones, así que lleva mi identidad, no un tema prestado.
  "precios.html": dict(
-   nombre="Oliva", fuentes="Archivo+Black&family=Archivo:wght@300;400;500;600;700",
-   display='"Archivo Black",Impact,sans-serif', texto='"Archivo",-apple-system,sans-serif',
-   h1="clamp(40px,7vw,84px)", h2="clamp(28px,4.4vw,50px)", lh=".95",
-   vars="""--fondo:#edefe9; --superficie:#fff; --hueco:#e2e5da; --borde:#d6dacb; --borde-fino:#e3e6dc;
-   --tinta:#141710; --tinta-2:#4f5545; --tinta-3:#868c78;
-   --naranja:#4d7c1f; --fuego:linear-gradient(104deg,#4d7c1f,#7ba838); --naranja-piel:#e8f0d8;"""),
+   nombre="Editorial (la casa)",
+   fuentes="Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700",
+   display='"Oswald","Arial Narrow",sans-serif', texto='"Hanken Grotesk",-apple-system,sans-serif',
+   h1="clamp(34px,6.4vw,88px)", h2="clamp(30px,4.6vw,58px)", lh=".94", casa=True,
+   vars="""--fondo:#f2f2f0; --superficie:#fff; --hueco:#eaeae7; --borde:#0d0d0f; --borde-fino:#d8d7d3;
+   --tinta:#0d0d0f; --tinta-2:#4a4a50; --tinta-3:#8a8a92;
+   --naranja:#fe4a23; --fuego:linear-gradient(104deg,#fe4a23,#ff812e); --naranja-piel:#ffeae4;
+   --p-azul:#2563eb; --p-verde:#007d55; --menta:#4edea3; --verde-piel:#e8f6ef;"""),
 
  "ficha-google.html": dict(
    nombre="Azul señal", fuentes="Instrument+Serif:ital@0;1&family=Public+Sans:wght@300;400;500;600;700",
@@ -39,6 +43,37 @@ TEMAS = {
    --p-azul:#c2600a; --p-verde:#0e9384;"""),
 }
 
+# Lo que solo lleva la página de la casa: titulares en mayúsculas, rótulos muy
+# espaciados con su línea, y esquinas rectas en vez de redondeadas.
+EDITORIAL = """
+  h1,h2{ text-transform:uppercase; }
+  .rotulo{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.28em;
+    text-transform:uppercase; display:flex; align-items:center; gap:12px; }
+  .rotulo::after{ content:""; flex:1; height:1px; background:var(--borde-fino); }
+  /* En la cabecera hay DOS rótulos en la misma fila: si los dos estiran su
+     línea, la del primero tacha al segundo. Ahí no lleva línea ninguno. */
+  .hilo .rotulo::after{ display:none; }
+  /* _estilo.css pinta `.hilo span:last-child` como barra de 2px con el
+     degradado, contando con que el último span sea el hilo. Aquí el último es
+     el SEGUNDO rótulo, y al darle display:flex la altura pasó a aplicarle y lo
+     aplastaba bajo la barra naranja. Se le devuelve su caja. */
+  .hilo .rotulo{ height:auto!important; background:none!important; flex:0 0 auto; }
+  .hilo{ display:flex; align-items:center; gap:14px; }
+  .hilo > span:not(.rotulo){ flex:1; height:1px; background:var(--borde-fino);
+    border-radius:0; }
+  /* La tarjeta verde venía del tema oliva, que ya no es esta página. */
+  .b-verde{ background:var(--naranja-piel); border:1px solid var(--borde); }
+  .b-verde .rotulo,.b-verde h3,.b-verde .precio,.b-verde .precio small,
+  .b-verde p,.b-verde .listado li{ color:var(--tinta)!important; }
+  .b-verde .listado{ border-color:var(--borde-fino)!important; }
+  .b-verde .listado li::before{ background:var(--naranja)!important; }
+  .bento > *{ border-radius:0; }
+  .b-claro,.b-papel,.b-negro,.b-verde{ border:1px solid var(--borde); }
+  .boton{ border-radius:0; font-family:var(--mono); font-size:12px; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; }
+  .pil{ border-radius:0; }
+"""
+
 for archivo, t in TEMAS.items():
     p = BASE/archivo
     s = p.read_text(encoding="utf-8")
@@ -52,6 +87,7 @@ for archivo, t in TEMAS.items():
   h2{{ font-size:{t['h2']}; line-height:{t['lh']}; letter-spacing:-.02em; }}
   .barra .marca{{ font-size:15px; letter-spacing:-.01em; }}
   .precio,.grandota,.aguja .gran{{ letter-spacing:-.04em; }}
+  {EDITORIAL if t.get('casa') else ''}
 </style>""", 1)
     p.write_text(s, encoding="utf-8")
     print(f"{archivo:24} → {t['nombre']}")
