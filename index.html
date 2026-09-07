@@ -524,7 +524,10 @@
   .chip-g.cerrado{ background:var(--rojo-piel); color:#c0392b; }
   .chip-g.abierto{ background:var(--verde-piel); color:var(--p-verde); }
   .fot-g{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-  .fot-g i{ display:block; aspect-ratio:4/3; border-radius:8px; }
+  .fot-g i,.fot-g img{ display:block; width:100%; aspect-ratio:4/3; border-radius:8px;
+    object-fit:cover; }
+  /* La cuarta del «antes» va vacía a propósito: el negocio que no tiene fotos
+     tampoco las tiene todas. */
   .fot-g .gris{ background:#dedad6; }
   .fot-g .buena{ background:linear-gradient(135deg,#d8b48a,#8a6a48); }
   .pie-g{ align-items:center; border-top:1px solid var(--borde-fino); padding-top:14px; }
@@ -553,9 +556,13 @@
   .nota-comp{ margin-top:16px; max-width:44rem; font-size:14.5px; color:var(--tinta-2);
     font-weight:300; }
   @media (max-width:760px){
-    .capa{ padding:14px; } .tarj{ padding:15px 16px; gap:12px; }
-    .tit-g{ font-size:17px; } .fot-g{ gap:6px; }
-    .acc-g span{ font-size:11px; padding:4px 9px; } .res-g{ font-size:11.5px; }
+    .capa{ padding:12px; } .tarj{ padding:13px 14px; gap:11px; }
+    .tit-g{ font-size:16px; white-space:normal; }
+    .fot-g{ gap:5px; grid-template-columns:repeat(3,1fr); }
+    .fot-g > :nth-child(4){ display:none; }
+    .fila-g{ flex-wrap:wrap; gap:8px; }
+    .acc-g{ flex-wrap:wrap; }
+    .acc-g span{ font-size:10.5px; padding:4px 8px; } .res-g{ font-size:11px; }
     .rot-lado{ top:10px; } .rot-lado.izq{ left:10px; } .rot-lado.der{ right:10px; }
   }
 </style>
@@ -639,7 +646,7 @@
               <div class="sub-g">Bar de tapas · Viladecans</div></div>
             <span class="chip-g cerrado">Cerrado</span>
           </div>
-          <div class="fot-g"><i class="gris"></i><i class="gris"></i><i class="gris"></i><i class="gris"></i></div>
+          <div class="fot-g"><img src="img/mal-local.jpg" alt="Foto oscura y movida del local" width="360" height="270" loading="lazy"><img src="img/mal-plato.jpg" alt="Foto oscura de un plato" width="360" height="270" loading="lazy"><img src="img/mal-barra.jpg" alt="Foto oscura de la barra" width="360" height="270" loading="lazy"><i class="gris"></i></div>
           <div class="fila-g pie-g">
             <span class="res-g">Sin responder a 6 reseñas</span>
             <div class="acc-g"></div>
@@ -651,7 +658,7 @@
               <div class="sub-g">Bar de tapas · Viladecans</div></div>
             <span class="chip-g abierto">Abierto</span>
           </div>
-          <div class="fot-g"><i class="buena"></i><i class="buena"></i><i class="buena"></i><i class="buena"></i></div>
+          <div class="fot-g"><img src="img/bien-local.jpg" alt="El local con luz" width="360" height="270" loading="lazy"><img src="img/bien-plato.jpg" alt="Un plato de la casa" width="360" height="270" loading="lazy"><img src="img/bien-barra.jpg" alt="La barra" width="360" height="270" loading="lazy"><img src="img/bien-tapa.jpg" alt="Una tapa" width="360" height="270" loading="lazy"></div>
           <div class="fila-g pie-g">
             <span class="res-g">6 reseñas contestadas</span>
             <div class="acc-g"><span>Llamar</span><span>Cómo llegar</span><span>Web</span></div>

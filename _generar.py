@@ -255,9 +255,10 @@ CSS_FICHA = """
   .simula .nom{ font-size:17px; font-weight:600; color:#1a0dab; }
   .simula .est{ font-size:13.5px; color:var(--tinta-2); margin-top:3px; }
   .simula .est b{ font-weight:600; }
-  .simula .fot{ display:flex; gap:5px; margin-top:10px; }
-  .simula .fot i{ width:44px; height:34px; border-radius:5px; background:var(--hueco); display:block; }
-  .bien .simula .fot i{ background:linear-gradient(135deg,#d8cfc2,#c2b6a5); }
+  .simula .fot{ display:flex; gap:5px; margin-top:10px; flex-wrap:wrap; }
+  .simula .fot i,.simula .fot img{ width:44px; height:34px; border-radius:5px;
+    background:var(--hueco); display:block; object-fit:cover; }
+  @media (max-width:560px){ .simula .fot i,.simula .fot img{ width:38px; height:29px; } }
   .pasos-f{ counter-reset:p; display:grid; gap:0; border-top:1px solid var(--borde); }
   .paso-f{ display:grid; grid-template-columns:64px 1fr; gap:22px; padding:24px 0;
     border-bottom:1px solid var(--borde); }
@@ -286,7 +287,7 @@ pagina("ficha-google.html","Ficha de Google en condiciones", """
         <div class="simula">
           <div class="nom">Bar Sant Ramon</div>
           <div class="est">Bar · Viladecans<br><b style="color:#c0392b">Cerrado</b> · abre a las 8:00</div>
-          <div class="fot"><i></i><i></i></div>
+          <div class="fot"><img src="img/mal-local.jpg" alt="Foto oscura del local" width="44" height="34" loading="lazy"><img src="img/mal-barra.jpg" alt="Foto oscura de la barra" width="44" height="34" loading="lazy"></div>
         </div>
         <p style="font-size:14.5px;color:#7b2317;margin-top:14px">Dice que está cerrado porque el horario es el del verano pasado. Dos fotos que subió un cliente. Sin web, sin carta, sin responder a nadie. <strong>El de al lado se lleva la mesa.</strong></p>
       </div>
@@ -295,7 +296,7 @@ pagina("ficha-google.html","Ficha de Google en condiciones", """
         <div class="simula">
           <div class="nom">Bar Sant Ramon</div>
           <div class="est">Bar de tapas · Viladecans<br><b style="color:var(--p-verde)">Abierto</b> · cierra a las 23:30</div>
-          <div class="fot"><i></i><i></i><i></i><i></i></div>
+          <div class="fot"><img src="img/bien-local.jpg" alt="El local con luz" width="44" height="34" loading="lazy"><img src="img/bien-barra.jpg" alt="La barra" width="44" height="34" loading="lazy"><img src="img/bien-plato.jpg" alt="Un plato" width="44" height="34" loading="lazy"><img src="img/bien-tapa.jpg" alt="Una tapa" width="44" height="34" loading="lazy"></div>
         </div>
         <p style="font-size:14.5px;color:#1f5240;margin-top:14px">Horario real, incluidos festivos. Fotos del local, de la barra y de dos platos. Carta enlazada, botón de llamar y de cómo llegar. <strong>Las reseñas contestadas una a una.</strong></p>
       </div>
