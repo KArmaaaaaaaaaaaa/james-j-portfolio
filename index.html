@@ -89,6 +89,29 @@
   .cinta .hilo{ flex:1; height:2px; background:var(--fuego); border-radius:2px; }
 
   .titular{ position:relative; }
+  h1.titular--largo{ font-size:clamp(46px,10.4vw,138px); line-height:.86; }
+  h1.titular--largo .linea{ display:block; overflow:hidden; padding-bottom:.06em; }
+  /* La máscara la pone .linea; lo que sube es el <i> de dentro. Animar el
+     bloque con overflow:hidden a la vez que se recorta a sí mismo da saltos. */
+  h1.titular--largo .linea > i{ display:block; font-style:normal;
+    transform:translateY(105%); opacity:0;
+    animation:subir-linea 560ms var(--curva-larga) both; }
+  h1.titular--largo .linea:nth-child(1) > i{ animation-delay:60ms }
+  h1.titular--largo .linea:nth-child(2) > i{ animation-delay:140ms }
+  h1.titular--largo .linea:nth-child(3) > i{ animation-delay:220ms }
+  @keyframes subir-linea{ to{ transform:none; opacity:1; } }
+
+  /* El trazo se dibuja solo cuando el titular ya está colocado. */
+  .trazado{ font-style:normal; position:relative; display:inline-block; }
+  .trazado::after{ content:""; position:absolute; left:0; right:0; bottom:.02em;
+    height:.075em; border-radius:99px; background:var(--fuego);
+    transform:scaleX(0); transform-origin:left;
+    animation:trazar 520ms var(--curva-larga) 700ms both; }
+  @keyframes trazar{ to{ transform:scaleX(1); } }
+
+  @media (max-width:560px){
+    h1.titular--largo{ font-size:clamp(38px,11.2vw,64px); line-height:.94; }
+  }
   h1 .fina{ -webkit-text-stroke:2px var(--tinta); color:transparent; }
   @supports not (-webkit-text-stroke: 1px black){ h1 .fina{ color:var(--tinta-3); } }
 
@@ -288,10 +311,21 @@
     font-family:var(--mono); font-size:13px; font-weight:600; color:var(--naranja);
     background:var(--naranja-piel); border-radius:999px; padding:7px 15px; }
   .prueba .glosa{ margin-top:18px; max-width:30rem; color:var(--tinta-2); font-weight:300; font-size:16px; }
+  .prueba .oferta{ margin-top:22px; padding-top:20px; border-top:1px solid var(--borde);
+    max-width:32rem; }
+  .prueba .oferta p{ color:var(--tinta-2); font-weight:300; font-size:15.5px; margin:0 0 14px; }
+  .prueba .oferta .tarifa{ font-family:var(--mono); font-size:15px; font-weight:600;
+    color:var(--tinta); letter-spacing:-.01em; display:block; margin-bottom:10px; }
+  .prueba .oferta .tarifa em{ font-style:normal; font-weight:400; color:var(--tinta-3); }
+  .prueba .oferta .enlaces{ display:flex; gap:18px; flex-wrap:wrap; font-size:14.5px;
+    font-weight:500; }
 
   @media (prefers-reduced-motion:reduce){
     .rueda{ animation:none!important; }
     .tik{ animation:none!important; }
+    h1.titular--largo .linea > i{ animation:none!important;
+      transform:none!important; opacity:1!important; }
+    .trazado::after{ animation:none!important; transform:scaleX(1)!important; }
   }
 
   /* ---------- trabajo ancho con gráficos ---------- */
@@ -499,8 +533,12 @@
 
 <div class="env">
   <header class="portada">
-    <div class="titular carga">
-      <h1>Que te<br><span class="fina">encuentren</span></h1>
+    <div class="titular">
+      <h1 class="titular--largo">
+        <span class="linea"><i>Que te <span class="fina">encuentren</span></i></span>
+        <span class="linea"><i>en Google</i></span>
+        <span class="linea"><i>y entren <em class="trazado">por la puerta</em></i></span>
+      </h1>
     </div>
     <div class="firma carga">
       <span class="yo">James J Benavides</span>
@@ -647,6 +685,14 @@
         <div class="grandota"><span class="contar" data-a="5574">0</span>,00&nbsp;€</div>
         <span class="cero">0,00 € de diferencia</span>
         <p class="glosa">Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano.</p>
+        <div class="oferta">
+          <span class="tarifa">250 € de montaje <em>y 20 € al mes</em></span>
+          <p>Si cobras por jornadas, rutas o servicios y a fin de mes te sientas a sumar la libreta: manda <b>una foto de la hoja</b> y sale la factura en PDF, con su numeración, su IVA y su IRPF. Te enseña línea por línea lo que ha leído antes de emitir nada, y las fotos de gasoil y peajes se guardan como gasto del mes.</p>
+          <div class="enlaces">
+            <a href="precios.html">Qué incluye y qué no →</a>
+            <a href="caso-factura.html">Ver el mes entero →</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>

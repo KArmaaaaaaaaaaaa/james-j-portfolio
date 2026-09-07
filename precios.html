@@ -128,6 +128,13 @@
     .b-ancho,.b-alto{ grid-column:auto; grid-row:auto; } }
   .b-claro{ background:var(--superficie); border:1px solid var(--borde-fino); }
   .b-verde{ background:#dcf0a4; border:1px solid #c9e388; }
+  .b-papel{ background:#eaf1f1; border:1px solid #cbdcdc; }
+  .b-papel .rotulo{ color:#0f6e6e; }
+  .b-papel .listado li::before{ background:#0f6e6e; }
+  .b-papel .listado{ border-color:#cbdcdc; }
+  .b-papel .listado li{ color:#33484f; }
+  .precio .mas{ display:block; font-size:16px; font-weight:500;
+    letter-spacing:-.01em; margin-top:2px; color:var(--tinta-2); }
   .b-negro{ background:var(--tinta); color:#fff; border:1px solid var(--tinta); }
   .b-negro .rotulo{ color:#8b8890; }
   .precio{ font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:34px;
@@ -224,6 +231,23 @@
         </ul>
       </div>
 
+      <div class="b-papel b-ancho revelar">
+        <span class="rotulo">Para quien factura por jornadas</span>
+        <div class="precio" style="color:#123c3c">250 € <small style="color:#4d7373">montaje, una vez</small>
+          <span class="mas" style="color:#33484f">y 20 € al mes mientras lo uses</span></div>
+        <h3 style="color:#123c3c">De la foto de la libreta a la factura</h3>
+        <p style="font-size:15px;color:#33484f;font-weight:300;margin-top:8px">Si trabajas por rutas, por jornadas o por servicios y a fin de mes te toca sentarte a sumar la libreta, esto lo hace por ti. Mandas <b>una foto de la hoja</b> y sale la factura en PDF, con su número de serie, su IVA y su IRPF.</p>
+        <ul class="listado">
+          <li>Lee la letra a mano y te enseña línea por línea lo que ha entendido, incluidas las que no ha sabido leer</li>
+          <li>No emite nada hasta que tú confirmas el dinero</li>
+          <li>Tarifas distintas por tipo de servicio, y los extras aparte</li>
+          <li>Las fotos de gasoil, peajes y taller se guardan como gasto del mes</li>
+          <li>Aviso el día 28 para que no se te pase</li>
+          <li>Resumen en CSV para tu gestoría</li>
+        </ul>
+        <p style="font-size:13.5px;color:#4d7373;font-weight:300;margin-top:16px;border-top:1px solid #cbdcdc;padding-top:14px">No es una asesoría y no te dice qué declarar: hace la cuenta que ya haces tú, sin equivocarse y en un minuto. <a href="caso-factura.html" style="color:#0f6e6e">Un mes real, al céntimo →</a></p>
+      </div>
+
       <div class="b-claro b-ancho revelar">
         <span class="rotulo">Cómo se paga</span>
         <h3 style="margin-top:12px">La mitad al empezar, la mitad cuando te gusta</h3>
@@ -248,6 +272,8 @@
         <p>Una semana desde que me pasas las fotos y los textos. La ficha de Google, el mismo día. Lo que suele retrasar un encargo no soy yo: es que el material tarda en llegar.</p></div>
       <div class="pregunta"><h3>No tengo fotos buenas del local.</h3>
         <p>Voy y las hago. Va incluido en la web y en la ficha. Con un móvil actual y buena luz sale mejor que la mayoría de las fotos de banco de imágenes.</p></div>
+      <div class="pregunta"><h3>Lo de la factura, ¿vale para mi oficio?</h3>
+        <p>Vale para cualquiera que cobre por unidades repetidas: rutas, jornadas, servicios a domicilio, horas. Se configura una vez con tus tarifas y tu cliente, y a partir de ahí es mandar la foto. Lo que no cubre es facturar a cien clientes distintos cada mes: para eso ya hay programas y no te voy a vender el mío.</p></div>
       <div class="pregunta"><h3>¿Y si no sé qué poner?</h3>
         <p>Ese es mi trabajo, no el tuyo. De la conversación de veinte minutos salen los textos. Tú cuentas cómo se lo explicas a un cliente en el mostrador y yo lo escribo.</p></div>
     </div>
