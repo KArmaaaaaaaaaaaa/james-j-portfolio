@@ -120,6 +120,19 @@
   .entradilla b{ color:var(--tinta); font-weight:600; }
 
   .acciones{ display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
+  .cupo{ display:inline-flex; align-items:center; gap:10px; margin-top:26px;
+    font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.02em;
+    color:var(--tinta-2); background:var(--superficie); border:1px solid var(--borde);
+    border-radius:999px; padding:9px 17px 9px 14px; }
+  .cupo i{ width:8px; height:8px; border-radius:50%; background:#1a9e4b; flex:0 0 auto;
+    box-shadow:0 0 0 4px rgba(26,158,75,.16); }
+  .cupo b{ font-weight:600; color:var(--tinta); }
+  /* El latido dice «esto está vivo», no adorna. Se para si molesta. */
+  @media (prefers-reduced-motion:no-preference){
+    .cupo i{ animation:latir 2.4s var(--curva-larga) infinite; }
+    @keyframes latir{ 0%,100%{ box-shadow:0 0 0 4px rgba(26,158,75,.16); }
+                      50%{ box-shadow:0 0 0 7px rgba(26,158,75,.06); } }
+  }
   .boton{ display:inline-flex; align-items:center; gap:9px; font-size:15.5px; font-weight:600;
     padding:14px 26px; border-radius:999px; text-decoration:none; color:#fff;
     transition:transform var(--micro) var(--curva-salida), box-shadow var(--rapido) var(--curva-suave), background var(--rapido) var(--curva-suave); }
@@ -149,7 +162,11 @@
   .franja .n{ font-family:var(--display); font-size:52px; line-height:1; }
   .franja .n em{ font-style:normal; background:var(--fuego); -webkit-background-clip:text;
     background-clip:text; color:transparent; }
-  .franja .q{ margin-top:6px; font-size:13.5px; line-height:1.42; color:var(--tinta-2); }
+  .franja .q{ margin-top:9px; font-size:13px; line-height:1.45; color:var(--tinta-3);
+    max-width:22rem; }
+  .franja > div{ transition:background var(--medio) var(--curva-larga); }
+  .franja > div:hover{ background:var(--superficie); }
+  @media (hover:none){ .franja > div:hover{ background:var(--fondo); } }
 
   section{ padding:112px 0; }
   .cabecera{ margin-bottom:44px; }
@@ -386,11 +403,18 @@
     transition:transform var(--medio) var(--curva-larga), box-shadow var(--medio) var(--curva-larga); }
   .muestra:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(40,25,15,.12); }
   @media (hover:none){ .muestra:hover{ transform:none; box-shadow:none; } }
-  .muestra .tema{ font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.12em;
-    text-transform:uppercase; opacity:.72; }
-  .muestra .tit{ font-size:31px; line-height:1.02; margin:12px 0 8px; letter-spacing:-.02em; }
+  .muestra .tema{ position:absolute; top:14px; right:14px; z-index:1;
+    font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; opacity:.9; padding:5px 10px; border-radius:999px;
+    background:rgba(255,255,255,.72); backdrop-filter:saturate(150%) blur(6px);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.07); white-space:nowrap;
+    max-width:calc(100% - 28px); overflow:hidden; text-overflow:ellipsis; }
+  .muestra .tit{ font-size:31px; line-height:1.02; margin:6px 0 8px; letter-spacing:-.02em;
+    padding-right:84px; }
   .muestra .desc{ font-size:14px; line-height:1.5; opacity:.78; }
-  .muestra .tintas{ display:flex; gap:6px; margin-top:18px; }
+  .muestra .tintas{ display:flex; gap:6px; margin-top:18px; align-items:center; }
+  .muestra .letra{ font-family:var(--mono); font-size:10px; font-weight:600;
+    letter-spacing:.09em; text-transform:uppercase; opacity:.6; margin-left:6px; }
   .muestra .tintas i{ width:20px; height:20px; border-radius:6px; display:block;
     box-shadow:inset 0 0 0 1px rgba(0,0,0,.08); }
   .muestra .ir{ margin-top:16px; font-family:var(--mono); font-size:11.5px; font-weight:600;
@@ -544,6 +568,7 @@
       <span class="yo">James J Benavides</span>
       <span class="que">Hago la web y pongo en orden la ficha de Google de bares, talleres y tiendas de barrio del Baix Llobregat.</span>
     </div>
+    <div class="cupo carga"><i></i>Cojo <b>dos encargos</b> a la vez</div>
     <div class="acciones carga">
       <a class="boton boton--fuego" href="#contacto">Pedir presupuesto</a>
       <a class="boton boton--linea" href="#servicios">Ver lo que hago</a>
@@ -709,37 +734,37 @@
 
       <a class="muestra revelar" href="precios.html"
          style="background:#edefe9;border-color:#d6dacb;color:#141710;font-family:'Archivo',sans-serif">
-        <div class="tema">Oliva · Archivo Black</div>
+        <div class="tema">Oliva</div>
         <div class="tit" style="font-family:'Archivo Black',Impact,sans-serif">Precios</div>
         <div class="desc">Retícula de bloques desiguales, verde de campo y tipografía de peso. Para quien vende algo concreto y con precio.</div>
-        <div class="tintas"><i style="background:#4d7c1f"></i><i style="background:#edefe9"></i><i style="background:#141710"></i></div>
+        <div class="tintas"><i style="background:#4d7c1f"></i><i style="background:#edefe9"></i><i style="background:#141710"></i><span class="letra">Archivo Black</span></div>
         <div class="ir" style="color:#4d7c1f">Verla <span>→</span></div>
       </a>
 
       <a class="muestra revelar" href="ficha-google.html"
          style="background:#f6f8fb;border-color:#d6dfec;color:#0e1520;font-family:'Public Sans',sans-serif">
-        <div class="tema">Azul señal · Instrument Serif</div>
+        <div class="tema">Azul señal</div>
         <div class="tit" style="font-family:'Instrument Serif',Georgia,serif;font-size:36px">Ficha de Google</div>
         <div class="desc">Serif de titular sobre azul de institución. Transmite oficio antiguo y sirve para negocios que llevan años abiertos.</div>
-        <div class="tintas"><i style="background:#1a5fd6"></i><i style="background:#f6f8fb"></i><i style="background:#0e1520"></i></div>
+        <div class="tintas"><i style="background:#1a5fd6"></i><i style="background:#f6f8fb"></i><i style="background:#0e1520"></i><span class="letra">Instrument Serif</span></div>
         <div class="ir" style="color:#1a5fd6">Verla <span>→</span></div>
       </a>
 
       <a class="muestra revelar" href="caso-factura.html"
          style="background:#ecf0f1;border-color:#cdd8db;color:#0f1b26;font-family:'Newsreader',Georgia,serif">
-        <div class="tema">Documento · Bricolage Grotesque</div>
+        <div class="tema">Documento</div>
         <div class="tit" style="font-family:'Bricolage Grotesque',Helvetica,sans-serif">Un caso</div>
         <div class="desc">Papel frío y verde azulado, con el texto en serif de lectura. Para contar algo largo sin que canse la vista.</div>
-        <div class="tintas"><i style="background:#0f6e6e"></i><i style="background:#ecf0f1"></i><i style="background:#0f1b26"></i></div>
+        <div class="tintas"><i style="background:#0f6e6e"></i><i style="background:#ecf0f1"></i><i style="background:#0f1b26"></i><span class="letra">Bricolage Grotesque</span></div>
         <div class="ir" style="color:#0f6e6e">Verla <span>→</span></div>
       </a>
 
       <a class="muestra revelar" href="panel-demo.html"
          style="background:#f1f1f7;border-color:#d8d8e6;color:#15141d;font-family:'Manrope',sans-serif">
-        <div class="tema">Índigo · Sora</div>
+        <div class="tema">Índigo</div>
         <div class="tit" style="font-family:'Sora',sans-serif;font-size:29px">Demo del panel</div>
         <div class="desc">Índigo de producto y geométrica moderna. La que usaría un negocio que quiere parecerse a una aplicación.</div>
-        <div class="tintas"><i style="background:#5b53e8"></i><i style="background:#f1f1f7"></i><i style="background:#15141d"></i></div>
+        <div class="tintas"><i style="background:#5b53e8"></i><i style="background:#f1f1f7"></i><i style="background:#15141d"></i><span class="letra">Sora</span></div>
         <div class="ir" style="color:#5b53e8">Verla <span>→</span></div>
       </a>
 
