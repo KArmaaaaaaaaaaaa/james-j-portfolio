@@ -507,6 +507,67 @@
   }
   @media (min-width:761px){ .menu-panel{ display:none !important; } }
 
+  /* ---------- lámina: aerografía japonesa ----------
+     El lenguaje de las referencias llevado a CSS, sin una sola imagen: un
+     azul plano (no degradado de cielo), cromados por bandas de gradiente con
+     saltos bruscos, sombras negras sin desenfoque, destellos de cuatro puntas
+     y el titular tono sobre tono. Llenar esto de PNG lo haría lento, que es
+     justo lo que le vendo a un bar. */
+  .lamina{ --cobalto:#0f3fa8; --cobalto-alto:#2f60d6;
+    background:var(--cobalto); color:#eaf0ff; position:relative; overflow:hidden;
+    margin:0 calc(50% - 50vw); padding:104px calc(50vw - 50% + 26px);
+    border-top:1px solid var(--cobalto); border-bottom:1px solid var(--cobalto); }
+  .lamina .rotulo{ color:#93b0f5; }
+  .lamina .rotulo::after{ background:rgba(255,255,255,.22); }
+  /* Tono sobre tono: el titular es el mismo azul, un punto más claro. Es lo
+     que hace que la lámina no parezca un banner. */
+  .lamina h2{ color:var(--cobalto-alto); margin:18px 0 0;
+    font-size:clamp(52px,13vw,168px); line-height:.84; letter-spacing:-.02em; }
+  .lamina .bajo{ margin-top:26px; max-width:34rem; font-size:17px; font-weight:300;
+    color:#c3d3ff; }
+  .lamina .bajo b{ color:#fff; font-weight:600; }
+
+  .ficha-t{ display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    margin-top:48px; border-top:1px solid rgba(255,255,255,.3); }
+  .ficha-t > div{ padding:18px 16px 0 0; border-right:1px solid rgba(255,255,255,.18); }
+  .ficha-t > div:last-child{ border-right:0; }
+  .ficha-t .k{ font-family:var(--mono); font-size:9.5px; font-weight:600;
+    letter-spacing:.22em; text-transform:uppercase; color:#8fa9ef; display:block;
+    margin-bottom:9px; }
+  .ficha-t .v{ font-family:var(--display); font-size:clamp(21px,2.8vw,34px);
+    line-height:1; text-transform:uppercase; color:#fff; }
+  @media (max-width:760px){ .ficha-t{ grid-template-columns:1fr 1fr; }
+    .ficha-t > div:nth-child(2){ border-right:0; }
+    .ficha-t > div:nth-child(-n+2){ border-bottom:1px solid rgba(255,255,255,.18);
+      padding-bottom:16px; } }
+
+  /* La pieza cromada: bandas duras, sin difuminar, como la aerografía */
+  .cromo{ position:absolute; right:calc(50vw - 50% + 66px); top:50%;
+    transform:translateY(-50%) rotate(-8deg); width:190px; height:250px;
+    border-radius:22px; display:none;
+    background:linear-gradient(104deg,
+      #e8eefc 0%, #ffffff 17%, #a8b8d8 18%, #dde5f6 34%,
+      #7f92b8 35%, #f2f6ff 52%, #9fb0d2 53%, #ffffff 72%,
+      #b9c6e2 73%, #e2e9f8 100%);
+    box-shadow:26px 26px 0 rgba(0,0,0,.34);   /* sombra dura, sin blur */ }
+  @media (min-width:1000px){ .cromo{ display:block; } }
+  /* Destello de cuatro puntas: dos barras cruzadas, nada más */
+  .cromo::before,.cromo::after{ content:""; position:absolute; background:#fff;
+    left:50%; top:26%; transform:translate(-50%,-50%); filter:blur(.4px); }
+  .cromo::before{ width:86px; height:2px; }
+  .cromo::after{ width:2px; height:86px; }
+  .destello{ position:absolute; pointer-events:none; }
+  .destello::before,.destello::after{ content:""; position:absolute; background:#fff;
+    left:50%; top:50%; transform:translate(-50%,-50%); opacity:.85; }
+  .destello::before{ width:44px; height:1.5px; }
+  .destello::after{ width:1.5px; height:44px; }
+  .destello.d1{ left:14%; top:22%; } .destello.d2{ left:40%; bottom:18%; top:auto; }
+  @media (prefers-reduced-motion:no-preference){
+    .destello{ animation:brillar 3.4s var(--curva-larga) infinite; }
+    .destello.d2{ animation-delay:1.1s; }
+    @keyframes brillar{ 0%,72%,100%{ opacity:0; transform:scale(.6); }
+                        82%{ opacity:1; transform:scale(1); } } }
+
   /* ---------- comparador arrastrable ---------- */
   .comparador{ position:relative; min-height:260px; border-radius:20px; overflow:hidden;
     border:1px solid var(--borde-fino); background:var(--hueco);
@@ -759,6 +820,21 @@
   </section>
 
 
+
+  <section class="lamina revelar">
+    <span class="destello d1" aria-hidden="true"></span>
+    <span class="destello d2" aria-hidden="true"></span>
+    <span class="cromo" aria-hidden="true"></span>
+    <span class="rotulo">Cómo trabajo</span>
+    <h2>Una web<br>no es un folleto</h2>
+    <p class="bajo">Un folleto se imprime una vez y se queda viejo. Una web se cambia el martes por la tarde porque has subido el menú, y el miércoles ya está bien. <b>Lo que te entrego se puede cambiar sin llamarme.</b></p>
+    <div class="ficha-t">
+      <div><span class="k">Dueño</span><div class="v">Tú</div></div>
+      <div><span class="k">Plantilla</span><div class="v">Ninguna</div></div>
+      <div><span class="k">Permanencia</span><div class="v">No hay</div></div>
+      <div><span class="k">Quien la hace</span><div class="v">Yo</div></div>
+    </div>
+  </section>
 
   <section id="estilos">
     <div class="cabecera revelar">
