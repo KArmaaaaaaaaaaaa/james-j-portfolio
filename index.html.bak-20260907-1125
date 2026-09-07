@@ -3,7 +3,7 @@
 <title>James J Projects · Webs y fichas de Google en el Baix Llobregat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600&family=Instrument+Serif&family=Public+Sans:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700&family=Newsreader:opsz,wght@6..72,400&family=Sora:wght@400;600&family=Manrope:wght@400;600&display=swap">
 <style>
@@ -18,12 +18,12 @@
     --micro: 200ms;
 
     /* neutros con sesgo cálido hacia el acento */
-    --fondo:      #f2f2f0;
+    --fondo:      #f4f3f1;
     --superficie: #ffffff;
-    --hueco:      #eaeae7;
-    --borde:      #0d0d0f;      /* editorial: el borde es tinta, no gris */
-    --borde-fino: #d8d7d3;
-    --tinta:      #0d0d0f;
+    --hueco:      #ebe9e6;
+    --borde:      #dedbd6;
+    --borde-fino: #e8e5e1;
+    --tinta:      #131316;
     --tinta-2:    #56545a;
     --tinta-3:    #8b8890;
 
@@ -49,8 +49,8 @@
     --verde-piel:#e8f6ef;
     --p-ambar:#a86a00; --p-cian:#0b7d8f;
 
-    --display:"Oswald","Haettenschweiler","Arial Narrow",sans-serif;
-    --texto:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --display:"Bebas Neue","Haettenschweiler","Arial Narrow",sans-serif;
+    --texto:"Outfit",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
     --medida:42rem; --ancho:74rem;
   }
@@ -64,18 +64,14 @@
 
   h1,h2,h3{ margin:0; font-weight:400; text-wrap:balance; }
   h1{ font-family:var(--display); font-size:clamp(72px,17vw,232px); line-height:.8; letter-spacing:.002em; }
-  h2{ font-family:var(--display); font-size:clamp(34px,5.4vw,74px); line-height:.94;
-    letter-spacing:-.015em; text-transform:uppercase; font-weight:500; }
+  h2{ font-family:var(--display); font-size:clamp(40px,7vw,86px); line-height:.9; letter-spacing:.004em; }
   h3{ font-size:19px; font-weight:600; line-height:1.32; letter-spacing:-.012em; }
   p{ margin:0 0 1.05em; } p:last-child{ margin-bottom:0; }
   strong{ font-weight:600; }
   a{ color:var(--naranja); text-underline-offset:3px; }
 
-  .rotulo{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.28em;
-    text-transform:uppercase; color:var(--tinta-3); display:flex; align-items:center; gap:12px; }
-  .rotulo::after{ content:""; flex:1; height:1px; background:var(--borde-fino); }
-  .franja .rotulo{ font-size:9.5px; letter-spacing:.22em; display:block; margin-bottom:12px; }
-  .franja .rotulo::after{ display:none; }
+  .rotulo{ font-family:var(--mono); font-size:11.5px; font-weight:500;
+    letter-spacing:.13em; text-transform:uppercase; color:var(--tinta-3); }
   .cifra{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
 
   /* ---------- barra flotante ---------- */
@@ -103,8 +99,8 @@
   .cinta .hilo{ flex:1; height:2px; background:var(--fuego); border-radius:2px; }
 
   .titular{ position:relative; }
-  h1.titular--largo{ font-size:clamp(38px,8.6vw,124px); line-height:.9; text-transform:uppercase; }
-  h1.titular--largo .linea{ display:block; overflow:hidden; padding-bottom:.24em; }
+  h1.titular--largo{ font-size:clamp(46px,10.4vw,138px); line-height:.86; }
+  h1.titular--largo .linea{ display:block; overflow:hidden; padding-bottom:.06em; }
   /* La máscara la pone .linea; lo que sube es el <i> de dentro. Animar el
      bloque con overflow:hidden a la vez que se recorta a sí mismo da saltos. */
   h1.titular--largo .linea > i{ display:block; font-style:normal;
@@ -116,9 +112,9 @@
   @keyframes subir-linea{ to{ transform:none; opacity:1; } }
 
   /* El trazo se dibuja solo cuando el titular ya está colocado. */
-  .trazado{ font-style:normal; position:relative; display:inline-block; line-height:1; }
-  .trazado::after{ content:""; position:absolute; left:0; right:0; top:1.02em;
-    height:.05em; background:var(--fuego);
+  .trazado{ font-style:normal; position:relative; display:inline-block; }
+  .trazado::after{ content:""; position:absolute; left:0; right:0; bottom:.02em;
+    height:.075em; border-radius:99px; background:var(--fuego);
     transform:scaleX(0); transform-origin:left;
     animation:trazar 520ms var(--curva-larga) 700ms both; }
   @keyframes trazar{ to{ transform:scaleX(1); } }
@@ -133,12 +129,11 @@
     color:var(--tinta-2); font-weight:300; }
   .entradilla b{ color:var(--tinta); font-weight:600; }
 
-  .acciones{ display:flex; flex-wrap:wrap; gap:0; margin-top:30px; }
+  .acciones{ display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
   .cupo{ display:inline-flex; align-items:center; gap:10px; margin-top:26px;
     font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.02em;
-    color:var(--tinta); background:transparent; border:1px solid var(--borde);
-    border-radius:0; padding:10px 18px; text-transform:uppercase; letter-spacing:.14em;
-    font-size:11px; }
+    color:var(--tinta-2); background:var(--superficie); border:1px solid var(--borde);
+    border-radius:999px; padding:9px 17px 9px 14px; }
   .cupo i{ width:8px; height:8px; border-radius:50%; background:var(--menta); flex:0 0 auto;
     box-shadow:0 0 0 4px var(--menta-piel); }
   .cupo b{ font-weight:600; color:var(--tinta); }
@@ -148,16 +143,12 @@
     @keyframes latir{ 0%,100%{ box-shadow:0 0 0 4px rgba(78,222,163,.55); }
                       50%{ box-shadow:0 0 0 8px rgba(78,222,163,.16); } }
   }
-  .boton{ font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.16em;
-    text-transform:uppercase; text-decoration:none; padding:17px 30px; border-radius:0;
-    border:1px solid var(--borde); color:var(--tinta); background:transparent; display:inline-block;
-    transition:background var(--micro) var(--curva-salida), color var(--micro) var(--curva-salida); }
-  .boton + .boton{ border-left:0; }
-  .boton--fuego{ background:var(--tinta); color:#fff; border-color:var(--tinta); }
-  .boton:hover{ background:var(--naranja); color:#fff; border-color:var(--naranja); }
-  @media (hover:none){ .boton:hover{ background:transparent; color:var(--tinta); }
-    .boton--fuego:hover{ background:var(--tinta); color:#fff; } }
-  .boton--linea{ background:transparent; }
+  .boton{ display:inline-flex; align-items:center; gap:9px; font-size:15.5px; font-weight:600;
+    padding:14px 26px; border-radius:999px; text-decoration:none; color:#fff;
+    transition:transform var(--micro) var(--curva-salida), box-shadow var(--rapido) var(--curva-suave), background var(--rapido) var(--curva-suave); }
+  .boton--fuego{ background:var(--fuego); box-shadow:0 6px 20px rgba(254,74,35,.26); }
+  .boton--fuego:hover{ box-shadow:0 10px 30px rgba(254,74,35,.36); }
+  .boton--linea{ background:var(--superficie); color:var(--tinta); box-shadow:inset 0 0 0 1px var(--borde); }
   .boton--linea:hover{ box-shadow:inset 0 0 0 1px var(--tinta); }
   .boton:active{ transform:scale(.97); }
   @media (hover:none){ .boton--fuego:hover{ box-shadow:0 6px 20px rgba(254,74,35,.26); } .boton--linea:hover{ box-shadow:inset 0 0 0 1px var(--borde); } }
@@ -175,23 +166,16 @@
   .pil--cian{color:var(--p-cian)} .pil--tinta{color:var(--tinta-2)}
 
   /* ---------- franja ---------- */
-  .franja{ margin-top:56px; display:grid; grid-template-columns:repeat(4,1fr);
-    border:1px solid var(--borde); }
-  .franja > div{ background:transparent; padding:22px 20px;
-    border-right:1px solid var(--borde); }
-  .franja > div:last-child{ border-right:0; }
-  .franja .n{ font-family:var(--display); font-size:clamp(26px,3.4vw,44px); line-height:1;
-    font-weight:500; letter-spacing:-.01em; }
+  .franja{ margin-top:92px; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:1px; background:var(--borde); border-top:1px solid var(--borde); border-bottom:1px solid var(--borde); }
+  .franja > div{ background:var(--fondo); padding:28px 24px 30px; }
+  .franja .n{ font-family:var(--display); font-size:52px; line-height:1; }
   .franja .n em{ font-style:normal; background:var(--fuego); -webkit-background-clip:text;
     background-clip:text; color:transparent; }
-  .franja .q{ margin-top:9px; font-size:12.5px; line-height:1.4; color:var(--tinta-2);
-    font-weight:300; max-width:22rem; }
-  @media (max-width:900px){ .franja{ grid-template-columns:1fr 1fr; }
-    .franja > div:nth-child(2){ border-right:0; }
-    .franja > div:nth-child(-n+2){ border-bottom:1px solid var(--borde); } }
-  @media (max-width:520px){ .franja{ grid-template-columns:1fr; }
-    .franja > div{ border-right:0; border-bottom:1px solid var(--borde); }
-    .franja > div:last-child{ border-bottom:0; } }
+  .franja .q{ margin-top:9px; font-size:13px; line-height:1.45; color:var(--tinta-3);
+    max-width:22rem; }
+  .franja > div{ transition:background var(--medio) var(--curva-larga); }
+  .franja > div:hover{ background:var(--superficie); }
   @media (hover:none){ .franja > div:hover{ background:var(--fondo); } }
 
   section{ padding:112px 0; }
@@ -423,28 +407,28 @@
   .b-verde .relleno{ background:var(--p-verde); }
 
   /* ---------- muestrario de estilos ---------- */
-  .muestras{ border-top:1px solid var(--borde); }
-  .muestra{ display:grid; grid-template-columns:88px 1fr auto; gap:26px; align-items:baseline;
-    padding:30px 0; border-bottom:1px solid var(--borde); text-decoration:none; color:inherit;
-    border-radius:0; background:transparent!important; border-left:0; border-right:0; border-top:0;
-    transition:padding-left var(--medio) var(--curva-larga); }
-  .muestra:hover{ transform:none; box-shadow:none; padding-left:16px; }
-  @media (hover:none){ .muestra:hover{ padding-left:0; } }
-  .muestra .num{ font-family:var(--display); font-size:52px; font-weight:300; line-height:.8;
-    color:var(--tinta-3); letter-spacing:-.02em; }
-  .muestra .tema{ position:static; background:none; box-shadow:none; backdrop-filter:none;
-    padding:0; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.2em;
-    text-transform:uppercase; color:var(--tinta-3); margin-top:12px; opacity:1; max-width:none; }
-  .muestra .tema b{ color:var(--naranja); font-weight:600; }
-  .muestra .tit{ font-family:var(--display); font-size:clamp(28px,4vw,46px); text-transform:uppercase;
-    font-weight:500; line-height:1; letter-spacing:-.01em; margin:0; padding-right:0; }
-  .muestra .desc{ font-size:14.5px; color:var(--tinta-2); font-weight:300; margin-top:10px;
-    max-width:34rem; line-height:1.5; opacity:1; }
-  .muestra .tintas{ display:none; }
-  .muestra .ir{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.16em;
-    text-transform:uppercase; white-space:nowrap; color:var(--naranja)!important; margin:0; }
-  @media (max-width:700px){ .muestra{ grid-template-columns:56px 1fr; gap:16px; }
-    .muestra .ir{ grid-column:2; } }
+  .muestras{ display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); }
+  .muestra{ border-radius:20px; padding:26px 24px 24px; text-decoration:none; display:block;
+    border:1px solid; position:relative; overflow:hidden;
+    transition:transform var(--medio) var(--curva-larga), box-shadow var(--medio) var(--curva-larga); }
+  .muestra:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(40,25,15,.12); }
+  @media (hover:none){ .muestra:hover{ transform:none; box-shadow:none; } }
+  .muestra .tema{ position:absolute; top:14px; right:14px; z-index:1;
+    font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; opacity:.9; padding:5px 10px; border-radius:999px;
+    background:rgba(255,255,255,.72); backdrop-filter:saturate(150%) blur(6px);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.07); white-space:nowrap;
+    max-width:calc(100% - 28px); overflow:hidden; text-overflow:ellipsis; }
+  .muestra .tit{ font-size:31px; line-height:1.02; margin:6px 0 8px; letter-spacing:-.02em;
+    padding-right:84px; }
+  .muestra .desc{ font-size:14px; line-height:1.5; opacity:.78; }
+  .muestra .tintas{ display:flex; gap:6px; margin-top:18px; align-items:center; }
+  .muestra .letra{ font-family:var(--mono); font-size:10px; font-weight:600;
+    letter-spacing:.09em; text-transform:uppercase; opacity:.6; margin-left:6px; }
+  .muestra .tintas i{ width:20px; height:20px; border-radius:6px; display:block;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.08); }
+  .muestra .ir{ margin-top:16px; font-family:var(--mono); font-size:11.5px; font-weight:600;
+    letter-spacing:.06em; display:flex; align-items:center; gap:7px; }
   .muestra .ir span{ transition:transform var(--rapido) var(--curva-salida); }
   .muestra:hover .ir span{ transform:translateX(4px); }
 
@@ -714,10 +698,9 @@
 
 
   <div class="franja">
-    <div><span class="rotulo">Web completa</span><div class="n cifra"><em>400–900 €</em></div><div class="q">Precio cerrado y dicho de antemano</div></div>
-    <div><span class="rotulo">Ficha de Google</span><div class="n cifra">150–300 €</div><div class="q">Lo primero que ve quien te busca</div></div>
-    <div><span class="rotulo">Plazo</span><div class="n cifra">7 días</div><div class="q">De la primera conversación a la web publicada</div></div>
-    <div><span class="rotulo">Palabras raras</span><div class="n cifra">0</div><div class="q">Ni «plataforma», ni «IA», ni inglés</div></div>
+    <div><div class="n cifra"><em>400–900 €</em></div><div class="q">una web completa, precio cerrado y dicho de antemano</div></div>
+    <div><div class="n cifra">7 días</div><div class="q">de la primera conversación a la web publicada</div></div>
+    <div><div class="n cifra">0</div><div class="q">palabras raras: ni «plataforma», ni «IA», ni inglés</div></div>
   </div>
 
 
@@ -759,41 +742,41 @@
     </div>
     <div class="muestras">
 
-      <a class="muestra revelar" href="precios.html">
-        <span class="num">01</span>
-        <div class="cuerpo">
-          <div class="tit">Precios</div>
-          <div class="tema">Oliva <b>//</b> Archivo Black</div>
-          <div class="desc">Retícula de bloques desiguales, verde de campo y tipografía de peso. Para quien vende algo concreto y con precio.</div>
-        </div>
-        <span class="ir">Verla →</span></a>
+      <a class="muestra revelar" href="precios.html"
+         style="background:#edefe9;border-color:#d6dacb;color:#141710;font-family:'Archivo',sans-serif">
+        <div class="tema">Oliva</div>
+        <div class="tit" style="font-family:'Archivo Black',Impact,sans-serif">Precios</div>
+        <div class="desc">Retícula de bloques desiguales, verde de campo y tipografía de peso. Para quien vende algo concreto y con precio.</div>
+        <div class="tintas"><i style="background:#4d7c1f"></i><i style="background:#edefe9"></i><i style="background:#141710"></i><span class="letra">Archivo Black</span></div>
+        <div class="ir" style="color:#4d7c1f">Verla <span>→</span></div>
+      </a>
 
-      <a class="muestra revelar" href="ficha-google.html">
-        <span class="num">02</span>
-        <div class="cuerpo">
-          <div class="tit">Ficha de Google</div>
-          <div class="tema">Azul señal <b>//</b> Instrument Serif</div>
-          <div class="desc">Serif de titular sobre azul de institución. Transmite oficio antiguo y sirve para negocios que llevan años abiertos.</div>
-        </div>
-        <span class="ir">Verla →</span></a>
+      <a class="muestra revelar" href="ficha-google.html"
+         style="background:#f6f8fb;border-color:#d6dfec;color:#0e1520;font-family:'Public Sans',sans-serif">
+        <div class="tema">Azul señal</div>
+        <div class="tit" style="font-family:'Instrument Serif',Georgia,serif;font-size:36px">Ficha de Google</div>
+        <div class="desc">Serif de titular sobre azul de institución. Transmite oficio antiguo y sirve para negocios que llevan años abiertos.</div>
+        <div class="tintas"><i style="background:#1a5fd6"></i><i style="background:#f6f8fb"></i><i style="background:#0e1520"></i><span class="letra">Instrument Serif</span></div>
+        <div class="ir" style="color:#1a5fd6">Verla <span>→</span></div>
+      </a>
 
-      <a class="muestra revelar" href="caso-factura.html">
-        <span class="num">03</span>
-        <div class="cuerpo">
-          <div class="tit">Un caso</div>
-          <div class="tema">Documento <b>//</b> Bricolage Grotesque</div>
-          <div class="desc">Papel frío y verde azulado, con el texto en serif de lectura. Para contar algo largo sin que canse la vista.</div>
-        </div>
-        <span class="ir">Verla →</span></a>
+      <a class="muestra revelar" href="caso-factura.html"
+         style="background:#ecf0f1;border-color:#cdd8db;color:#0f1b26;font-family:'Newsreader',Georgia,serif">
+        <div class="tema">Documento</div>
+        <div class="tit" style="font-family:'Bricolage Grotesque',Helvetica,sans-serif">Un caso</div>
+        <div class="desc">Papel frío y verde azulado, con el texto en serif de lectura. Para contar algo largo sin que canse la vista.</div>
+        <div class="tintas"><i style="background:#0f6e6e"></i><i style="background:#ecf0f1"></i><i style="background:#0f1b26"></i><span class="letra">Bricolage Grotesque</span></div>
+        <div class="ir" style="color:#0f6e6e">Verla <span>→</span></div>
+      </a>
 
-      <a class="muestra revelar" href="panel-demo.html">
-        <span class="num">04</span>
-        <div class="cuerpo">
-          <div class="tit">Demo del panel</div>
-          <div class="tema">Índigo <b>//</b> Sora</div>
-          <div class="desc">Índigo de producto y geométrica moderna. La que usaría un negocio que quiere parecerse a una aplicación.</div>
-        </div>
-        <span class="ir">Verla →</span></a>
+      <a class="muestra revelar" href="panel-demo.html"
+         style="background:#f1f1f7;border-color:#d8d8e6;color:#15141d;font-family:'Manrope',sans-serif">
+        <div class="tema">Índigo</div>
+        <div class="tit" style="font-family:'Sora',sans-serif;font-size:29px">Demo del panel</div>
+        <div class="desc">Índigo de producto y geométrica moderna. La que usaría un negocio que quiere parecerse a una aplicación.</div>
+        <div class="tintas"><i style="background:#5b53e8"></i><i style="background:#f1f1f7"></i><i style="background:#15141d"></i><span class="letra">Sora</span></div>
+        <div class="ir" style="color:#5b53e8">Verla <span>→</span></div>
+      </a>
 
     </div>
   </section>
