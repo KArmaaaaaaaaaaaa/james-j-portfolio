@@ -65,7 +65,7 @@ def pagina(archivo, titulo, cuerpo, extra_css="", extra_js=""):
   <a href="ficha-google.html">Ficha de Google</a><a href="caso-factura.html">Un caso</a>
   <a href="panel-demo.html">Demo</a>
   <a href="mailto:jamesjoelbenavides2004@gmail.com">jamesjoelbenavides2004@gmail.com</a>
-  <span class="der">Baix Llobregat y Barcelona</span>
+  <span class="der">Barcelona y Hamburgo</span>
 </div></footer>
 {JS}{extra_js}"""
     (BASE/archivo).write_text(html, encoding="utf-8")
@@ -184,6 +184,22 @@ pagina("precios.html","Precios sin depender", f"""
         <p style="font-size:13.5px;color:#4d7373;font-weight:300;margin-top:16px;border-top:1px solid #cbdcdc;padding-top:14px">No es una asesoría y no te dice qué declarar: hace la cuenta que ya haces tú, sin equivocarse y en un minuto. <a href="caso-factura.html" style="color:#0f6e6e">Un mes real, al céntimo →</a></p>
       </div>
 
+      <div class="b-papel b-ancho revelar">
+        <span class="rotulo">Para bares y restaurantes</span>
+        <div class="precio" style="color:#123c3c">120 € <small style="color:#4d7373">hasta 20 mesas</small>
+          <span class="mas" style="color:#33484f">y 3 € por cada mesa de más</span></div>
+        <h3 style="color:#123c3c">La carta, pegada en la mesa</h3>
+        <p style="font-size:15px;color:#33484f;font-weight:300;margin-top:8px">Una pegatina en cada mesa. El cliente <b>acerca el móvil</b> y le sale tu carta con fotos, precios y alérgenos. Sin cámara, sin enfocar, sin app. Y cuando subes un precio, lo cambias tú desde el panel y ya está: <b>no hay que reimprimir nada</b>.</p>
+        <ul class="listado">
+          <li>Pegatina con chip dentro <b>y el código impreso encima</b>: funciona con cualquier móvil, tenga o no la antena</li>
+          <li>Aguanta la limpieza diaria y no se despega</li>
+          <li>Cambias la carta desde el móvil y cambia en todas las mesas a la vez</li>
+          <li>Cartas de temporada sin tirar las viejas a la basura</li>
+          <li>Alérgenos siempre al día, que es obligatorio</li>
+        </ul>
+        <p style="font-size:13.5px;color:#4d7373;font-weight:300;margin-top:16px;border-top:1px solid #cbdcdc;padding-top:14px">Las fotos las haces tú con el móvil: Google rechaza las generadas por ordenador y desde agosto de 2026 el reglamento europeo obliga a etiquetarlas. <a href="https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev/" style="color:#0f6e6e" target="_blank" rel="noopener">Ver una carta de verdad →</a></p>
+      </div>
+
       <div class="b-claro b-ancho revelar">
         <span class="rotulo">Cómo se paga</span>
         <h3 style="margin-top:12px">La mitad al empezar, la mitad cuando te gusta</h3>
@@ -208,6 +224,8 @@ pagina("precios.html","Precios sin depender", f"""
         <p>Una semana desde que me pasas las fotos y los textos. La ficha de Google, el mismo día. Lo que suele retrasar un encargo no soy yo: es que el material tarda en llegar.</p></div>
       <div class="pregunta"><h3>No tengo fotos buenas del local.</h3>
         <p>Voy y las hago. Va incluido en la web y en la ficha. Con un móvil actual y buena luz sale mejor que la mayoría de las fotos de banco de imágenes.</p></div>
+      <div class="pregunta"><h3>¿Y si el cliente no sabe usar la pegatina?</h3>
+        <p>La pegatina lleva las dos cosas: el chip para acercar el móvil y el código impreso encima para quien prefiera la cámara. Cualquier móvil de los últimos diez años entra por una vía o por la otra. Y si alguien no quiere ninguna, le sigues sacando la carta de papel: esto quita trabajo, no lo impone.</p></div>
       <div class="pregunta"><h3>Lo de la factura, ¿vale para mi oficio?</h3>
         <p>Vale para cualquiera que cobre por unidades repetidas: rutas, jornadas, servicios a domicilio, horas. Se configura una vez con tus tarifas y tu cliente, y a partir de ahí es mandar la foto. Lo que no cubre es facturar a cien clientes distintos cada mes: para eso ya hay programas y no te voy a vender el mío.</p></div>
       <div class="pregunta"><h3>¿Y si no sé qué poner?</h3>
