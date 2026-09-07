@@ -53,7 +53,7 @@ def pagina(archivo, titulo, cuerpo, extra_css="", extra_js=""):
 <style>{CSS}{extra_css}</style>
 
 <nav class="barra">
-  <a class="marca" href="index.html">Inicio</a>
+  <a class="marca" href="index.html">James J Projects</a>
   {nav}
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
 </nav>
