@@ -1,43 +1,51 @@
-# James J Benavides — portfolio
+# James J Projects
 
-Webs y fichas de Google para negocios locales del Baix Llobregat y Barcelona.
+Websites and Google Business Profiles for neighbourhood businesses, plus a
+menu that lives on the table and a photo-to-invoice tool.
 
-## Cómo está hecho
+## How it is built
 
-Cinco páginas HTML estáticas, sin framework, sin paso de compilación y sin una
-sola dependencia en el navegador. Las fuentes se cargan de Google Fonts; todo lo
-demás va dentro del propio fichero.
-
-| Fichero | Qué es | Tema |
-|---|---|---|
-| `index.html` | Portada y trabajos | Fuego · Bebas Neue + Outfit |
-| `precios.html` | Precios y preguntas frecuentes | Oliva · Archivo Black |
-| `ficha-google.html` | El servicio de la ficha | Azul señal · Instrument Serif |
-| `caso-factura.html` | Un caso real | Documento · Bricolage Grotesque |
-| `panel-demo.html` | Demostración de panel | Índigo · Sora |
-
-Cada página lleva su propia paleta y sus propias tipografías a propósito: el
-muestrario de la portada existe para enseñar variedad, no porque falte criterio.
-
-## Volver a generarlo
+Six static HTML pages, no framework, no build step, no browser dependency
+beyond the fonts.
 
 ```bash
-python3 _generar.py   # monta las páginas desde la plantilla y _estilo.css
-python3 _temas.py     # aplica el tema de color y letra de cada una
+python3 _build.py        # English — what gets published
+python3 _build.py es     # Spanish, into /es/
 ```
 
-`index.html` no lo toca ninguno de los dos: se edita a mano.
+| File | What it is |
+|---|---|
+| `_build.py` | The generator. Content lives in `t(en, es)` calls; structure and motion are shared. |
+| `_sistema.css` | The visual system: tokens, type, plates, chrome, motion. |
+| `img/` | Seven images, 84 KB total. The "before" ones are the same photo darkened and blurred, not a different photo. |
+| `_estilo/` | The direction analysis and the Stitch prompt. |
+| `_viejo/` | The previous generator, kept as reference. |
 
-## Movimiento
+## The visual world
 
-Curvas y duraciones medidas sobre el CSS real de las referencias, no de memoria:
-`cubic-bezier(.455,.03,.515,.955)` a 600 ms para las apariciones,
-`cubic-bezier(.39,.575,.565,1)` a 200 ms para las microinteracciones. Solo se
-animan `transform` y `opacity`. Hay bloque de `prefers-reduced-motion` y una red
-de seguridad de 3 s por si la pestaña se abre en segundo plano.
+Japanese 80s airbrush over an Apple chassis. Flat cobalt fields alternating
+with paper; chrome as hard-banded gradients that cut rather than blend; black
+cast shadows with no blur; four-point sparkles; one warm accent, never two.
+Rank is carried by colour inversion between plates, never by growing type.
 
-## Aviso sobre las cifras
+Motion values are measured from apple.com's own CSS, not from memory:
+`cubic-bezier(.4,0,.6,1)`, 320 ms for anything that travels, 240 for states,
+160 for a tap. Nothing runs past 560 ms. Only `transform` and `opacity`.
 
-Las cifras del panel de demostración son **inventadas** y están marcadas como
-ejemplo en la propia página. Las del caso de la factura son reales; los datos
-fiscales del cliente están tapados.
+Contrast is checked, not assumed. Body text 17.32:1, links 4.83:1, the 10px
+spec labels 4.58:1, and the tone-on-tone headline 3.07:1 — which is why the
+cobalt highlight is `#6493f7` and not the darker blue that looked better and
+failed at 1.64:1.
+
+## Language
+
+English, decided 2026-09-07 ahead of a move to Hamburg. Spanish is generable
+from the same source because the paying customer today is a Spanish bar owner.
+
+## What is real and what is not
+
+The August 2026 invoice (5,574.00 €, matching by hand to the cent) is real.
+The dashboard figures are invented and the page says so. The bar is an
+example and its page says so. Photos are stock in the demo; for a client they
+are the client's own, because Google rejects generated photos on business
+profiles and EU AI Act Article 50 has required labelling since 2 August 2026.

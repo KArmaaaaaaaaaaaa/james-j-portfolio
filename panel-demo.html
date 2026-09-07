@@ -1,367 +1,343 @@
-<meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>El panel de tu negocio</title>
+<title>A dashboard, demonstrated — James J Projects</title>
+<meta name="description" content="How many people looked you up and how many called. Demonstration figures, labelled as such.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<style>  :root{
-    --curva:cubic-bezier(.455,.03,.515,.955); --salida:cubic-bezier(.39,.575,.565,1);
-    --expo:cubic-bezier(.16,1,.3,1);
-    --lento:600ms; --medio:400ms; --rapido:300ms; --micro:200ms;
-    --fondo:#f4f3f1; --superficie:#fff; --hueco:#ebe9e6; --borde:#dedbd6; --borde-fino:#e8e5e1;
-    --tinta:#131316; --tinta-2:#56545a; --tinta-3:#8b8890;
-    --naranja:#fe4a23; --fuego:linear-gradient(104deg,#fe4a23,#ff812e);
-    --violeta:#774dff; --naranja-piel:#ffeae4;
-    /* Verde y azul salidos de las seis pantallas de Stitch. Además el verde
-       anterior (#0f8a5f) daba 4,36:1 sobre blanco y el mínimo son 4,5. */
-    --p-azul:#2563eb; --p-verde:#007d55; --p-rosa:#d6337f; --p-ambar:#a86a00; --p-cian:#0b7d8f;
-    --menta:#4edea3; --menta-piel:#bdffdb;
-    --verde-piel:#e8f6ef; --rojo:#c0392b; --rojo-piel:#fbe9e6;
-    --display:"Bebas Neue","Arial Narrow",sans-serif;
-    --texto:"Outfit",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-    --medida:42rem; --ancho:74rem;
-  }
-  body{ background:var(--fondo); color:var(--tinta); font-family:var(--texto);
-    font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; padding:0; overflow-x:hidden; }
-  ::selection{ background:var(--naranja); color:#fff; }
-  .env{ max-width:var(--ancho); margin:0 auto; padding:0 26px; }
-  h1,h2,h3{ margin:0; font-weight:400; text-wrap:balance; }
-  h1{ font-family:var(--display); font-size:clamp(54px,10vw,132px); line-height:.84; }
-  h2{ font-family:var(--display); font-size:clamp(36px,6vw,72px); line-height:.92; }
-  h3{ font-size:19px; font-weight:600; line-height:1.32; letter-spacing:-.012em; }
-  p{ margin:0 0 1.05em; } p:last-child{ margin-bottom:0; }
-  strong{ font-weight:600; }
-  em{ font-style:normal; background:linear-gradient(transparent 62%,#ffe0d6 62%); }
-  a{ color:var(--naranja); text-underline-offset:3px; }
-  .rotulo{ font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.13em;
-    text-transform:uppercase; color:var(--tinta-3); }
-  .cifra{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   James J Projects — sistema visual
+   Aerografía japonesa de los 80 sobre chasis Apple.
+   El mundo: campos de cobalto plano alternando con papel; cromados por
+   bandas que cortan en vez de fundir; sombras negras sin desenfoque;
+   destellos de cuatro puntas; un solo acento cálido, nunca dos.
+   ═══════════════════════════════════════════════════════════════════ */
 
-  .barra{ position:fixed; z-index:50; top:16px; left:50%; transform:translateX(-50%);
-    display:flex; align-items:center; gap:4px; background:rgba(255,255,255,.84);
-    backdrop-filter:blur(16px); border:1px solid var(--borde-fino); border-radius:999px;
-    padding:6px 6px 6px 20px; box-shadow:0 6px 24px rgba(30,20,10,.09); max-width:calc(100vw - 28px); }
-  .barra .marca{ font-family:var(--display); font-size:20px; letter-spacing:.02em;
-    margin-right:10px; white-space:nowrap; text-decoration:none; color:var(--tinta); }
-  .barra a.nav{ font-size:14px; font-weight:500; color:var(--tinta-2); text-decoration:none;
-    padding:8px 12px; border-radius:999px; white-space:nowrap;
-    transition:color var(--rapido) var(--salida), background var(--rapido) var(--salida); }
-  .barra a.nav:hover{ color:var(--tinta); background:var(--hueco); }
-  .barra a.nav[aria-current]{ color:var(--tinta); background:var(--hueco); }
-  .barra .cta{ background:var(--fuego); color:#fff; font-weight:600; padding:10px 18px;
-    border-radius:999px; text-decoration:none; font-size:14px; white-space:nowrap; }
-  @media (hover:none){ .barra a.nav:hover{ color:var(--tinta-2); background:none; } }
-  @media (max-width:860px){ .barra .oculto{ display:none; } }
+:root{
+  /* Movimiento medido sobre el CSS real de apple.com */
+  --curva:cubic-bezier(.4,0,.6,1);
+  --entrada:cubic-bezier(.25,.1,.3,1);
+  --expo:cubic-bezier(.16,1,.3,1);
+  --lento:560ms; --normal:320ms; --rapido:240ms; --micro:160ms;
 
-  .cabeza{ padding:128px 0 0; }
-  .hilo{ display:flex; align-items:center; gap:14px; margin-bottom:28px; }
-  .hilo span:last-child{ flex:1; height:2px; background:var(--fuego); border-radius:2px; }
-  .bajada{ max-width:34rem; margin-top:30px; font-size:20px; line-height:1.5;
-    color:var(--tinta-2); font-weight:300; }
-  .bajada b{ color:var(--tinta); font-weight:600; }
+  /* Papel. Frío, no crema: la lámina no es un libro viejo. */
+  --papel:#f2f2f0; --blanco:#ffffff; --hueco:#e9e9e6;
+  --tinta:#0d0d0f; --tinta-2:#4a4a50;
+  /* 4,58:1 sobre papel. El gris anterior (#83838b) daba 3,35 y los spec
+     son de 10 px: texto pequeño, hace falta 4,5. */
+  --tinta-3:#6d6d75;
+  --hilo:#d7d6d2;
 
-  section{ padding:88px 0; }
-  .titulo{ margin-bottom:38px; }
-  .titulo p{ max-width:var(--medida); margin-top:16px; color:var(--tinta-2); font-weight:300; font-size:18px; }
+  /* Cobalto. Un campo, no un degradado de cielo. */
+  --cobalto:#0f3fa8; --cobalto-hondo:#0a2c78;
+  /* Tono sobre tono, pero legible: #2f60d6 daba 1,64:1 y el mínimo para
+     texto grande es 3,0. Este da 3,07 y sigue siendo azul sobre azul. */
+  --cobalto-alto:#6493f7;
+  --sobre-cobalto:#e8eeff; --sobre-cobalto-2:#a9c0f5; --hilo-cobalto:#3a63bd;
 
-  .boton{ display:inline-flex; align-items:center; gap:8px; font-size:15.5px; font-weight:600;
-    padding:14px 26px; border-radius:999px; text-decoration:none; color:#fff; border:none; cursor:pointer;
-    transition:transform var(--micro) var(--salida), box-shadow var(--rapido) var(--curva); }
-  .boton--fuego{ background:var(--fuego); box-shadow:0 6px 20px rgba(254,74,35,.26); }
-  .boton--fuego:hover{ box-shadow:0 10px 30px rgba(254,74,35,.36); }
-  .boton--linea{ background:var(--superficie); color:var(--tinta); box-shadow:inset 0 0 0 1px var(--borde); }
-  .boton--linea:hover{ box-shadow:inset 0 0 0 1px var(--tinta); }
-  .boton:active{ transform:scale(.97); }
-  @media (hover:none){ .boton--fuego:hover{ box-shadow:0 6px 20px rgba(254,74,35,.26); } }
-  .acciones{ display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; }
+  /* Un solo acento cálido. Nunca dos.
+     El bermellón de marca vale como SUPERFICIE; para texto sobre papel da
+     3,01:1, así que enlaces y etiquetas usan la variante oscura (4,83:1), y
+     el fondo del botón en hover también, porque blanco sobre el bermellón
+     claro se queda en 3,38. */
+  --fuego:#fe4a23; --fuego-texto:#c92e0d; --fuego-fondo:#b02607;
 
-  .caja{ background:var(--superficie); border:1px solid var(--borde-fino); border-radius:20px; padding:28px; }
-  .rejilla{ display:grid; gap:18px; }
-  .r2{ grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
-  .r3{ grid-template-columns:repeat(auto-fit,minmax(268px,1fr)); }
+  /* Acentos de servicio: cada oficio tiene el suyo, y solo aparece
+     en su propia región. Contraste comprobado sobre papel. */
+  --verde:#007d55; --azul:#2563eb; --menta:#4edea3;
 
-  .pil{ display:inline-block; font-family:var(--mono); font-size:12px; font-weight:500;
-    padding:6px 13px; border-radius:999px; background:var(--superficie);
-    border:1px solid var(--borde-fino); }
-  .pil--naranja{color:var(--naranja)} .pil--azul{color:var(--p-azul)} .pil--verde{color:var(--p-verde)}
-  .pil--rosa{color:var(--p-rosa)} .pil--violeta{color:var(--violeta)} .pil--ambar{color:var(--p-ambar)}
+  --display:"Oswald","Arial Narrow",sans-serif;
+  --texto:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 
-  .pie{ border-top:1px solid var(--borde); padding:36px 0 44px; margin-top:32px; }
-  .pie .env{ display:flex; gap:20px; flex-wrap:wrap; align-items:baseline; }
-  .pie a{ color:var(--tinta-2); text-decoration:none; font-size:14.5px; }
-  .pie a:hover{ color:var(--naranja); }
-  .pie .der{ margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--tinta-3); }
+  --medida:68ch;     /* medida de lectura, dentro de 65-75ch */
+  --ancho:74rem;
+  color-scheme:light;
 
-  @keyframes entrar{ from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
-  .carga{ animation:entrar var(--medio) var(--curva) both; }
-  .carga:nth-child(1){animation-delay:40ms} .carga:nth-child(2){animation-delay:110ms}
-  .carga:nth-child(3){animation-delay:180ms} .carga:nth-child(4){animation-delay:250ms}
-  .revelar{ opacity:0; transform:translateY(26px);
-    transition:opacity var(--lento) var(--curva), transform var(--lento) var(--curva); }
-  .revelar.visible{ opacity:1; transform:none; }
-  :focus-visible{ outline:2px solid var(--naranja); outline-offset:3px; border-radius:6px; }
+  /* Las superficies del navegador también son diseño */
+  accent-color:var(--fuego-fondo);
+}
 
-  @media (max-width:760px){
-    .env{ padding:0 18px; } body{ font-size:16.5px; line-height:1.6; }
-    .cabeza{ padding-top:96px; } section{ padding:56px 0; } .caja{ padding:20px; }
-    .barra{ top:10px; padding:5px 5px 5px 16px; gap:8px; }
-    .barra .marca{ font-size:16px; margin-right:0; }
-    .barra .cta{ padding:9px 15px; font-size:13.5px; }
-    .bajada{ font-size:17.5px; margin-top:22px; }
-    .titulo{ margin-bottom:26px; }
-    .titulo p{ font-size:16.5px; }
-    .acciones{ gap:9px; } .boton{ padding:13px 20px; font-size:15px; }
-    .pie{ padding:26px 0 28px; margin-top:20px; }
-    .pie .env{ gap:12px; } .pie .der{ margin-left:0; width:100%; }
-    section:last-of-type{ padding-bottom:36px; }
-  }
-  @media (max-width:400px){ .boton{ width:100%; justify-content:center; } }
-  @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important;
-      transition-duration:.01ms!important; }
-    .revelar{ opacity:1!important; transform:none!important; }
-  }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font:400 17px/1.6 var(--texto);-webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;overflow-x:hidden}
 
-  .aviso-demo{ background:#fff5e0; border:1px solid #f2d8a0; border-radius:14px; padding:16px 20px;
-    display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:26px; }
-  .aviso-demo .et{ font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.11em;
-    text-transform:uppercase; color:#7a4a12; background:#ffe3b0; border-radius:5px; padding:4px 9px; }
-  .aviso-demo p{ font-size:14.5px; color:#6b4a1c; margin:0; flex:1; min-width:240px; }
-  .app{ background:var(--superficie); border:1px solid var(--borde-fino); border-radius:24px;
-    padding:24px; box-shadow:0 18px 44px rgba(40,25,15,.07); }
-  .app-cab{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
-  .app-cab h3{ font-size:24px; font-weight:500; letter-spacing:-.02em; }
-  .app-cab .sub{ font-size:14px; color:var(--tinta-3); width:100%; margin-top:-4px; }
-  .pestanas{ display:flex; gap:5px; margin-left:auto; flex-wrap:wrap; }
-  .pest{ font-size:13.5px; font-weight:500; color:var(--tinta-2); background:var(--fondo);
-    border:1px solid var(--borde-fino); border-radius:999px; padding:8px 15px; cursor:default; }
-  .pest.on{ background:var(--tinta); color:#fff; border-color:var(--tinta); }
-  .malla{ display:grid; gap:16px; grid-template-columns:1fr; }
-  @media (min-width:900px){ .malla{ grid-template-columns:320px 1fr 240px; } }
-  .panelito{ background:var(--fondo); border:1px solid var(--borde-fino); border-radius:16px; padding:18px; }
-  .panelito .tt{ font-size:14px; font-weight:600; margin-bottom:2px; }
-  .panelito .st{ font-size:12.5px; color:var(--tinta-3); margin-bottom:14px; }
-  .aguja{ position:relative; text-align:center; }
-  .aguja svg{ width:100%; max-width:300px; height:auto; overflow:visible; }
-  .aguja .centro{ position:absolute; left:50%; top:64%; transform:translate(-50%,-50%); }
-  .aguja .gran{ font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:30px;
-    font-weight:600; letter-spacing:-.03em; line-height:1; }
-  .aguja .peq{ font-size:12.5px; color:var(--tinta-2); margin-top:3px; }
-  .leyenda{ display:grid; gap:9px; margin-top:14px; }
-  .leyenda div{ display:flex; align-items:center; gap:9px; font-size:13px; }
-  .leyenda i{ width:9px; height:9px; border-radius:50%; flex:none; }
-  .leyenda .v{ margin-left:auto; font-family:var(--mono); font-variant-numeric:tabular-nums;
-    font-weight:600; font-size:13px; }
-  .lienzo{ position:relative; }
-  .lienzo svg{ display:block; width:100%; height:auto; overflow:visible; }
-  .rej{ stroke:var(--borde); stroke-width:1; }
-  .area{ fill:rgba(254,74,35,.10); }
-  .linea{ fill:none; stroke:var(--naranja); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
-  .punta{ fill:var(--naranja); stroke:var(--superficie); stroke-width:2; }
-  .cruz{ stroke:var(--tinta-3); stroke-width:1; stroke-dasharray:3 3; opacity:0; }
-  .eje{ font-family:var(--mono); font-size:10px; fill:var(--tinta-3); }
-  .globo{ position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-118%);
-    background:var(--tinta); color:#fff; border-radius:8px; padding:7px 11px; white-space:nowrap;
-    font-family:var(--mono); font-size:11.5px; line-height:1.45; z-index:3;
-    transition:opacity var(--micro) var(--salida); }
-  .cifras{ display:grid; gap:12px; }
-  .cifrita{ background:var(--fondo); border:1px solid var(--borde-fino); border-radius:14px; padding:14px 16px; }
-  .cifrita .l{ font-size:12.5px; color:var(--tinta-2); }
-  .cifrita .v{ font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:24px;
-    font-weight:600; letter-spacing:-.03em; margin-top:4px; display:flex; align-items:baseline; gap:9px; }
-  .chip{ font-family:var(--mono); font-size:11px; font-weight:600; border-radius:999px; padding:3px 8px; letter-spacing:0; }
-  .chip.sube{ background:var(--verde-piel); color:var(--p-verde); }
-  .chip.baja{ background:var(--rojo-piel); color:var(--rojo); }
-  .cifrita .c{ font-size:11.5px; color:var(--tinta-3); margin-top:3px; }
-  .tablita{ margin-top:16px; overflow-x:auto; }
-  table{ border-collapse:collapse; width:100%; min-width:560px; }
-  th,td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--borde-fino); font-size:14.5px; }
-  th{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--tinta-3); font-weight:500; }
-  tr:last-child td{ border-bottom:none; }
-  td .quien{ font-weight:600; } td .que{ font-size:12.5px; color:var(--tinta-3); }
-  .marca{ display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px;
-    font-weight:600; border-radius:999px; padding:4px 10px; }
-  .marca i{ width:6px; height:6px; border-radius:50%; background:currentColor; }
-  .m-ok{ background:var(--verde-piel); color:var(--p-verde); }
-  .m-pend{ background:#fff0d6; color:var(--p-ambar); }
-  .estrellas{ font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600; }
+/* Las partes que no dibujé también llevan el diseño. Es la señal más
+   barata de que una página está construida y no ensamblada. */
+::selection{background:var(--fuego-fondo);color:#fff}
+.plate ::selection{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
+:focus-visible{outline:2px solid var(--fuego-fondo);outline-offset:3px;border-radius:2px}
+.plate :focus-visible{outline-color:var(--sobre-cobalto)}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:var(--hueco)}
+::-webkit-scrollbar-thumb{background:var(--tinta-3);border:3px solid var(--hueco)}
+::-webkit-scrollbar-thumb:hover{background:var(--tinta-2)}
+a{color:var(--fuego-texto);text-decoration-thickness:1px;text-underline-offset:.22em}
+:where(h1,h2,h3,.cifra,.dato,td,.precio){font-variant-numeric:tabular-nums}
 
-  /* ── Tema «Índigo» · solo esta página ── */
-  :root{ --fondo:#f1f1f7; --superficie:#fff; --hueco:#e6e6f0; --borde:#d8d8e6; --borde-fino:#e6e6f0;
-   --tinta:#15141d; --tinta-2:#4f4d63; --tinta-3:#87849c;
-   --naranja:#5b53e8; --fuego:linear-gradient(104deg,#5b53e8,#8b82ff); --naranja-piel:#e8e6fd;
-   --p-azul:#c2600a; --p-verde:#0e9384;
-    --display:"Sora",-apple-system,sans-serif; --texto:"Manrope",-apple-system,sans-serif; }
-  h1{ font-size:clamp(38px,6.4vw,78px); line-height:1.02; letter-spacing:-.025em; }
-  h2{ font-size:clamp(27px,4.2vw,46px); line-height:1.02; letter-spacing:-.02em; }
-  .barra .marca{ font-size:15px; letter-spacing:-.01em; }
-  .precio,.grandota,.aguja .gran{ letter-spacing:-.04em; }
-  
+.env{max-width:var(--ancho);margin:0 auto;padding:0 26px}
+@media(max-width:640px){.env{padding:0 18px}}
+
+/* ── Tipografía ─────────────────────────────────────────────────── */
+h1,h2,h3{margin:0;font-weight:500;font-family:var(--display);
+  text-transform:uppercase;letter-spacing:-.015em;text-wrap:balance}
+h1{font-size:clamp(34px,8.4vw,112px);line-height:.9}
+h2{font-size:clamp(30px,5vw,68px);line-height:.94}
+h3{font-size:clamp(19px,2vw,25px);line-height:1.1;letter-spacing:-.005em}
+p{margin:0 0 1.05em;max-width:var(--medida)}
+p:last-child{margin-bottom:0}
+.guia{font-size:19px;font-weight:300;color:var(--tinta-2);max-width:var(--medida)}
+.guia b{font-weight:600;color:var(--tinta)}
+.plate .guia{color:var(--sobre-cobalto-2)}
+.plate .guia b{color:#fff}
+
+/* Ficha técnica: los rótulos van AL LADO del contenido o bajo un dato,
+   nunca como etiqueta encima de un titular. Un titular se sostiene solo. */
+.spec{font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--tinta-3);
+  display:block}
+.plate .spec{color:var(--sobre-cobalto-2)}
+
+/* ── Plates: la inversión es la jerarquía ───────────────────────────
+   Lo que manda invierte el color, no crece de tamaño. */
+.plate{background:var(--cobalto);color:var(--sobre-cobalto);
+  margin-inline:calc(50% - 50vw);padding-block:clamp(72px,9vw,124px)}
+.plate > .env{padding-inline:max(26px,calc(50vw - var(--ancho)/2 + 26px))}
+.plate h1,.plate h2{color:var(--cobalto-alto)}   /* tono sobre tono */
+.plate h3{color:#fff}
+.papel-sec{padding-block:clamp(72px,9vw,124px)}
+
+/* ── Cromado: bandas que cortan, no degradados que funden ────────── */
+.cromo{background:linear-gradient(104deg,
+  #e8eefc 0%,#ffffff 17%,#a8b8d8 18%,#dde5f6 34%,
+  #7f92b8 35%,#f2f6ff 52%,#9fb0d2 53%,#ffffff 72%,
+  #b9c6e2 73%,#e2e9f8 100%)}
+
+/* Destello de cuatro puntas: dos barras cruzadas y nada más */
+.chispa{position:absolute;pointer-events:none;width:1px;height:1px}
+.chispa::before,.chispa::after{content:"";position:absolute;background:#fff;
+  left:50%;top:50%;transform:translate(-50%,-50%);opacity:.9}
+.chispa::before{width:46px;height:1.5px}
+.chispa::after{width:1.5px;height:46px}
+
+/* ── Botones: rectos, en mono, pegados entre sí ─────────────────── */
+.acciones{display:flex;flex-wrap:wrap;gap:0;margin-top:30px}
+.boton{font-family:var(--mono);font-size:12px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
+  padding:17px 28px;border:1px solid var(--tinta);color:var(--tinta);
+  background:transparent;display:inline-block;cursor:pointer;
+  transition:background var(--micro) var(--curva),color var(--micro) var(--curva),
+    transform var(--micro) var(--curva)}
+.boton + .boton{border-left:0}
+.boton--lleno{background:var(--tinta);color:var(--papel)}
+.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
+.boton:active{transform:scale(.985)}
+.plate .boton{border-color:var(--sobre-cobalto);color:var(--sobre-cobalto)}
+.plate .boton--lleno{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
+.plate .boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
+@media(hover:none){.boton:hover{background:transparent;color:var(--tinta);
+  border-color:var(--tinta)}
+  .boton--lleno:hover{background:var(--tinta);color:var(--papel)}
+  .plate .boton:hover{background:transparent;color:var(--sobre-cobalto);
+    border-color:var(--sobre-cobalto)}}
+
+/* ── Las cantidades son la interfaz ──────────────────────────────── */
+.precio{font-family:var(--display);font-weight:500;line-height:1;
+  font-size:clamp(38px,5.4vw,72px);letter-spacing:-.02em;color:var(--tinta)}
+.precio small{font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--tinta-3);
+  display:block;margin-top:10px;letter-spacing:.16em}
+.plate .precio{color:#fff}
+.plate .precio small{color:var(--sobre-cobalto-2)}
+
+/* ── El movimiento ───────────────────────────────────────────────── */
+.sube{opacity:0;transform:translateY(20px);
+  transition:opacity var(--normal) var(--entrada),transform var(--normal) var(--entrada)}
+.sube.dentro{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;
+    animation-iteration-count:1!important;transition-duration:.01ms!important;
+    scroll-behavior:auto!important}
+  .sube{opacity:1!important;transform:none!important}
+}
+
+
+.barra{position:fixed;z-index:50;top:16px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);
+  backdrop-filter:saturate(180%) blur(16px);border:1px solid var(--hilo);
+  padding:7px 8px 7px 18px;max-width:calc(100vw - 32px)}
+.barra .marca{font-family:var(--display);font-size:19px;text-transform:uppercase;
+  letter-spacing:.01em;color:var(--tinta);text-decoration:none;margin-right:14px;
+  white-space:nowrap}
+.barra a:not(.marca){font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-2);
+  text-decoration:none;padding:9px 12px;white-space:nowrap;
+  transition:color var(--rapido) var(--curva),background var(--rapido) var(--curva)}
+.barra a:not(.marca):hover{color:var(--tinta);background:var(--hueco)}
+.barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
+.barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
+.barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
+.menu-btn{display:none;background:none;border:0;padding:8px;cursor:pointer;
+  color:var(--tinta)}
+.menu-btn svg{width:21px;height:21px;display:block}
+.menu-panel{position:fixed;z-index:49;top:66px;left:50%;transform:translateX(-50%);
+  width:calc(100vw - 32px);max-width:420px;background:var(--blanco);
+  border:1px solid var(--hilo);padding:8px;display:grid}
+.menu-panel a{font-family:var(--mono);font-size:12px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--tinta);
+  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo)}
+.menu-panel a:last-child{border-bottom:0}
+@media(max-width:1080px){.barra .solo-ancho{display:none}.menu-btn{display:block}}
+@media(min-width:1081px){.menu-panel{display:none!important}}
+@media(hover:none){.barra a:not(.marca):hover{background:none;color:var(--tinta-2)}}
+
+.pie{border-top:1px solid var(--tinta);padding:34px 0 54px;margin-top:0}
+.pie-fila{display:flex;justify-content:space-between;align-items:baseline;
+  gap:20px;flex-wrap:wrap}
+.marca-pie{font-family:var(--display);font-size:20px;text-transform:uppercase}
+.pie-nota{margin-top:16px;letter-spacing:.14em;line-height:1.9}
+
+/* La portada: la única que empieza pegada arriba */
+.portada{padding:132px 0 0}
+@media(max-width:760px){.portada{padding-top:104px}}
+
+
+.comparar{position:relative;border:1px solid var(--tinta);overflow:hidden;
+  display:grid;margin-top:40px;touch-action:pan-y;background:var(--hueco)}
+.lado{grid-area:1/1;padding:22px;display:grid;align-items:center;min-width:0}
+.comparar{min-width:0}
+.ficha-g,.fila-g,.fila-g > div,.fot-g{min-width:0}
+.tit-g,.sub-g,.res-g{overflow-wrap:anywhere}
+.lado.antes{background:var(--hueco)}
+.lado.desp{background:var(--blanco);clip-path:inset(0 0 0 52%)}
+.rot-lado{position:absolute;top:12px;font-family:var(--mono);font-size:9.5px;
+  font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--tinta);color:var(--papel);padding:4px 9px;z-index:3}
+.rot-lado.izq{left:12px}.rot-lado.der{right:12px}
+.ficha-g{background:var(--blanco);border:1px solid var(--hilo);padding:18px;
+  display:grid;gap:13px;align-content:start}
+.antes .ficha-g{border-color:var(--hilo)}
+.fila-g{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;flex-wrap:wrap}
+.tit-g{font-size:18px;font-weight:600;color:#1a0dab;white-space:normal}
+.sub-g{font-size:13px;color:var(--tinta-2)}
+.chip-g{font-family:var(--mono);font-size:10px;font-weight:600;padding:4px 9px;
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.chip-g.cerrado{background:#fbe9e6;color:#a3271a}
+.chip-g.abierto{background:#e8f6ef;color:var(--verde)}
+.fot-g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.fot-g img,.fot-g i{display:block;width:100%;max-width:100%;min-width:0;
+  aspect-ratio:4/3;object-fit:cover;background:var(--hueco)}
+.res-g{font-size:12.5px;color:var(--tinta-2)}
+.acc-g{display:flex;gap:6px;flex-wrap:wrap}
+.acc-g span{font-family:var(--mono);font-size:10px;font-weight:600;
+  border:1px solid var(--azul);color:var(--azul);padding:4px 8px;
+  letter-spacing:.06em}
+.tirador{position:absolute;top:0;bottom:0;left:52%;width:2px;background:var(--tinta);
+  z-index:4;cursor:ew-resize}
+.tirador::after{content:"";position:absolute;top:50%;left:50%;width:38px;height:38px;
+  transform:translate(-50%,-50%);background:var(--tinta);border-radius:50%}
+.tirador span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:1;color:var(--papel);font-size:13px;font-family:var(--mono)}
+@media(max-width:760px){.fot-g{grid-template-columns:repeat(3,1fr)}
+  .fot-g > :nth-child(4){display:none}.lado{padding:12px}
+  .rot-lado{top:8px}.rot-lado.izq{left:8px}.rot-lado.der{right:8px}}
+
+.numeros{display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--tinta);margin-top:36px}
+.numeros > div{padding:22px 20px;border-right:1px solid var(--tinta)}
+.numeros > div:last-child{border-right:0}
+.numeros .dato{font-family:var(--display);font-size:clamp(30px,4.4vw,52px);
+  line-height:1;margin-top:9px}
+@media(max-width:700px){.numeros{grid-template-columns:1fr}
+  .numeros > div{border-right:0;border-bottom:1px solid var(--tinta)}
+  .numeros > div:last-child{border-bottom:0}}
+.aviso-demo{border:1px solid var(--fuego-texto);padding:18px 20px;margin-top:32px;
+  font-size:15px;color:var(--tinta-2);font-weight:300}
+.aviso-demo b{color:var(--fuego-texto);font-weight:600}
+
 </style>
+</head>
+<body>
 
-<nav class="barra">
+<nav class="barra" aria-label="Main">
   <a class="marca" href="index.html">James J Projects</a>
-  <a class="nav oculto" href="index.html">Inicio</a><a class="nav oculto" href="precios.html">Precios</a><a class="nav oculto" href="carta-nfc.html">Carta en la mesa</a><a class="nav oculto" href="ficha-google.html">Ficha de Google</a><a class="nav oculto" href="caso-factura.html">Un caso</a><a class="nav oculto" href="panel-demo.html" aria-current='page'>Demo</a>
-  <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
+  <a class="solo-ancho" href="index.html">Home</a><a class="solo-ancho" href="precios.html">Pricing</a><a class="solo-ancho" href="carta-nfc.html">Menu on the table</a><a class="solo-ancho" href="ficha-google.html">Google profile</a><a class="solo-ancho" href="caso-factura.html">Case</a><a class="solo-ancho" href="panel-demo.html" aria-current='page'>Dashboard</a>
+  <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Talk to me</a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
+    aria-label="Open the menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
 </nav>
+<div class="menu-panel" id="menuPanel" hidden><a href="index.html">Home</a><a href="precios.html">Pricing</a><a href="carta-nfc.html">Menu on the table</a><a href="ficha-google.html">Google profile</a><a href="caso-factura.html">Case</a><a href="panel-demo.html">Dashboard</a>
+  <a href="mailto:jamesjoelbenavides2004@gmail.com">Talk to me</a></div>
 
+<main>
+<section class="papel-sec" style="padding-top:132px">
+  <div class="env">
+    <h1>Whether it is<br>working</h1>
+    <p class="guia" style="margin-top:26px">A website you cannot measure is an expense. One you can measure is a decision: you know whether it was worth it, and you know which month to push. One screen, no jargon.</p>
 
-<div class="env">
-  <header class="cabeza">
-    <div class="hilo carga"><span class="rotulo">Demostración</span><span></span>
-      <span class="rotulo">Datos de muestra</span></div>
-    <h1 class="carga">El panel<br>de tu negocio</h1>
-    <p class="bajada carga">Lo que ve un dueño de bar el lunes por la mañana: <b>cuánta gente le ha buscado, qué ha hecho al encontrarle y si va a más o a menos.</b> Sin palabras raras y sin tener que interpretar nada: la respuesta está escrita en la propia frase.</p>
-  </header>
-
-  <section>
-    <div class="aviso-demo revelar">
-      <span class="et">Ejemplo</span>
-      <p><strong>El «Bar Sant Ramon» no existe y estas cifras son inventadas.</strong> Están aquí para enseñar el formato, no para presumir de resultados. Cuando sea tu negocio, serán los tuyos y saldrán de tu ficha de Google.</p>
+    <div class="numeros sube">
+      <div><span class="spec">Looked you up in 12 weeks</span><div class="dato">1.284</div></div>
+      <div><span class="spec">Called from the profile</span><div class="dato">96</div></div>
+      <div><span class="spec">Asked for directions</span><div class="dato">212</div></div>
     </div>
 
-    <div class="app revelar">
-      <div class="app-cab">
-        <div>
-          <h3>Buenos días, Ramon</h3>
-          <div class="sub">Bar Sant Ramon · Viladecans · últimas 12 semanas</div>
-        </div>
-        <div class="pestanas">
-          <span class="pest on">Resumen</span><span class="pest">Reseñas</span><span class="pest">Fotos</span>
-        </div>
-      </div>
+    <div class="aviso-demo sube"><b>The Bar Sant Ramon does not exist and these figures are invented.</b> They are here to show the format, not to boast about results. When it is your business they will be yours, and they will come out of your own Google profile.</div>
+  </div>
+</section>
 
-      <div class="malla">
-        <div class="panelito">
-          <div class="tt">Cómo te encuentran</div>
-          <div class="st">De 1.470 veces que has salido</div>
-          <div class="aguja">
-            <svg viewBox="0 0 300 172" role="img" aria-label="De 1.470 apariciones, 892 buscando el tipo de negocio, 412 buscando el nombre y 166 desde el mapa">
-              <path d="M38.0 147.7 A112 112 0 0 1 184.7 43.5" stroke="var(--p-azul)" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M189.1 45.0 A112 112 0 0 1 254.2 108.9" stroke="var(--naranja)" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M255.8 113.3 A112 112 0 0 1 262.0 147.7" stroke="var(--p-verde)" stroke-width="18" fill="none" stroke-linecap="round"/>
-            </svg>
-            <div class="centro"><div class="gran">1.470</div><div class="peq">veces que has salido</div></div>
-          </div>
-          <div class="leyenda">
-            <div><i style="background:var(--p-azul)"></i>Buscando tu tipo de negocio<span class="v">892</span></div>
-            <div><i style="background:var(--naranja)"></i>Buscando tu nombre<span class="v">412</span></div>
-            <div><i style="background:var(--p-verde)"></i>Desde el mapa<span class="v">166</span></div>
-          </div>
-        </div>
-
-        <div class="panelito">
-          <div class="tt">Cuánta gente te busca</div>
-          <div class="st">Visitas a tu ficha, por semana</div>
-          <div class="lienzo" id="lz">
-            <svg viewBox="0 0 520 168" role="img" aria-label="Las visitas suben de 84 a 182 por semana en doce semanas">
-              <line class="rej" x1="10" y1="142.0" x2="510" y2="142.0"/><line class="rej" x1="10" y1="77.0" x2="510" y2="77.0"/><line class="rej" x1="10" y1="12.0" x2="510" y2="12.0"/>
-              <path class="area" d="M10.0 82.0 L55.5 77.0 L100.9 86.3 L146.4 73.4 L191.8 63.4 L237.3 68.4 L282.7 50.6 L328.2 41.3 L373.6 47.0 L419.1 30.6 L464.5 22.0 L510.0 12.0 L510.0 142.0 L10.0 142.0 Z"/>
-              <path class="linea" d="M10.0 82.0 L55.5 77.0 L100.9 86.3 L146.4 73.4 L191.8 63.4 L237.3 68.4 L282.7 50.6 L328.2 41.3 L373.6 47.0 L419.1 30.6 L464.5 22.0 L510.0 12.0"/>
-              <line class="cruz" id="cz" y1="12" y2="142"/>
-              <circle class="punta" id="pu" r="4.5" cx="510.0" cy="12.0"/>
-              <text class="eje" x="10" y="160">hace 12 sem.</text>
-              <text class="eje" x="510" y="160" text-anchor="end">esta semana</text>
-              <circle class="pt" cx="10.0" cy="82.0" r="10" fill="transparent" tabindex="0" data-i="0" data-v="84"/><circle class="pt" cx="55.5" cy="77.0" r="10" fill="transparent" tabindex="0" data-i="1" data-v="91"/><circle class="pt" cx="100.9" cy="86.3" r="10" fill="transparent" tabindex="0" data-i="2" data-v="78"/><circle class="pt" cx="146.4" cy="73.4" r="10" fill="transparent" tabindex="0" data-i="3" data-v="96"/><circle class="pt" cx="191.8" cy="63.4" r="10" fill="transparent" tabindex="0" data-i="4" data-v="110"/><circle class="pt" cx="237.3" cy="68.4" r="10" fill="transparent" tabindex="0" data-i="5" data-v="103"/><circle class="pt" cx="282.7" cy="50.6" r="10" fill="transparent" tabindex="0" data-i="6" data-v="128"/><circle class="pt" cx="328.2" cy="41.3" r="10" fill="transparent" tabindex="0" data-i="7" data-v="141"/><circle class="pt" cx="373.6" cy="47.0" r="10" fill="transparent" tabindex="0" data-i="8" data-v="133"/><circle class="pt" cx="419.1" cy="30.6" r="10" fill="transparent" tabindex="0" data-i="9" data-v="156"/><circle class="pt" cx="464.5" cy="22.0" r="10" fill="transparent" tabindex="0" data-i="10" data-v="168"/><circle class="pt" cx="510.0" cy="12.0" r="10" fill="transparent" tabindex="0" data-i="11" data-v="182"/>
-            </svg>
-            <div class="globo" id="gl"></div>
-          </div>
-        </div>
-
-        <div class="cifras">
-          <div class="cifrita"><div class="l">Te han llamado</div>
-            <div class="v">47 <span class="chip sube">+22 %</span></div>
-            <div class="c">frente a las 12 semanas anteriores</div></div>
-          <div class="cifrita"><div class="l">Han pedido cómo llegar</div>
-            <div class="v">112 <span class="chip sube">+38 %</span></div>
-            <div class="c">es la acción más repetida</div></div>
-          <div class="cifrita"><div class="l">Nota media</div>
-            <div class="v">4,6 <span class="chip baja">−0,1</span></div>
-            <div class="c">sobre 38 opiniones</div></div>
-        </div>
-      </div>
-
-      <div class="tablita">
-        <table>
-          <thead><tr><th>Reseña</th><th>Nota</th><th>Cuándo</th><th>Contestada</th></tr></thead>
-          <tbody>
-            <tr><td><span class="quien">Marta G.</span><div class="que">«El menú del día, impecable»</div></td>
-              <td class="estrellas">5,0</td><td>hace 2 días</td><td><span class="marca m-ok"><i></i>Sí</span></td></tr>
-            <tr><td><span class="quien">Joan P.</span><div class="que">«Tardaron con la comanda»</div></td>
-              <td class="estrellas">3,0</td><td>hace 5 días</td><td><span class="marca m-pend"><i></i>Pendiente</span></td></tr>
-            <tr><td><span class="quien">Lucía R.</span><div class="que">«La terraza es lo mejor del barrio»</div></td>
-              <td class="estrellas">5,0</td><td>hace 1 semana</td><td><span class="marca m-ok"><i></i>Sí</span></td></tr>
-            <tr><td><span class="quien">Andrés M.</span><div class="que">«Buen precio, sitio sencillo»</div></td>
-              <td class="estrellas">4,0</td><td>hace 2 semanas</td><td><span class="marca m-ok"><i></i>Sí</span></td></tr>
-          </tbody>
-        </table>
-      </div>
+<section class="plate">
+  <div class="env">
+    <h2 class="sube">Where the<br>numbers come from</h2>
+    <p class="guia sube" style="margin-top:26px">Straight out of Google's own Business Profile statistics, and out of the site itself. Nothing is estimated and nothing is modelled: if a number cannot be counted, it does not appear on the screen.</p>
+    <p class="guia sube" style="margin-top:16px">It arrives once a month, in an email you can read in thirty seconds. If a month goes badly, the email says so.</p>
+    <div class="acciones sube">
+      <a class="boton boton--lleno" href="precios.html">30–50 € a month</a>
+      <a class="boton" href="index.html">Back to the start</a>
     </div>
-  </section>
+  </div>
+</section>
+</main>
 
-  <section>
-    <div class="titulo revelar"><h2>De dónde salen estos números</h2>
-      <p>De tu ficha de Google, que ya los recoge gratis y casi nadie mira. Yo solo los saco de donde están escondidos y los pongo en una frase que se entiende.</p></div>
-    <div class="acciones revelar">
-      <a class="boton boton--fuego" href="ficha-google.html">Ver el servicio de la ficha</a>
-      <a class="boton boton--linea" href="precios.html">Precios</a>
+
+<footer class="pie">
+  <div class="env">
+    <div class="pie-fila">
+      <span class="marca-pie">James J Projects</span>
+      <span class="spec">Barcelona and Hamburg · remote</span>
     </div>
-  </section>
-</div>
-
-
-<footer class="pie"><div class="env">
-  <a href="index.html">Inicio</a><a href="precios.html">Precios</a>
-  <a href="ficha-google.html">Ficha de Google</a><a href="caso-factura.html">Un caso</a>
-  <a href="panel-demo.html">Demo</a>
-  <a href="mailto:jamesjoelbenavides2004@gmail.com">jamesjoelbenavides2004@gmail.com</a>
-  <span class="der">Barcelona y Hamburgo</span>
-</div></footer>
-
+    <p class="spec pie-nota">Hand-built. No template, no framework, nothing loaded from a third party except the fonts.</p>
+  </div>
+</footer>
 <script>
-(function(){
-  var els=document.querySelectorAll('.revelar'), c=new Map();
-  els.forEach(function(el){ var p=el.parentElement,n=c.get(p)||0; c.set(p,n+1);
-    el.style.transitionDelay=Math.min(n,5)*70+'ms'; });
-  var o=new IntersectionObserver(function(es){ es.forEach(function(e){
-    if(e.isIntersecting){ e.target.classList.add('visible'); o.unobserve(e.target); } }); },
-    {threshold:.15,rootMargin:'0px 0px -10% 0px'});
-  els.forEach(function(el){ o.observe(el); });
-  setTimeout(function(){ els.forEach(function(el){ el.classList.add('visible'); }); },3000);
+const obs=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){
+  e.target.classList.add('dentro');obs.unobserve(e.target);}},
+  {threshold:.14,rootMargin:'0px 0px -8% 0px'});
+const cuenta=new Map();
+document.querySelectorAll('.sube').forEach(el=>{
+  const p=el.parentElement;const n=cuenta.get(p)??0;cuenta.set(p,n+1);
+  el.style.transitionDelay=Math.min(n,5)*60+'ms';obs.observe(el);});
+/* Red de seguridad: si la pestaña se abre en segundo plano el observador no
+   dispara nunca y la página se queda en blanco para siempre. */
+setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
 
-  // Números que suben. Se entiende sin explicarlo y cuesta un bucle, no 21 animaciones.
-  function mil(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-    document.querySelectorAll('.contar').forEach(function(n){
-    var fin=+n.dataset.a, ini=null, dur=900, hecho=false;
-    function paso(t){ if(!ini) ini=t; var p=Math.min((t-ini)/dur,1);
-      var e=1-Math.pow(1-p,3);
-      n.textContent=mil(Math.round(fin*e));
-      if(p<1) requestAnimationFrame(paso); }
-    var ob=new IntersectionObserver(function(es){ es.forEach(function(e){
-      if(e.isIntersecting && !hecho){ hecho=true; requestAnimationFrame(paso); ob.unobserve(n); } }); },
-      {threshold:.4});
-    ob.observe(n);
-    setTimeout(function(){ if(!hecho){ hecho=true; n.textContent=mil(fin); } },3000);
-  });
-})();
-</script>
+const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
+if(btn&&panel){btn.addEventListener('click',()=>{
+  const abierto=btn.getAttribute('aria-expanded')==='true';
+  btn.setAttribute('aria-expanded',String(!abierto));panel.hidden=abierto;});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){
+    btn.setAttribute('aria-expanded','false');panel.hidden=true;btn.focus();}});}
 
-<script>
-(function(){
-  var caja=document.getElementById('lz'); if(!caja) return;
-  var g=document.getElementById('gl'), cz=document.getElementById('cz'),
-      pu=document.getElementById('pu'), svg=caja.querySelector('svg'), n=12;
-  caja.querySelectorAll('.pt').forEach(function(p){
-    function e(){
-      var cx=p.getAttribute('cx'), cy=p.getAttribute('cy'), i=+p.dataset.i, v=+p.dataset.v,
-          r=svg.getBoundingClientRect(), c=caja.getBoundingClientRect(), esc=r.width/520;
-      cz.setAttribute('x1',cx); cz.setAttribute('x2',cx); cz.style.opacity=1;
-      pu.setAttribute('cx',cx); pu.setAttribute('cy',cy);
-      g.innerHTML='<b>'+v+'</b> visitas<br>'+(i===n-1?'esta semana':'hace '+(n-1-i)+' semanas');
-      g.style.left=(r.left-c.left+cx*esc)+'px'; g.style.top=(r.top-c.top+cy*esc)+'px'; g.style.opacity=1;
-    }
-    p.addEventListener('mouseenter',e); p.addEventListener('focus',e);
-  });
-  caja.addEventListener('mouseleave',function(){ g.style.opacity=0; cz.style.opacity=0; });
-})();
 </script>
+</body>
+</html>
