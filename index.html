@@ -36,7 +36,17 @@
     --naranja-piel:#ffeae4;
 
     /* sincronía de píldoras: cada cosa con su color */
-    --p-azul:#1b6ef3; --p-verde:#0f8a5f; --p-rosa:#d6337f;
+    /* Verde y azul salen de las seis pantallas que generé en Stitch: elegí
+       #007d55 en cuatro y #2563eb en las seis. Además arreglan un fallo que
+       había: el verde anterior (#0f8a5f) daba 4,36:1 sobre blanco y el mínimo
+       para texto son 4,5. Ahora dan 5,17:1 los dos. */
+    --p-azul:#2563eb; --p-verde:#007d55; --p-rosa:#d6337f;
+    /* El menta salió en las seis pantallas, pero con 1,71:1 no vale para
+       texto: es color de punto y de fondo, nunca de letra. */
+    --menta:#4edea3; --menta-piel:#bdffdb;
+    /* .chip-g.abierto la usaba sin que estuviera definida aquí, así que el
+       fondo salía transparente. #e8f6ef deja el verde en 4,64:1. */
+    --verde-piel:#e8f6ef;
     --p-ambar:#a86a00; --p-cian:#0b7d8f;
 
     --display:"Bebas Neue","Haettenschweiler","Arial Narrow",sans-serif;
@@ -124,14 +134,14 @@
     font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.02em;
     color:var(--tinta-2); background:var(--superficie); border:1px solid var(--borde);
     border-radius:999px; padding:9px 17px 9px 14px; }
-  .cupo i{ width:8px; height:8px; border-radius:50%; background:#1a9e4b; flex:0 0 auto;
-    box-shadow:0 0 0 4px rgba(26,158,75,.16); }
+  .cupo i{ width:8px; height:8px; border-radius:50%; background:var(--menta); flex:0 0 auto;
+    box-shadow:0 0 0 4px var(--menta-piel); }
   .cupo b{ font-weight:600; color:var(--tinta); }
   /* El latido dice «esto está vivo», no adorna. Se para si molesta. */
   @media (prefers-reduced-motion:no-preference){
     .cupo i{ animation:latir 2.4s var(--curva-larga) infinite; }
-    @keyframes latir{ 0%,100%{ box-shadow:0 0 0 4px rgba(26,158,75,.16); }
-                      50%{ box-shadow:0 0 0 7px rgba(26,158,75,.06); } }
+    @keyframes latir{ 0%,100%{ box-shadow:0 0 0 4px rgba(78,222,163,.55); }
+                      50%{ box-shadow:0 0 0 8px rgba(78,222,163,.16); } }
   }
   .boton{ display:inline-flex; align-items:center; gap:9px; font-size:15.5px; font-weight:600;
     padding:14px 26px; border-radius:999px; text-decoration:none; color:#fff;
@@ -496,7 +506,7 @@
   .chip-g{ font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em;
     text-transform:uppercase; border-radius:999px; padding:6px 13px; white-space:nowrap; }
   .chip-g.cerrado{ background:var(--rojo-piel); color:#c0392b; }
-  .chip-g.abierto{ background:var(--verde-piel); color:#0f8a5f; }
+  .chip-g.abierto{ background:var(--verde-piel); color:var(--p-verde); }
   .fot-g{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
   .fot-g i{ display:block; aspect-ratio:4/3; border-radius:8px; }
   .fot-g .gris{ background:#dedad6; }

@@ -276,7 +276,7 @@ pagina("ficha-google.html","Ficha de Google en condiciones", """
         <span class="sello-f"><span class="pto"></span>Como queda</span>
         <div class="simula">
           <div class="nom">Bar Sant Ramon</div>
-          <div class="est">Bar de tapas · Viladecans<br><b style="color:#0f8a5f">Abierto</b> · cierra a las 23:30</div>
+          <div class="est">Bar de tapas · Viladecans<br><b style="color:var(--p-verde)">Abierto</b> · cierra a las 23:30</div>
           <div class="fot"><i></i><i></i><i></i><i></i></div>
         </div>
         <p style="font-size:14.5px;color:#1f5240;margin-top:14px">Horario real, incluidos festivos. Fotos del local, de la barra y de dos platos. Carta enlazada, botón de llamar y de cómo llegar. <strong>Las reseñas contestadas una a una.</strong></p>

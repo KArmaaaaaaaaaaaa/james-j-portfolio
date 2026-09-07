@@ -6,8 +6,11 @@
     --tinta:#131316; --tinta-2:#56545a; --tinta-3:#8b8890;
     --naranja:#fe4a23; --fuego:linear-gradient(104deg,#fe4a23,#ff812e);
     --violeta:#774dff; --naranja-piel:#ffeae4;
-    --p-azul:#1b6ef3; --p-verde:#0f8a5f; --p-rosa:#d6337f; --p-ambar:#a86a00; --p-cian:#0b7d8f;
-    --verde-piel:#e3f3ea; --rojo:#c0392b; --rojo-piel:#fbe9e6;
+    /* Verde y azul salidos de las seis pantallas de Stitch. Además el verde
+       anterior (#0f8a5f) daba 4,36:1 sobre blanco y el mínimo son 4,5. */
+    --p-azul:#2563eb; --p-verde:#007d55; --p-rosa:#d6337f; --p-ambar:#a86a00; --p-cian:#0b7d8f;
+    --menta:#4edea3; --menta-piel:#bdffdb;
+    --verde-piel:#e8f6ef; --rojo:#c0392b; --rojo-piel:#fbe9e6;
     --display:"Bebas Neue","Arial Narrow",sans-serif;
     --texto:"Outfit",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
