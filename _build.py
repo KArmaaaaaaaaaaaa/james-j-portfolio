@@ -19,10 +19,11 @@ SISTEMA = (BASE / "_sistema.css").read_text(encoding="utf-8")
 IDIOMA = "es" if len(sys.argv) > 1 and sys.argv[1] == "es" else "en"
 SALIDA = BASE / "es" if IDIOMA == "es" else BASE
 
-FUENTES = ("https://fonts.googleapis.com/css2?"
-  "family=Oswald:wght@300;400;500;600"
-  "&family=Hanken+Grotesk:wght@300;400;500;600;700"
-  "&family=IBM+Plex+Mono:wght@400;500;600&display=swap")
+# Las páginas en castellano se escriben en /es/, así que todo lo que no sea
+# HTML vive un nivel más arriba.
+A = "../" if IDIOMA == "es" else ""
+FUENTES = (BASE / "_fuentes.css").read_text(encoding="utf-8").replace(
+    "url(fuentes/", f"url({A}fuentes/")
 
 # ── Menú ───────────────────────────────────────────────────────────────
 NAV = [
@@ -37,6 +38,15 @@ NAV = [
 def t(en, es):
     """Un texto en los dos idiomas."""
     return en if IDIOMA == "en" else es
+
+def euros(entero, dec="00"):
+    """5574 -> «5,574.00 €» en inglés, «5.574,00 €» en castellano."""
+    miles = f"{entero:,}".replace(",", "." if IDIOMA == "es" else ",")
+    coma = "," if IDIOMA == "es" else "."
+    return f"{miles}{coma}{dec}\u00a0€"
+
+def num(n):
+    return f"{n:,}".replace(",", "." if IDIOMA == "es" else ",")
 
 DEMO = "https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev"
 CORREO = "jamesjoelbenavides2004@gmail.com"
@@ -57,19 +67,40 @@ document.querySelectorAll('.sube').forEach(el=>{
    dispara nunca y la página se queda en blanco para siempre. */
 setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
 
-const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
-if(btn&&panel){btn.addEventListener('click',()=>{
-  const abierto=btn.getAttribute('aria-expanded')==='true';
-  btn.setAttribute('aria-expanded',String(!abierto));panel.hidden=abierto;});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){
-    btn.setAttribute('aria-expanded','false');panel.hidden=true;btn.focus();}});}
+const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel'),
+      velo=document.getElementById('menuVelo');
+if(btn&&panel){
+  const cerrar=(devolver)=>{
+    if(panel.hidden)return;
+    btn.setAttribute('aria-expanded','false');panel.hidden=true;
+    if(velo)velo.hidden=true;
+    document.body.classList.remove('menu-abierto');
+    if(devolver)btn.focus();};
+  const abrir=()=>{
+    btn.setAttribute('aria-expanded','true');panel.hidden=false;
+    if(velo)velo.hidden=false;
+    document.body.classList.add('menu-abierto');};
+  btn.addEventListener('click',()=>{panel.hidden?abrir():cerrar(false);});
+  /* Tocar el velo cierra. Es el gesto que se hace primero en un móvil, y sin
+     esto la única salida era volver a acertarle al botón. */
+  if(velo)velo.addEventListener('click',()=>cerrar(false));
+  /* Pulsar una entrada del índice cierra el panel además de navegar: si el
+     destino es un ancla de la misma página, la navegación no recarga nada y
+     el menú se quedaba abierto tapando justo lo que se acababa de pedir. */
+  panel.addEventListener('click',e=>{if(e.target.closest('a'))cerrar(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrar(true);});
+  /* Y si la ventana cambia de tamaño hasta el escritorio, el panel abierto se
+     queda flotando sobre una barra que ya enseña todos los enlaces. */
+  window.addEventListener('resize',()=>{if(window.innerWidth>1080)cerrar(false);});}
 """
 
 def barra(actual):
     enlaces = "".join(
       f'<a class="solo-ancho" href="{h}"{" aria-current=\'page\'" if h==actual else ""}>{d[IDIOMA]}</a>'
       for h, d in NAV if h != actual or True)
-    movil = "".join(f'<a href="{h}">{d[IDIOMA]}</a>' for h, d in NAV)
+    movil = "".join(
+      f'<a href="{h}"{" aria-current=\'page\'" if h == actual else ""}>{d[IDIOMA]}</a>'
+      for h, d in NAV)
     return f"""
 <nav class="barra" aria-label="{t('Main','Principal')}">
   <a class="marca" href="index.html">James J Projects</a>
@@ -81,6 +112,7 @@ def barra(actual):
       stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
   </button>
 </nav>
+<div class="menu-velo" id="menuVelo" hidden></div>
 <div class="menu-panel" id="menuPanel" hidden>{movil}
   <a href="mailto:{CORREO}">{t('Talk to me','Hablamos')}</a></div>"""
 
@@ -91,9 +123,9 @@ PIE = f"""
       <span class="marca-pie">James J Projects</span>
       <span class="spec">{t('Barcelona and Hamburg · remote','Barcelona y Hamburgo · en remoto')}</span>
     </div>
-    <p class="spec pie-nota">{t(
-      'Hand-built. No template, no framework, nothing loaded from a third party except the fonts.',
-      'Hecho a mano. Sin plantilla, sin framework y sin nada de terceros salvo las tipografías.')}</p>
+    <p class="nota pie-nota">{t(
+      'Hand-built. No template, no framework, no tracking, and nothing at all loaded from a third party — the typefaces are served from here.',
+      'Hecho a mano. Sin plantilla, sin framework, sin rastreo y sin nada de terceros: las tipografías se sirven desde aquí.')}</p>
   </div>
 </footer>"""
 
@@ -106,16 +138,23 @@ def pagina(archivo, titulo, descripcion, cuerpo, css_extra="", js_extra=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{titulo}</title>
 <meta name="description" content="{descripcion}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FUENTES}">
+<link rel="preload" href="{A}fuentes/hanken-grotesk-300-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{A}fuentes/oswald-400-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+<noscript><style>.sube{{opacity:1!important;transform:none!important}}
+.titular .linea > i,.firma,.cupo,.acciones{{opacity:1!important;transform:none!important;animation:none!important}}
+/* Sin JS nadie pone `.dentro`, y la factura y el embudo son contenido, no
+   adorno: se quedarían invisibles para siempre. */
+.factura .lin,.factura .sum,.factura .tot,.factura .de{{opacity:1!important;transform:none!important;animation:none!important}}
+.embudo .via > i{{transform:scaleX(1)!important;animation:none!important}}</style></noscript>
 <style>
+{FUENTES}
 {SISTEMA}
 {CHASIS}
 {css_extra}
 </style>
 </head>
 <body>
+<a class="saltar" href="#principal">{t('Skip to the content','Saltar al contenido')}</a>
 {barra(archivo)}
 {cuerpo}
 {PIE}
@@ -144,25 +183,115 @@ CHASIS = """
 .barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
 .barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
 .barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
-.menu-btn{display:none;background:none;border:0;padding:8px;cursor:pointer;
-  color:var(--tinta)}
+/* El botón vive en los dos tamaños: en estrecho es la única forma de llegar al
+   índice, y en ancho acompaña a los enlaces porque el sitio tiene seis páginas
+   y la barra solo enseña las que caben. */
+.menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
+  color:var(--tinta);transition:transform var(--micro) var(--curva),
+  color var(--rapido) var(--curva)}
+.menu-btn:hover{color:var(--fuego-texto)}
+.menu-btn:active{transform:scale(.94)}
 .menu-btn svg{width:21px;height:21px;display:block}
-.menu-panel{position:fixed;z-index:49;top:66px;left:50%;transform:translateX(-50%);
+.menu-btn svg path{transition:transform var(--rapido) var(--curva)}
+/* Abierto, las tres barras se convierten en una equis sin cambiar de marcado. */
+.menu-btn[aria-expanded="true"] svg{transform:rotate(90deg)}
+@media(hover:none){.menu-btn:hover{color:var(--tinta)}}
+
+/* El velo: sin él, en el móvil la única manera de cerrar era acertarle otra vez
+   al botón. Tocar fuera es el gesto que la gente hace primero. */
+.menu-velo{position:fixed;inset:0;z-index:48;background:rgba(13,13,15,.32);
+  backdrop-filter:blur(2px);animation:velo var(--rapido) var(--curva) both}
+.menu-velo[hidden]{display:none}
+@keyframes velo{from{opacity:0}to{opacity:1}}
+
+.menu-panel{position:fixed;z-index:49;top:66px;left:50%;
   width:calc(100vw - 32px);max-width:420px;background:var(--blanco);
-  border:1px solid var(--hilo);padding:8px;display:grid}
+  border:1px solid var(--hilo);padding:8px;display:grid;
+  /* Seis entradas más «Hablamos» no caben en un móvil apaisado: que el panel
+     tenga su propio scroll en vez de salirse por abajo de la pantalla. */
+  max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;
+  transform:translateX(-50%);
+  animation:panel var(--normal) var(--entrada) both}
+@keyframes panel{from{opacity:0;transform:translateX(-50%) translateY(-10px)}
+                 to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .menu-panel a{font-family:var(--mono);font-size:12px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;color:var(--tinta);
-  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo)}
+  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo);
+  transition:background var(--rapido) var(--curva),
+             padding-left var(--rapido) var(--curva)}
+.menu-panel a:hover{background:var(--hueco);padding-left:22px}
 .menu-panel a:last-child{border-bottom:0}
-@media(max-width:1080px){.barra .solo-ancho{display:none}.menu-btn{display:block}}
-@media(min-width:1081px){.menu-panel{display:none!important}}
+.menu-panel a[aria-current]{background:var(--hueco);color:var(--fuego-texto)}
+@media(hover:none){.menu-panel a:hover{background:none;padding-left:16px}}
+/* Sin esta línea el panel sale abierto: `display:grid` de la regla de clase
+   gana por especificidad al `[hidden]{display:none}` de la hoja del
+   navegador, y el atributo `hidden` del marcado no pinta nada. */
+.menu-panel[hidden]{display:none}
+/* Mientras el panel está abierto el fondo no se mueve: en el móvil, hacer
+   scroll con el índice delante desplazaba la página por detrás y el menú se
+   quedaba flotando encima de un sitio distinto del que se dejó. */
+body.menu-abierto{overflow:hidden}
+@media(max-width:1080px){.barra .solo-ancho{display:none}}
+@media(prefers-reduced-motion:reduce){
+  .menu-panel,.menu-velo{animation:none}}
 @media(hover:none){.barra a:not(.marca):hover{background:none;color:var(--tinta-2)}}
 
 .pie{border-top:1px solid var(--tinta);padding:34px 0 54px;margin-top:0}
 .pie-fila{display:flex;justify-content:space-between;align-items:baseline;
   gap:20px;flex-wrap:wrap}
 .marca-pie{font-family:var(--display);font-size:20px;text-transform:uppercase}
-.pie-nota{margin-top:16px;letter-spacing:.14em;line-height:1.9}
+.pie-nota{margin-top:16px}
+
+/* ── El mundo: la pieza cromada, su sombra dura y sus destellos ─────
+   Vive en el chasis, no en la portada: si solo aparece en una página no es
+   un mundo, es un adorno. En estrecho no se esconde, se muda a la esquina y
+   se sale del plano, que es lo que hace una lámina de aerografía. */
+.plate{position:relative;overflow:hidden}
+.plate > .env{position:relative;z-index:1}
+.pieza{position:absolute;z-index:0;pointer-events:none;
+  right:-34px;bottom:-42px;width:118px;height:156px;
+  transform:rotate(-8deg);box-shadow:16px 16px 0 rgba(0,0,0,.32)}
+@media(min-width:1080px){
+  .pieza{right:6%;bottom:auto;top:50%;width:184px;height:244px;
+    transform:translateY(-50%) rotate(-8deg);
+    box-shadow:24px 24px 0 rgba(0,0,0,.32)}}
+.pieza .chispa{--chispa:64px;left:52%;top:27%}
+/* El margen lateral de una franja solo existe por encima de 1440 px; por
+   debajo, un destello al 33% cae sobre el párrafo. Así que por defecto van a
+   las esquinas y solo bajan al margen cuando hay margen. */
+.plate .chispa.a{--chispa:72px;left:89%;top:7%;bottom:auto}
+.plate .chispa.b{--chispa:44px;left:9%;bottom:8%;top:auto}
+@media(min-width:1440px){
+  .plate .chispa.a{--chispa:104px;left:5%;top:26%}
+  .plate .chispa.b{--chispa:60px;left:10%;bottom:20%}}
+@media(prefers-reduced-motion:no-preference){
+  .plate > .chispa{animation:brillar 3.6s var(--curva) infinite}
+  .plate > .chispa.b{animation-delay:1.2s}
+  @keyframes brillar{0%,74%,100%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+                     84%{opacity:1;transform:translate(-50%,-50%) scale(1)}}}
+
+/* Pasos numerados y ficha de hechos. Viven aquí y no en el CSS de una
+   página porque los usan dos: en caso-factura.html los pasos salían sin
+   rejilla y en ficha-google.html los hechos salían sin bordes. */
+.pasos{border-top:1px solid var(--tinta);margin-top:12px}
+.paso{display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;
+  padding:26px 0;border-bottom:1px solid var(--tinta)}
+.paso .n{font-family:var(--display);font-size:30px;line-height:.9;
+  color:var(--tinta-3)}
+.paso h3{margin-bottom:8px}
+.paso p{font-size:15.5px;color:var(--tinta-2);font-weight:300}
+@media(max-width:560px){.paso{grid-template-columns:32px 1fr;gap:14px}}
+
+.hechos{display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--hilo-cobalto);margin-top:48px}
+.hechos > div{padding:18px 16px 0 0;border-right:1px solid var(--hilo-cobalto)}
+.hechos > div:last-child{border-right:0}
+.hechos .dato{font-family:var(--display);font-size:clamp(21px,2.8vw,34px);
+  line-height:1;text-transform:uppercase;color:#fff;margin-top:9px}
+@media(max-width:760px){.hechos{grid-template-columns:1fr 1fr}
+  .hechos > div:nth-child(2){border-right:0}
+  .hechos > div:nth-child(-n+2){border-bottom:1px solid var(--hilo-cobalto);
+    padding-bottom:16px}}
 
 /* La portada: la única que empieza pegada arriba */
 .portada{padding:132px 0 0}
@@ -171,6 +300,9 @@ CHASIS = """
 
 # ═══════════════════════════ 1. PORTADA ═══════════════════════════════
 CSS_HOME = """
+/* La portada pide más presencia que el resto de páginas: es lo primero y a
+   veces lo único que alguien mira. Sube solo aquí, no en los h1 del resto. */
+.portada .titular{font-size:clamp(40px,9.4vw,132px);letter-spacing:-.015em}
 .titular .linea{display:block;overflow:hidden;padding-bottom:.2em}
 .titular .linea > i{display:block;font-style:normal;transform:translateY(105%);
   opacity:0;animation:subir 640ms var(--expo) both}
@@ -185,36 +317,73 @@ CSS_HOME = """
   animation:trazar 560ms var(--curva) 700ms both}
 @keyframes trazar{to{transform:scaleX(1)}}
 
-.firma{margin-top:32px;display:grid;gap:11px;max-width:38rem;
-  border-left:1px solid var(--fuego);padding-left:18px;
+.firma{margin-top:36px;display:grid;gap:13px;max-width:42rem;
+  border-left:2px solid var(--fuego);padding-left:22px;
   animation:aparecer 560ms var(--entrada) 300ms both}
+.firma .guia{font-size:clamp(19px,2.1vw,23.5px);line-height:1.5;
+  color:var(--tinta-2)}
 @keyframes aparecer{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.cupo{display:inline-flex;align-items:center;gap:10px;margin-top:24px;
-  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;border:1px solid var(--tinta);padding:10px 17px;
-  animation:aparecer 560ms var(--entrada) 380ms both}
-.cupo i{width:7px;height:7px;border-radius:50%;background:var(--verde);flex:0 0 auto}
+.cupo{display:inline-flex;align-items:center;gap:11px;margin-top:26px;
+  font-family:var(--display);font-size:15px;font-weight:500;letter-spacing:.05em;
+  text-transform:uppercase;border:1px solid var(--tinta);padding:11px 19px;
+  animation:aparecer 560ms var(--entrada) 380ms both;
+  transition:transform var(--rapido) var(--curva),
+             box-shadow var(--rapido) var(--curva)}
+.cupo:hover{transform:translateY(-2px);box-shadow:5px 5px 0 var(--tinta)}
+@media(hover:none){.cupo:hover{transform:none;box-shadow:none}}
+.cupo i{width:8px;height:8px;background:var(--verde);flex:0 0 auto;
+  box-shadow:0 0 0 3px rgba(0,125,85,.18)}
+/* El punto respira: dice «hay hueco ahora», y un punto quieto no lo dice. */
 @media(prefers-reduced-motion:no-preference){
-  .cupo i{animation:latir 2.6s var(--curva) infinite}
-  @keyframes latir{0%,100%{box-shadow:0 0 0 3px rgba(0,125,85,.22)}
-                   50%{box-shadow:0 0 0 7px rgba(0,125,85,.05)}}}
+  .cupo i{animation:latir 2.8s var(--curva) infinite}
+  @keyframes latir{0%,100%{box-shadow:0 0 0 3px rgba(0,125,85,.18)}
+                   50%{box-shadow:0 0 0 6px rgba(0,125,85,.10)}}}
 .acciones{animation:aparecer 560ms var(--entrada) 460ms both}
+
+/* La lámina de la portada. El titular ocupa la izquierda y la derecha se
+   quedaba en blanco: esto es lo que la llena, y es el mismo objeto que
+   reaparece en cada franja azul. Se retira en cuanto le quitaría sitio al
+   texto, no antes. */
+.lamina{display:none}
+@media(min-width:1120px){
+  .portada{position:relative}
+  .portada > *{position:relative;z-index:1}
+  .lamina{display:block;position:absolute;z-index:0;pointer-events:none;
+    right:8px;top:74px;width:284px;height:496px;
+    animation:aparecer 640ms var(--entrada) 220ms both}
+  .lamina .placa{position:absolute;inset:0;transform:rotate(5deg);
+    box-shadow:22px 22px 0 var(--tinta)}
+  .lamina .plano{position:absolute;left:-58px;top:96px;width:196px;height:352px;
+    background:var(--cobalto);transform:rotate(-6deg)}
+  .lamina .chispa{--chispa:96px;left:56%;top:23%}
+  .lamina .chispa.baja{--chispa:52px;left:22%;top:71%}}
+@media(prefers-reduced-motion:no-preference){
+  .lamina .chispa{animation:brillar 4.4s var(--curva) 1s infinite}
+  .lamina .chispa.baja{animation-delay:2.6s}}
 
 /* Las cantidades son la interfaz: la tarifa es el objeto más grande de su
    región y los dígitos guardan su sitio. */
 .tarifas{display:grid;grid-template-columns:repeat(4,1fr);
   border:1px solid var(--tinta);margin-top:72px}
 .tarifas > a{padding:24px 20px 26px;border-right:1px solid var(--tinta);
-  text-decoration:none;color:inherit;display:block;
-  transition:background var(--rapido) var(--curva)}
+  text-decoration:none;color:inherit;display:block;position:relative;
+  transition:background var(--rapido) var(--curva),
+             transform var(--rapido) var(--curva),
+             box-shadow var(--rapido) var(--curva)}
 .tarifas > a:last-child{border-right:0}
-.tarifas > a:hover{background:var(--blanco)}
+.tarifas > a:hover{background:var(--blanco);transform:translateY(-3px);
+  box-shadow:7px 7px 0 var(--tinta);z-index:1}
+.tarifas > a:active{transform:translateY(-1px);box-shadow:3px 3px 0 var(--tinta)}
+/* El rótulo de la flecha avanza con la tarjeta, que es lo que se ha pulsado. */
+.tarifas > a .ir{transition:transform var(--rapido) var(--curva)}
+.tarifas > a:hover .ir{transform:translateX(5px)}
 .tarifas .que{font-size:15px;color:var(--tinta-2);margin-top:12px;font-weight:300;
   max-width:none}
-.tarifas .ir{font-family:var(--mono);font-size:10px;font-weight:600;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--fuego-texto);
+.tarifas .ir{font-family:var(--display);font-size:14px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--fuego-texto);
   margin-top:14px;display:block}
-@media(hover:none){.tarifas > a:hover{background:transparent}}
+@media(hover:none){.tarifas > a:hover{background:transparent;transform:none;
+  box-shadow:none}.tarifas > a:hover .ir{transform:none}}
 @media(max-width:900px){.tarifas{grid-template-columns:1fr 1fr}
   .tarifas > a:nth-child(2){border-right:0}
   .tarifas > a:nth-child(-n+2){border-bottom:1px solid var(--tinta)}}
@@ -222,46 +391,70 @@ CSS_HOME = """
   .tarifas > a{border-right:0;border-bottom:1px solid var(--tinta)}
   .tarifas > a:last-child{border-bottom:0}}
 
-/* Plate: la pieza cromada con su sombra dura y su destello */
-.pieza{position:absolute;right:6%;top:50%;
-  transform:translateY(-50%) rotate(-8deg);width:184px;height:244px;
-  box-shadow:24px 24px 0 rgba(0,0,0,.32);display:none}
-@media(min-width:1080px){.pieza{display:block}}
-.pieza .chispa{left:52%;top:27%}
-.plate{position:relative;overflow:hidden}
-.plate .chispa.a{left:12%;top:24%}
-.plate .chispa.b{left:33%;bottom:20%;top:auto}
-@media(prefers-reduced-motion:no-preference){
-  .plate > .chispa{animation:brillar 3.6s var(--curva) infinite}
-  .plate > .chispa.b{animation-delay:1.2s}
-  @keyframes brillar{0%,74%,100%{opacity:0;transform:scale(.5)}
-                     84%{opacity:1;transform:scale(1)}}}
-
-.hechos{display:grid;grid-template-columns:repeat(4,1fr);
-  border-top:1px solid var(--hilo-cobalto);margin-top:48px}
-.hechos > div{padding:18px 16px 0 0;border-right:1px solid var(--hilo-cobalto)}
-.hechos > div:last-child{border-right:0}
-.hechos .dato{font-family:var(--display);font-size:clamp(21px,2.8vw,34px);
-  line-height:1;text-transform:uppercase;color:#fff;margin-top:9px}
-@media(max-width:760px){.hechos{grid-template-columns:1fr 1fr}
-  .hechos > div:nth-child(2){border-right:0}
-  .hechos > div:nth-child(-n+2){border-bottom:1px solid var(--hilo-cobalto);
-    padding-bottom:16px}}
 
 .prueba{display:grid;gap:38px;align-items:center;margin-top:20px}
-@media(min-width:900px){.prueba{grid-template-columns:.9fr 1.1fr;gap:64px}}
+@media(min-width:900px){.prueba{grid-template-columns:288px minmax(0,1fr);gap:72px}}
 .grandota{font-family:var(--display);font-size:clamp(56px,9vw,124px);line-height:.86;
   letter-spacing:-.02em}
 .cero{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:12px;
   font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   border:1px solid var(--fuego-texto);color:var(--fuego-texto);padding:7px 13px}
-.ticket{aspect-ratio:3/4;border:1px solid var(--tinta);background:var(--blanco);
-  padding:26px;display:grid;align-content:start;gap:9px;
-  box-shadow:18px 18px 0 var(--hueco)}
-.ticket i{display:block;height:8px;background:var(--hueco)}
-.ticket i.corta{width:54%}
-.ticket .corte{height:1px;background:var(--tinta);margin:14px 0 4px}
-.ticket .total{height:20px;width:44%;background:var(--tinta);margin-left:auto}
+/* La factura de agosto, con sus cifras de verdad. Antes aquí había barras
+   grises simulando un papel: enseñaba la forma de una factura y ninguna de las
+   cuentas, que es justo lo único que había que demostrar. Los datos fiscales
+   —quién factura, a quién, matrícula e IBAN— van tapados en negro, y se ve que
+   están tapados a propósito. */
+.factura{width:100%;max-width:340px;justify-self:start;
+  border:1px solid var(--tinta);background:var(--blanco);
+  padding:22px 22px 24px;display:grid;align-content:start;
+  box-shadow:14px 14px 0 var(--tinta);font-family:var(--mono);font-size:11.5px;
+  color:var(--tinta-2);line-height:1.5}
+.factura .cab{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:12px;border-bottom:1px solid var(--tinta);padding-bottom:12px}
+.factura .rot{font-family:var(--display);font-size:17px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--tinta);line-height:1}
+.factura .serie-f{text-align:right;font-size:10.5px;color:var(--tinta-3);
+  white-space:nowrap}
+.factura .tapado{display:inline-block;height:9px;background:var(--tinta);
+  vertical-align:middle;opacity:.86}
+.factura .de{padding:11px 0;border-bottom:1px dashed var(--hilo);
+  display:grid;gap:6px}
+.factura .et{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--tinta-3)}
+.factura .lin{display:grid;grid-template-columns:1fr auto;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--hilo)}
+.factura .lin .u{font-size:10px;color:var(--tinta-3);display:block}
+.factura .lin .im{color:var(--tinta);white-space:nowrap;align-self:center}
+.factura .sum{display:grid;grid-template-columns:1fr auto;gap:10px;
+  padding:5px 0;font-size:11px}
+.factura .sum:first-of-type{padding-top:11px}
+.factura .sum .im{color:var(--tinta);white-space:nowrap}
+.factura .sum.resta .im{color:var(--fuego-texto)}
+.factura .tot{display:grid;grid-template-columns:1fr auto;gap:10px;
+  align-items:baseline;margin-top:11px;padding-top:12px;
+  border-top:1px solid var(--tinta)}
+.factura .tot .et{align-self:center}
+.factura .tot .im{font-family:var(--display);font-size:26px;color:var(--tinta);
+  line-height:1;letter-spacing:.01em}
+@media(max-width:900px){.factura{max-width:100%;font-size:12px}}
+
+/* Entra línea a línea, como se lee una factura: de arriba abajo. El escalonado
+   arranca cuando el bloque entra en pantalla, no al cargar, y para a los 60 ms
+   por línea para que la última no llegue tardísimo. */
+@media(prefers-reduced-motion:no-preference){
+  .factura .lin,.factura .sum,.factura .tot,.factura .de{opacity:0;
+    transform:translateY(9px)}
+  .factura.dentro .lin,.factura.dentro .sum,.factura.dentro .tot,
+  .factura.dentro .de{animation:lin var(--normal) var(--entrada) both}
+  .factura.dentro .de{animation-delay:40ms}
+  .factura.dentro .lin:nth-of-type(1){animation-delay:120ms}
+  .factura.dentro .lin:nth-of-type(2){animation-delay:180ms}
+  .factura.dentro .lin:nth-of-type(3){animation-delay:240ms}
+  .factura.dentro .sum:nth-of-type(1){animation-delay:300ms}
+  .factura.dentro .sum:nth-of-type(2){animation-delay:340ms}
+  .factura.dentro .sum:nth-of-type(3){animation-delay:380ms}
+  .factura.dentro .tot{animation-delay:440ms}
+  @keyframes lin{to{opacity:1;transform:none}}}
 
 .obras{border-top:1px solid var(--tinta);margin-top:8px}
 .obra{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;
@@ -283,19 +476,25 @@ pagina("index.html",
   t("Hand-built websites, Google Business Profiles and a menu that lives on the table. Closed prices, said up front.",
     "Webs hechas a mano, fichas de Google y una carta que vive en la mesa. Precios cerrados y dichos de antemano."),
 f"""
-<main>
+<main id="principal">
 <div class="env">
   <header class="portada">
+    <span class="lamina" aria-hidden="true">
+      <span class="plano"></span>
+      <span class="placa cromo"></span>
+      <span class="chispa"></span>
+      <span class="chispa baja"></span>
+    </span>
     <h1 class="titular">
-      <span class="linea"><i>{t("Found on","Que te")}</i></span>
-      <span class="linea"><i>{t("Google.","encuentren")} <span class="apagado">{t("","en Google")}</span></i></span>
+      <span class="linea"><i>{t("Found","Que te")}</i></span>
+      <span class="linea"><i><span class="apagado">{t("on Google.","encuentren en Google")}</span></i></span>
       <span class="linea"><i><em class="subrayado">{t("Walked into.","y entren por la puerta")}</em></i></span>
     </h1>
     <div class="firma">
       <span class="spec">James J Benavides</span>
       <p class="guia">{t(
-        "I build the website and put the Google profile in order for bars, garages and neighbourhood shops. I work remotely, so it makes no difference where you are.",
-        "Hago la web y pongo en orden la ficha de Google de bares, talleres y tiendas de barrio. Trabajo en remoto, así que da igual dónde estés.")}</p>
+        "I build the website and put the Google profile in order for bars, garages and corner shops — the ones somebody finds on a phone at nine at night, deciding where to go. I work remotely, so where you are changes nothing.",
+        "Hago la web y pongo en orden la ficha de Google de bares, talleres y tiendas de barrio: los negocios que alguien busca en el móvil a las nueve de la noche, decidiendo dónde ir. Trabajo en remoto, así que da igual dónde estés.")}</p>
     </div>
     <div class="cupo"><i></i>{t("Two jobs at a time","Cojo dos encargos a la vez")}</div>
     <div class="acciones">
@@ -306,25 +505,25 @@ f"""
     <div class="tarifas">
       <a href="ficha-google.html">
         <div class="precio">150–300 €<small>{t("one-off","una vez")}</small></div>
-        <h3>{t("Google profile","Ficha de Google")}</h3>
+        <h2 class="titulo-menor">{t("Google profile","Ficha de Google")}</h2>
         <p class="que">{t("The first thing anyone sees when they look you up. Usually still shows last summer's hours.",
           "Lo primero que ve quien te busca. Suele tener el horario del verano pasado.")}</p>
         <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
       <a href="precios.html">
         <div class="precio">400–900 €<small>{t("closed price","precio cerrado")}</small></div>
-        <h3>{t("Full website","Web completa")}</h3>
+        <h2 class="titulo-menor">{t("Full website","Web completa")}</h2>
         <p class="que">{t("One page done properly, not six done badly. Written, not filled in.",
           "Una página bien hecha, no seis mal hechas. Escrita, no rellenada.")}</p>
         <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
       <a href="carta-nfc.html">
         <div class="precio">120 €<small>{t("up to 20 tables","hasta 20 mesas")}</small></div>
-        <h3>{t("Menu on the table","Carta en la mesa")}</h3>
+        <h2 class="titulo-menor">{t("Menu on the table","Carta en la mesa")}</h2>
         <p class="que">{t("A sticker per table. Tap the phone, the menu opens. Change a price and it changes everywhere.",
           "Una pegatina por mesa. Acercas el móvil y sale la carta. Cambias un precio y cambia en todas.")}</p>
         <span class="ir">{t("See it live →","Verlo funcionando →")}</span></a>
       <a href="caso-factura.html">
         <div class="precio">250 €<small>{t("+ 20 € a month","+ 20 € al mes")}</small></div>
-        <h3>{t("Photo to invoice","De la foto a la factura")}</h3>
+        <h2 class="titulo-menor">{t("Photo to invoice","De la foto a la factura")}</h2>
         <p class="que">{t("Send a photo of the day sheet, get the invoice as a PDF with VAT and withholding done.",
           "Mandas la foto de la libreta y sale la factura en PDF, con IVA e IRPF hechos.")}</p>
         <span class="ir">{t("Read the case →","Leer el caso →")}</span></a>
@@ -338,9 +537,9 @@ f"""
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">{t("A website is not<br>a printed leaflet","Una web no es<br>un folleto")}</h2>
-    <p class="guia sube" style="margin-top:26px">{t(
-      "A leaflet is printed once and goes stale. A website gets changed on a Tuesday afternoon because you raised the price of the set menu, and by Wednesday it is right. <b>What I hand you can be changed without calling me.</b>",
-      "Un folleto se imprime una vez y se queda viejo. Una web se cambia el martes por la tarde porque has subido el menú, y el miércoles ya está bien. <b>Lo que te entrego se puede cambiar sin llamarme.</b>")}</p>
+    <p class="guia sube grande" style="margin-top:28px">{t(
+      "A leaflet is printed once and starts going stale that same afternoon. A website gets changed on a Tuesday because you put the set menu up to fourteen euros, and by Wednesday it is right everywhere anyone looks. <b>What I hand you can be changed without calling me, and without paying me twice.</b>",
+      "Un folleto se imprime una vez y empieza a quedarse viejo esa misma tarde. Una web se cambia un martes porque has subido el menú a catorce euros, y el miércoles ya está bien en todas partes donde alguien mire. <b>Lo que te entrego se puede cambiar sin llamarme y sin pagarme dos veces.</b>")}</p>
     <div class="hechos sube">
       <div><span class="spec">{t("Owner","Dueño")}</span><div class="dato">{t("You","Tú")}</div></div>
       <div><span class="spec">{t("Template","Plantilla")}</span><div class="dato">{t("None","Ninguna")}</div></div>
@@ -353,14 +552,40 @@ f"""
 <section class="papel-sec">
   <div class="env">
     <div class="prueba">
-      <div class="ticket sube" aria-hidden="true">
-        <i></i><i class="corta"></i><i></i><i class="corta"></i><i></i>
-        <div class="corte"></div><div class="total"></div>
-      </div>
+      <figure class="factura sube" style="margin:0">
+        <div class="cab">
+          <span class="rot">{t("Invoice","Factura")}</span>
+          <span class="serie-f">Nº 2026/08/001<br>{t("31 August 2026","31 de agosto de 2026")}</span>
+        </div>
+        <div class="de">
+          <div><span class="et">{t("From","De")}</span><br>
+            <i class="tapado" style="width:118px"></i></div>
+          <div><span class="et">{t("Billed to","Facturar a")}</span><br>
+            <i class="tapado" style="width:96px"></i></div>
+        </div>
+        <div class="lin"><span>{t("Barcelona","Barcelona")}
+          <span class="u">{t("14 days","14 días")} · {euros(215)}</span></span>
+          <span class="im">{euros(3010)}</span></div>
+        <div class="lin"><span>{t("Outside routes","Rutas externas")}
+          <span class="u">{t("7 days","7 días")} · {euros(225)}</span></span>
+          <span class="im">{euros(1575)}</span></div>
+        <div class="lin"><span>{t("Second delivery","2ª entrega")}
+          <span class="u">{t("2 extras","2 extras")} · {euros(30)}</span></span>
+          <span class="im">{euros(60)}</span></div>
+        <div class="sum"><span>{t("Net","Base imponible")}</span>
+          <span class="im">{euros(4645)}</span></div>
+        <div class="sum"><span>{t("VAT 21%","IVA 21 %")}</span>
+          <span class="im">{euros(975,"45")}</span></div>
+        <div class="sum resta"><span>{t("Withholding 1%","Retención IRPF 1 %")}</span>
+          <span class="im">−{euros(46,"45")}</span></div>
+        <div class="tot"><span class="et">{t("Total","Total")}</span>
+          <span class="im">{euros(5574)}</span></div>
+      </figure>
       <div class="sube">
-        <span class="spec">{t("August 2026 · a real invoice","Agosto de 2026 · una factura real")}</span>
-        <div class="grandota" style="margin-top:14px">5.574,00&nbsp;€</div>
-        <div class="cero">{t("0.00 € difference","0,00 € de diferencia")}</div>
+        <div class="grandota">{euros(5574)}</div>
+        <span class="spec" style="margin-top:16px">{t(
+          "August 2026 · a real invoice","Agosto de 2026 · una factura real")}</span>
+        <div class="cero">{t(f"{euros(0)} difference", f"{euros(0)} de diferencia")}</div>
         <p class="guia" style="margin-top:22px">{t(
           "Twenty-one days written by hand in a notebook. The invoice the system produced came out identical, to the cent, to the one issued by hand. <b>This is the only real proof on this site; everything else is an honest demo and says so.</b>",
           "Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano. <b>Es la única prueba real de este sitio; lo demás son demos honestas y lo dicen.</b>")}</p>
@@ -399,6 +624,9 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">{t("Tell me about<br>the business","Cuéntame<br>el negocio")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(
@@ -414,8 +642,20 @@ f"""
 
 # ═══════════════════════════ 2. PRECIOS ═══════════════════════════════
 CSS_PRECIOS = """
-.tarjeta{border:1px solid var(--tinta);padding:28px;display:grid;
-  align-content:start;gap:0}
+/* En rejilla, las celdas se estiran a la altura de la fila y la tarjeta con
+   menos puntos se quedaba con un palmo de blanco muerto debajo de su lista.
+   En columna flexible, el pie se empuja al fondo con `margin-top:auto` y las
+   dos tarjetas de una fila terminan a la misma altura, con la misma línea. */
+.tarjeta{border:1px solid var(--tinta);padding:28px;display:flex;
+  flex-direction:column;gap:0}
+.pie-t{margin-top:auto;padding-top:20px;display:flex;flex-wrap:wrap;
+  align-items:baseline;justify-content:space-between;gap:12px}
+.pie-t .ir-t{font-family:var(--display);font-size:14px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--fuego-texto);
+  text-decoration:none;white-space:nowrap;
+  transition:transform var(--rapido) var(--curva)}
+.pie-t .ir-t:hover{transform:translateX(5px)}
+@media(hover:none){.pie-t .ir-t:hover{transform:none}}
 .rejilla{display:grid;gap:0;border:1px solid var(--tinta);margin-top:14px}
 .rejilla > .tarjeta{border:0;border-bottom:1px solid var(--tinta)}
 .rejilla > .tarjeta:last-child{border-bottom:0}
@@ -425,15 +665,16 @@ CSS_PRECIOS = """
     border-right:1px solid var(--tinta)}
   .rejilla > .tarjeta:nth-child(2n){border-right:0}
   .rejilla > .tarjeta:nth-last-child(-n+2){border-bottom:0}}
-.tarjeta h3{margin:16px 0 10px}
+.tarjeta h2{margin:16px 0 10px}
 .tarjeta .que{color:var(--tinta-2);font-weight:300;font-size:15.5px}
 .lista{list-style:none;padding:18px 0 0;margin:18px 0 0;
   border-top:1px solid var(--hilo);display:grid;gap:9px}
 .lista li{font-size:14.5px;color:var(--tinta-2);padding-left:17px;position:relative}
 .lista li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;
   background:var(--fuego)}
-.aviso-t{margin-top:18px;padding-top:16px;border-top:1px solid var(--hilo);
-  font-size:13.5px;color:var(--tinta-3);line-height:1.6}
+.aviso-t{font-size:13.5px;color:var(--tinta-3);line-height:1.6;
+  flex:1 1 15rem;min-width:0;margin:0}
+.pie-t{border-top:1px solid var(--hilo);margin-top:auto}
 .faq{border-top:1px solid var(--tinta);margin-top:56px}
 .faq > div{padding:26px 0;border-bottom:1px solid var(--hilo)}
 .faq h3{margin-bottom:10px}
@@ -442,18 +683,21 @@ CSS_PRECIOS = """
 
 def tarjeta(precio, unidad, titulo, que, puntos, nota="", destacada=False):
     lis = "".join(f"<li>{x}</li>" for x in puntos)
+    aviso = f'<p class="aviso-t">{nota}</p>' if nota else '<span></span>'
     return f"""<div class="tarjeta{' destacada' if destacada else ''}">
     <div class="precio">{precio}<small>{unidad}</small></div>
-    <h3>{titulo}</h3><p class="que">{que}</p>
+    <h2 class="titulo-menor">{titulo}</h2><p class="que">{que}</p>
     <ul class="lista">{lis}</ul>
-    {f'<p class="aviso-t">{nota}</p>' if nota else ''}</div>"""
+    <div class="pie-t">{aviso}
+      <a class="ir-t" href="mailto:{CORREO}">{t("Ask for this →","Pedirlo →")}</a>
+    </div></div>"""
 
 pagina("precios.html",
   t("Pricing — James J Projects","Precios — James J Projects"),
   t("Closed prices, written down. What each service costs and what it covers.",
     "Precios cerrados y por escrito. Qué cuesta cada servicio y qué incluye."),
 f"""
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px">
   <div class="env">
     <h1>{t("What it costs,<br>and why","Lo que cuesta,<br>y por qué")}</h1>
@@ -515,6 +759,9 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">{t("Half up front,<br>half when you like it","La mitad al empezar,<br>la mitad cuando te gusta")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(
@@ -570,11 +817,11 @@ CSS_NFC = """
 .onda{position:absolute;left:62%;bottom:12%;width:66px;height:66px;
   transform:translateX(-50%);border:2px solid var(--fuego);opacity:0}
 .movil{position:relative;z-index:2;width:122px;height:226px;background:var(--tinta);
-  padding:7px;box-shadow:0 18px 42px rgba(0,0,0,.4)}
+  padding:7px;box-shadow:14px 14px 0 rgba(0,0,0,.42)}
 .movil .pantalla{width:100%;height:100%;background:var(--blanco);overflow:hidden;
   position:relative}
 .cartita{position:absolute;inset:0;padding:9px;opacity:0}
-.cartita .cab{height:32px;background:var(--fuego);margin-bottom:8px;display:grid;
+.cartita .cab{height:32px;background:var(--fuego-fondo);margin-bottom:8px;display:grid;
   place-items:center;color:#fff;font-family:var(--mono);font-size:7px;
   letter-spacing:.14em}
 .cartita .ln{height:7px;background:var(--hueco);margin-bottom:5px}
@@ -595,14 +842,6 @@ CSS_NFC = """
 @media(prefers-reduced-motion:reduce){
   .movil{transform:translate(-64px,-16px) rotate(-3deg)}.cartita{opacity:1}}
 
-.pasos{border-top:1px solid var(--tinta);margin-top:12px}
-.paso{display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;
-  padding:26px 0;border-bottom:1px solid var(--tinta)}
-.paso .n{font-family:var(--display);font-size:30px;line-height:.9;
-  color:var(--tinta-3)}
-.paso h3{margin-bottom:8px}
-.paso p{font-size:15.5px;color:var(--tinta-2);font-weight:300}
-@media(max-width:560px){.paso{grid-template-columns:32px 1fr;gap:14px}}
 """
 
 pagina("carta-nfc.html",
@@ -610,7 +849,7 @@ pagina("carta-nfc.html",
   t("A sticker on every table opens your live menu. Change a price once and it changes on every table.",
     "Una pegatina en cada mesa abre tu carta. Cambias un precio una vez y cambia en todas."),
 f"""
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px;padding-bottom:0">
   <div class="env">
     <h1>{t("The menu,<br>stuck to the table","La carta,<br>pegada en la mesa")}</h1>
@@ -668,6 +907,9 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">{t("One menu,<br>two doors","Una carta,<br>dos puertas")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(
@@ -691,8 +933,8 @@ CSS_RESTO = """
 .tit-g,.sub-g,.res-g{overflow-wrap:anywhere}
 .lado.antes{background:var(--hueco)}
 .lado.desp{background:var(--blanco);clip-path:inset(0 0 0 52%)}
-.rot-lado{position:absolute;top:12px;font-family:var(--mono);font-size:9.5px;
-  font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+.rot-lado{position:absolute;top:12px;font-family:var(--mono);font-size:11px;
+  font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   background:var(--tinta);color:var(--papel);padding:4px 9px;z-index:3}
 .rot-lado.izq{left:12px}.rot-lado.der{right:12px}
 .ficha-g{background:var(--blanco);border:1px solid var(--hilo);padding:18px;
@@ -702,7 +944,7 @@ CSS_RESTO = """
   gap:12px;flex-wrap:wrap}
 .tit-g{font-size:18px;font-weight:600;color:#1a0dab;white-space:normal}
 .sub-g{font-size:13px;color:var(--tinta-2)}
-.chip-g{font-family:var(--mono);font-size:10px;font-weight:600;padding:4px 9px;
+.chip-g{font-family:var(--mono);font-size:11px;font-weight:600;padding:4px 9px;
   letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .chip-g.cerrado{background:#fbe9e6;color:#a3271a}
 .chip-g.abierto{background:#e8f6ef;color:var(--verde)}
@@ -711,7 +953,7 @@ CSS_RESTO = """
   aspect-ratio:4/3;object-fit:cover;background:var(--hueco)}
 .res-g{font-size:12.5px;color:var(--tinta-2)}
 .acc-g{display:flex;gap:6px;flex-wrap:wrap}
-.acc-g span{font-family:var(--mono);font-size:10px;font-weight:600;
+.acc-g span{font-family:var(--mono);font-size:11px;font-weight:600;
   border:1px solid var(--azul);color:var(--azul);padding:4px 8px;
   letter-spacing:.06em}
 .tirador{position:absolute;top:0;bottom:0;left:52%;width:2px;background:var(--tinta);
@@ -719,7 +961,9 @@ CSS_RESTO = """
 .tirador::after{content:"";position:absolute;top:50%;left:50%;width:38px;height:38px;
   transform:translate(-50%,-50%);background:var(--tinta);border-radius:50%}
 .tirador span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  z-index:1;color:var(--papel);font-size:13px;font-family:var(--mono)}
+  z-index:1;color:var(--papel);display:block}
+.tirador svg{width:22px;height:12px;display:block}
+.tirador:focus-visible{outline:2px solid var(--fuego-fondo);outline-offset:4px}
 @media(max-width:760px){.fot-g{grid-template-columns:repeat(3,1fr)}
   .fot-g > :nth-child(4){display:none}.lado{padding:12px}
   .rot-lado{top:8px}.rot-lado.izq{left:8px}.rot-lado.der{right:8px}}
@@ -733,6 +977,47 @@ CSS_RESTO = """
 @media(max-width:700px){.numeros{grid-template-columns:1fr}
   .numeros > div{border-right:0;border-bottom:1px solid var(--tinta)}
   .numeros > div:last-child{border-bottom:0}}
+/* La serie de doce semanas. Barras planas de cobalto, filo duro y una sola
+   marcada: la que cuenta la historia. Sin librería y sin imagen. */
+.serie{border:1px solid var(--tinta);border-top:0;padding:26px 22px 18px}
+.serie .barras{display:grid;grid-template-columns:repeat(12,1fr);gap:7px;
+  align-items:end;height:172px}
+.serie .barras > i{display:block;background:var(--cobalto);
+  transform-origin:bottom;animation:crecer 520ms var(--expo) both}
+.serie .barras > i.cima{background:var(--fuego)}
+@keyframes crecer{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.serie .eje{display:flex;justify-content:space-between;margin-top:10px;
+  border-top:1px solid var(--hilo);padding-top:9px}
+.serie figcaption{margin-top:14px}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+  white-space:nowrap}
+@media(max-width:560px){.serie .barras{height:132px;gap:4px}}
+@media(prefers-reduced-motion:reduce){.serie .barras > i{animation:none}}
+/* Las tres cifras de arriba estaban sueltas: 1.284, 96 y 212 no dicen nada
+   hasta que se ven una contra otra. El embudo las pone en escala y enseña lo
+   único que un dueño quiere saber: de los que te buscan, cuántos hacen algo. */
+.embudo{border:1px solid var(--tinta);border-top:0;padding:24px 22px 20px}
+.embudo .paso-e{display:grid;grid-template-columns:1fr;gap:7px;
+  padding:13px 0;border-bottom:1px solid var(--hilo)}
+.embudo .paso-e:last-of-type{border-bottom:0}
+.embudo .fila-e{display:flex;align-items:baseline;justify-content:space-between;
+  gap:14px}
+.embudo .qui{font-size:15px;color:var(--tinta-2);font-weight:300}
+.embudo .cifra{font-family:var(--display);font-size:clamp(22px,3.2vw,32px);
+  line-height:1;color:var(--tinta);white-space:nowrap}
+.embudo .cifra small{font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.1em;color:var(--tinta-3);margin-left:9px}
+.embudo .via{height:13px;background:var(--hueco);overflow:hidden}
+.embudo .via > i{display:block;height:100%;background:var(--cobalto);
+  transform-origin:left;transform:scaleX(0)}
+.embudo .paso-e:last-of-type .via > i{background:var(--fuego)}
+.embudo.dentro .via > i{animation:medir 520ms var(--expo) both}
+@keyframes medir{to{transform:scaleX(1)}}
+.embudo .paso-e:nth-of-type(2) .via > i{animation-delay:110ms}
+.embudo .paso-e:nth-of-type(3) .via > i{animation-delay:220ms}
+@media(prefers-reduced-motion:reduce){
+  .embudo .via > i{transform:scaleX(1);animation:none}}
+
 .aviso-demo{border:1px solid var(--fuego-texto);padding:18px 20px;margin-top:32px;
   font-size:15px;color:var(--tinta-2);font-weight:300}
 .aviso-demo b{color:var(--fuego-texto);font-weight:600}
@@ -742,31 +1027,33 @@ JS_COMPARAR = """
 const c=document.querySelector('.comparar');
 if(c){const d=c.querySelector('.lado.desp'),t=c.querySelector('.tirador');
 let arrastra=false;
+const antes=c.dataset.antes||'before',desp=c.dataset.desp||'after';
 const poner=x=>{const r=c.getBoundingClientRect();
   const p=Math.min(96,Math.max(4,((x-r.left)/r.width)*100));
-  d.style.clipPath=`inset(0 0 0 ${p}%)`;t.style.left=p+'%';};
+  d.style.clipPath=`inset(0 0 0 ${p}%)`;t.style.left=p+'%';
+  const n=Math.round(p);t.setAttribute('aria-valuenow',String(n));
+  t.setAttribute('aria-valuetext',n+'% '+antes+', '+(100-n)+'% '+desp);};
+/* El tirador arranca en el 52% que pinta el CSS: si no se siembra, la primera
+   flecha lo manda al 52 otra vez en vez de moverlo. */
+t.style.left='52%';poner(c.getBoundingClientRect().left+.52*c.getBoundingClientRect().width);
 const inicio=e=>{arrastra=true;poner((e.touches?e.touches[0]:e).clientX);};
 const mover=e=>{if(!arrastra)return;poner((e.touches?e.touches[0]:e).clientX);};
 const fin=()=>{arrastra=false;};
 c.addEventListener('mousedown',inicio);c.addEventListener('touchstart',inicio,{passive:true});
 window.addEventListener('mousemove',mover);window.addEventListener('touchmove',mover,{passive:true});
 window.addEventListener('mouseup',fin);window.addEventListener('touchend',fin);
-t.setAttribute('tabindex','0');t.setAttribute('role','slider');
-t.setAttribute('aria-label','Comparar antes y despues');
-t.setAttribute('aria-valuemin','0');t.setAttribute('aria-valuemax','100');
-t.setAttribute('aria-valuenow','52');
 t.addEventListener('keydown',e=>{
-  const actual=parseFloat(t.style.left)||52;
-  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();
-    const p=Math.min(96,Math.max(4,actual+(e.key==='ArrowLeft'?-4:4)));
-    d.style.clipPath=`inset(0 0 0 ${p}%)`;t.style.left=p+'%';
-    t.setAttribute('aria-valuenow',String(Math.round(p)));}});}
+  const actual=parseFloat(t.style.left)||52;let p=null;
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight') p=actual+(e.key==='ArrowLeft'?-4:4);
+  else if(e.key==='Home') p=4; else if(e.key==='End') p=96;
+  if(p===null)return;
+  e.preventDefault();poner(c.getBoundingClientRect().left+(p/100)*c.getBoundingClientRect().width);});}
 """
 
 def ficha_google(estado, hrs, fotos, resenas, acciones):
     return f"""<div class="ficha-g">
-      <div class="fila-g"><div><div class="tit-g">Bar Sant Ramon</div>
-        <div class="sub-g">{t("Tapas bar · Viladecans","Bar de tapas · Viladecans")}<br>{hrs}</div></div>
+      <div class="fila-g"><div><div class="tit-g">Bar Marina</div>
+        <div class="sub-g">{t("Tapas bar · sample profile","Bar de tapas · ficha de ejemplo")}<br>{hrs}</div></div>
         {estado}</div>
       <div class="fot-g">{fotos}</div>
       <div class="fila-g"><span class="res-g">{resenas}</span><div class="acc-g">{acciones}</div></div>
@@ -777,7 +1064,7 @@ pagina("ficha-google.html",
   t("The profile with the map beside it is the first thing a customer judges. Drag the bar and compare.",
     "La ficha que sale con el mapa al lado es lo primero que juzga un cliente. Mueve la barra y compara."),
 f"""
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px">
   <div class="env">
     <h1>{t("The same profile,<br>before and after","La misma ficha,<br>antes y después")}</h1>
@@ -786,34 +1073,59 @@ f"""
       "<b>Antes de entrar en tu web, la gente te ve en Google.</b> Esa ficha, la que sale con el mapa al lado, es lo primero que juzga un cliente. Y en ocho de cada diez negocios de barrio está con el horario de hace dos veranos y tres fotos borrosas hechas por otros.")}</p>
     <p class="spec" style="margin-top:22px;letter-spacing:.16em">{t("Drag the bar","Arrastra la barra")}</p>
 
-    <div class="comparar sube">
+    <div class="comparar sube"
+      data-antes="{t('before','antes')}" data-desp="{t('after','después')}">
       <span class="rot-lado izq">{t("Before","Antes")}</span>
       <span class="rot-lado der">{t("After","Después")}</span>
       <div class="lado antes">{ficha_google(
         f'<span class="chip-g cerrado">{t("Closed","Cerrado")}</span>',
         t("Says closed · opens at 8:00","Dice cerrado · abre a las 8:00"),
-        '<img src="img/mal-local.jpg" alt="" width="360" height="270" loading="lazy">'
-        '<img src="img/mal-barra.jpg" alt="" width="360" height="270" loading="lazy">'
-        '<i></i><i></i>',
+        f'<img src="{A}img/mal-local.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "The same photo of the room, dark and out of focus",
+           "La misma foto de la sala, oscura y desenfocada")}">'
+        f'<img src="{A}img/mal-barra.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "The same photo of the beer, washed out and blurred",
+           "La misma foto de la caña, lavada y movida")}">'
+        f'<i role="img" aria-label="{t("Empty photo slot","Hueco de foto vacío")}"></i>'
+        f'<i role="img" aria-label="{t("Empty photo slot","Hueco de foto vacío")}"></i>',
         t("6 reviews with no reply","Sin responder a 6 reseñas"), "")}</div>
       <div class="lado desp">{ficha_google(
         f'<span class="chip-g abierto">{t("Open","Abierto")}</span>',
         t("Open · closes at 23:30","Abierto · cierra a las 23:30"),
-        '<img src="img/bien-local.jpg" alt="" width="360" height="270" loading="lazy">'
-        '<img src="img/bien-barra.jpg" alt="" width="360" height="270" loading="lazy">'
-        '<img src="img/bien-plato.jpg" alt="" width="360" height="270" loading="lazy">'
-        '<img src="img/bien-tapa.jpg" alt="" width="360" height="270" loading="lazy">',
+        f'<img src="{A}img/bien-local.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "The room at night, the counter lit from behind",
+           "La sala de noche, con la barra iluminada por detrás")}">'
+        f'<img src="{A}img/bien-barra.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "A beer on an outdoor table, daylight",
+           "Una caña en una mesa de fuera, con luz de día")}">'
+        f'<img src="{A}img/bien-plato.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "A hand lifting a slice out of the pizza box",
+           "Una mano sacando una porción de la caja de pizza")}">'
+        f'<img src="{A}img/bien-tapa.jpg" width="360" height="270" loading="lazy" alt="{t(
+           "A bowl of chips on the counter",
+           "Un bol de patatas fritas sobre la barra")}">',
         t("6 reviews answered","6 reseñas contestadas"),
         f'<span>{t("Call","Llamar")}</span><span>{t("Directions","Cómo llegar")}</span><span>Web</span>')}</div>
-      <div class="tirador"><span>◀▶</span></div>
+      <div class="tirador" role="slider" tabindex="0"
+        aria-label="{t('Drag to compare the profile before and after','Arrastra para comparar la ficha antes y después')}"
+        aria-valuemin="0" aria-valuemax="100" aria-valuenow="52"
+        aria-valuetext="{t('52% before, 48% after','52% antes, 48% después')}"
+        ><span aria-hidden="true"><svg viewBox="0 0 22 12" fill="none"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+        stroke-linejoin="round"><path d="M6 2 2 6l4 4M16 2l4 4-4 4"/></svg></span></div>
     </div>
     <p class="guia" style="margin-top:20px;font-size:16px">{t(
       "Example business. What changes is not the design: it is that the hours are true, that you took the photos yourself, and that the reviews have been answered.",
       "Negocio de ejemplo. Lo que cambia no es el diseño: es que el horario sea el de verdad, que las fotos las hayas hecho tú y que las reseñas estén contestadas.")}</p>
+    <p class="nota" style="margin-top:14px">{t(
+      "About these photos: the four on the right are ordinary photographs. The two on the left are two of those same photographs, darkened and blurred on purpose — a neglected profile does not have different photos, it has these ones taken badly. Nothing here is computer-generated, because Google rejects generated photos on a business profile.",
+      "Sobre estas fotos: las cuatro de la derecha son fotografías normales. Las dos de la izquierda son dos de esas mismas fotografías, oscurecidas y desenfocadas a propósito — una ficha abandonada no tiene otras fotos, tiene estas mal hechas. Aquí no hay nada generado por ordenador, porque Google rechaza las fotos generadas en una ficha de negocio.")}</p>
   </div>
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
   <div class="env">
     <h2 class="sube">{t("What I actually do","Lo que hago de verdad")}</h2>
     <div class="hechos sube">
@@ -840,7 +1152,7 @@ pagina("caso-factura.html",
   t("Twenty-one handwritten days turned into an invoice that matched the hand-issued one exactly.",
     "Veintiuna jornadas escritas a mano convertidas en una factura idéntica a la emitida a mano."),
 f"""
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px">
   <div class="env">
     <h1>{t("Twenty-one days<br>in a notebook","Veintiuna jornadas<br>en una libreta")}</h1>
@@ -849,14 +1161,17 @@ f"""
       "Una autónoma del transporte factura a una empresa cada mes. Veintiuna jornadas escritas a mano: una fecha, una ruta y a veces una segunda entrega. Fin de mes era una tarde de sumar, y una suma mal hecha es dinero perdido o una factura que hay que rehacer.")}</p>
 
     <div class="numeros sube">
-      <div><span class="spec">{t("Invoice total","Total de la factura")}</span><div class="dato">5.574,00 €</div></div>
-      <div><span class="spec">{t("Difference vs. by hand","Diferencia con la de mano")}</span><div class="dato">0,00 €</div></div>
+      <div><span class="spec">{t("Invoice total","Total de la factura")}</span><div class="dato">{euros(5574)}</div></div>
+      <div><span class="spec">{t("Difference vs. by hand","Diferencia con la de mano")}</span><div class="dato">{euros(0)}</div></div>
       <div><span class="spec">{t("Time it now takes","Lo que tarda ahora")}</span><div class="dato">{t("1 minute","1 minuto")}</div></div>
     </div>
   </div>
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">{t("Why it was hard","Por qué era difícil")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(
@@ -902,7 +1217,7 @@ pagina("panel-demo.html",
   t("How many people looked you up and how many called. Demonstration figures, labelled as such.",
     "Cuánta gente te ha buscado y cuántos han llamado. Cifras de demostración, marcadas como tales."),
 f"""
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px">
   <div class="env">
     <h1>{t("Whether it is<br>working","Si está<br>funcionando")}</h1>
@@ -911,18 +1226,58 @@ f"""
       "Una web que no puedes medir es un gasto. Una que sí, es una decisión: sabes si valió la pena y sabes qué mes apretar. Una pantalla y sin palabras raras.")}</p>
 
     <div class="numeros sube">
-      <div><span class="spec">{t("Looked you up in 12 weeks","Te han buscado en 12 semanas")}</span><div class="dato">1.284</div></div>
+      <div><span class="spec">{t("Looked you up in 12 weeks","Te han buscado en 12 semanas")}</span><div class="dato">{num(1284)}</div></div>
       <div><span class="spec">{t("Called from the profile","Han llamado desde la ficha")}</span><div class="dato">96</div></div>
       <div><span class="spec">{t("Asked for directions","Han pedido cómo llegar")}</span><div class="dato">212</div></div>
     </div>
 
+    <figure class="serie sube" style="margin:0">
+      <div class="barras" aria-hidden="true"><i style="height:62.6%;animation-delay:0ms"></i><i style="height:69.5%;animation-delay:34ms"></i><i style="height:67.2%;animation-delay:68ms"></i><i style="height:74.0%;animation-delay:102ms"></i><i style="height:79.4%;animation-delay:136ms"></i><i style="height:75.6%;animation-delay:170ms"></i><i style="height:85.5%;animation-delay:204ms"></i><i style="height:90.1%;animation-delay:238ms"></i><i style="height:81.7%;animation-delay:272ms"></i><i style="height:96.2%;animation-delay:306ms"></i><i class="cima" style="height:100.0%;animation-delay:340ms"></i><i style="height:98.5%;animation-delay:374ms"></i></div>
+      <div class="eje">
+        <span class="spec">{t("12 weeks ago","Hace 12 semanas")}</span>
+        <span class="spec">{t("This week","Esta semana")}</span>
+      </div>
+      <figcaption class="nota">{t(
+        "Searches per week. The twelve bars add up to the " + num(1284) + " above; the tallest, week 11, is when the new photos went up. Read the exact figures in the table below.",
+        "Búsquedas por semana. Las doce barras suman las " + num(1284) + " de arriba; la más alta, la semana 11, es cuando se subieron las fotos nuevas. Las cifras exactas, en la tabla de abajo.")}</figcaption>
+      <table class="oculto"><caption>{t("Searches per week","Búsquedas por semana")}</caption>
+        <thead><tr><th>{t("Week","Semana")}</th><th>{t("Searches","Búsquedas")}</th></tr></thead>
+        <tbody><tr><td>1</td><td>82</td></tr><tr><td>2</td><td>91</td></tr><tr><td>3</td><td>88</td></tr><tr><td>4</td><td>97</td></tr><tr><td>5</td><td>104</td></tr><tr><td>6</td><td>99</td></tr><tr><td>7</td><td>112</td></tr><tr><td>8</td><td>118</td></tr><tr><td>9</td><td>107</td></tr><tr><td>10</td><td>126</td></tr><tr><td>11</td><td>131</td></tr><tr><td>12</td><td>129</td></tr></tbody></table>
+    </figure>
+
+    <figure class="embudo sube" style="margin:0">
+      <figcaption class="spec" style="margin-bottom:6px">{t(
+        "Of everyone who looked you up, in 12 weeks",
+        "De todos los que te buscaron, en 12 semanas")}</figcaption>
+      <div class="paso-e">
+        <div class="fila-e"><span class="qui">{t("Looked you up","Te buscaron")}</span>
+          <span class="cifra">{num(1284)}<small>100%</small></span></div>
+        <div class="via" aria-hidden="true"><i style="width:100%"></i></div>
+      </div>
+      <div class="paso-e">
+        <div class="fila-e"><span class="qui">{t("Asked for directions","Pidieron cómo llegar")}</span>
+          <span class="cifra">212<small>16,5%</small></span></div>
+        <div class="via" aria-hidden="true"><i style="width:16.5%"></i></div>
+      </div>
+      <div class="paso-e">
+        <div class="fila-e"><span class="qui">{t("Called you","Te llamaron")}</span>
+          <span class="cifra">96<small>7,5%</small></span></div>
+        <div class="via" aria-hidden="true"><i style="width:7.5%"></i></div>
+      </div>
+      <figcaption class="nota" style="margin-top:14px">{t(
+        "Seven and a half out of every hundred who find you pick up the phone. That is the number worth pushing, and the only one you can act on.",
+        "Siete de cada cien de los que te encuentran cogen el teléfono. Ese es el número que merece la pena mover, y el único sobre el que se puede actuar.")}</figcaption>
+    </figure>
+
     <div class="aviso-demo sube">{t(
-      "<b>The Bar Sant Ramon does not exist and these figures are invented.</b> They are here to show the format, not to boast about results. When it is your business they will be yours, and they will come out of your own Google profile.",
-      "<b>El «Bar Sant Ramon» no existe y estas cifras son inventadas.</b> Están aquí para enseñar el formato, no para presumir de resultados. Cuando sea tu negocio serán las tuyas y saldrán de tu ficha de Google.")}</div>
+      "<b>The Bar Marina does not exist and these figures are invented.</b> They are here to show the format, not to boast about results. When it is your business they will be yours, and they will come out of your own Google profile.",
+      "<b>El «Bar Marina» no existe y estas cifras son inventadas.</b> Están aquí para enseñar el formato, no para presumir de resultados. Cuando sea tu negocio serán las tuyas y saldrán de tu ficha de Google.")}</div>
   </div>
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
   <div class="env">
     <h2 class="sube">{t("Where the<br>numbers come from","De dónde salen<br>los números")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(

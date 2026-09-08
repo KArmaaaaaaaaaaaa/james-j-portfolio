@@ -11,7 +11,7 @@
   --curva:cubic-bezier(.4,0,.6,1);
   --entrada:cubic-bezier(.25,.1,.3,1);
   --expo:cubic-bezier(.16,1,.3,1);
-  --lento:560ms; --normal:320ms; --rapido:240ms; --micro:160ms;
+  --normal:320ms; --rapido:240ms; --micro:160ms;
 
   /* Papel. Frío, no crema: la lámina no es un libro viejo. */
   --papel:#f2f2f0; --blanco:#ffffff; --hueco:#e9e9e6;
@@ -37,7 +37,7 @@
 
   /* Acentos de servicio: cada oficio tiene el suyo, y solo aparece
      en su propia región. Contraste comprobado sobre papel. */
-  --verde:#007d55; --azul:#2563eb; --menta:#4edea3;
+  --verde:#007d55; --azul:#2563eb;
 
   --display:"Oswald","Arial Narrow",sans-serif;
   --texto:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
@@ -70,6 +70,15 @@ body{margin:0;background:var(--papel);color:var(--tinta);
 a{color:var(--fuego-texto);text-decoration-thickness:1px;text-underline-offset:.22em}
 :where(h1,h2,h3,.cifra,.dato,td,.precio){font-variant-numeric:tabular-nums}
 
+/* Lo primero que recibe el tabulador. Sin esto hay que pasar por los ocho
+   enlaces de la barra en cada página. */
+.saltar{position:fixed;z-index:100;top:16px;left:50%;
+  transform:translate(-50%,-160%);font-family:var(--mono);font-size:11px;
+  font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--tinta);color:var(--papel);text-decoration:none;
+  padding:13px 20px;transition:transform var(--rapido) var(--curva)}
+.saltar:focus{transform:translate(-50%,0)}
+
 .env{max-width:var(--ancho);margin:0 auto;padding:0 26px}
 @media(max-width:640px){.env{padding:0 18px}}
 
@@ -78,20 +87,28 @@ h1,h2,h3{margin:0;font-weight:500;font-family:var(--display);
   text-transform:uppercase;letter-spacing:-.015em;text-wrap:balance}
 h1{font-size:clamp(34px,8.4vw,112px);line-height:.9}
 h2{font-size:clamp(30px,5vw,68px);line-height:.94}
-h3{font-size:clamp(19px,2vw,25px);line-height:1.1;letter-spacing:-.005em}
+h3,.titulo-menor{font-size:clamp(19px,2vw,25px);line-height:1.1;
+  letter-spacing:-.005em}
 p{margin:0 0 1.05em;max-width:var(--medida)}
 p:last-child{margin-bottom:0}
 .guia{font-size:19px;font-weight:300;color:var(--tinta-2);max-width:var(--medida)}
+/* Para el párrafo que carga con el peso de una sección, no para el cuerpo. */
+.guia.grande{font-size:clamp(19px,2.1vw,24px);line-height:1.5}
 .guia b{font-weight:600;color:var(--tinta)}
 .plate .guia{color:var(--sobre-cobalto-2)}
 .plate .guia b{color:#fff}
 
 /* Ficha técnica: los rótulos van AL LADO del contenido o bajo un dato,
    nunca como etiqueta encima de un titular. Un titular se sostiene solo. */
-.spec{font-family:var(--mono);font-size:10px;font-weight:600;
-  letter-spacing:.26em;text-transform:uppercase;color:var(--tinta-3);
+.spec{font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-3);
   display:block}
 .plate .spec{color:var(--sobre-cobalto-2)}
+/* Letra pequeña que es una FRASE, no una etiqueta. El mono espaciado sirve
+   para dos palabras; para una línea entera hay que volver a la de lectura. */
+.nota{font-size:13.5px;line-height:1.7;font-weight:300;color:var(--tinta-3);
+  max-width:56ch}
+.plate .nota{color:var(--sobre-cobalto-2)}
 
 /* ── Plates: la inversión es la jerarquía ───────────────────────────
    Lo que manda invierte el color, no crece de tamaño. */
@@ -103,35 +120,49 @@ p:last-child{margin-bottom:0}
 .papel-sec{padding-block:clamp(72px,9vw,124px)}
 
 /* ── Cromado: bandas que cortan, no degradados que funden ────────── */
-.cromo{background:linear-gradient(104deg,
-  #e8eefc 0%,#ffffff 17%,#a8b8d8 18%,#dde5f6 34%,
-  #7f92b8 35%,#f2f6ff 52%,#9fb0d2 53%,#ffffff 72%,
-  #b9c6e2 73%,#e2e9f8 100%)}
+.cromo{background:linear-gradient(101deg,
+  #ccd7ed 0%,#f0f4ff 5%,#ffffff 6%,#f3f6ff 13%,
+  #93a6cb 14%,#bccae7 22%,#edf1fc 23%,#ffffff 31%,
+  #6b80ab 32%,#93a5ca 39%,#e2e9f8 40%,#ffffff 47%,
+  #a7b7da 48%,#f4f7ff 56%,#ffffff 63%,
+  #7d90b6 64%,#c6d2ec 72%,#ffffff 79%,
+  #9cadd0 80%,#e5ebf9 90%,#ffffff 100%)}
 
-/* Destello de cuatro puntas: dos barras cruzadas y nada más */
-.chispa{position:absolute;pointer-events:none;width:1px;height:1px}
-.chispa::before,.chispa::after{content:"";position:absolute;background:#fff;
-  left:50%;top:50%;transform:translate(-50%,-50%);opacity:.9}
-.chispa::before{width:46px;height:1.5px}
-.chispa::after{width:1.5px;height:46px}
+/* Destello de cuatro puntas. Los lados van hacia dentro: es lo que separa
+   una estrella de aerografía de una cruz. El tamaño se pasa por --chispa. */
+.chispa{position:absolute;pointer-events:none;
+  width:var(--chispa,72px);aspect-ratio:1;transform:translate(-50%,-50%)}
+.chispa::before{content:"";position:absolute;inset:0;background:#fff;
+  opacity:.92;clip-path:polygon(50% 0,54% 46%,100% 50%,54% 54%,
+    50% 100%,46% 54%,0 50%,46% 46%)}
 
 /* ── Botones: rectos, en mono, pegados entre sí ─────────────────── */
 .acciones{display:flex;flex-wrap:wrap;gap:0;margin-top:30px}
-.boton{font-family:var(--mono);font-size:12px;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
-  padding:17px 28px;border:1px solid var(--tinta);color:var(--tinta);
-  background:transparent;display:inline-block;cursor:pointer;
+/* En mono a 12px con .16em de tracking el rótulo se leía letra a letra y no
+   como una palabra. En la display, a más cuerpo y con el tracking bajado, se
+   lee de un vistazo y tiene la voz del resto del sitio. */
+.boton{font-family:var(--display);font-size:16px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;text-decoration:none;
+  padding:15px 28px;border:1px solid var(--tinta);color:var(--tinta);
+  background:transparent;display:inline-block;cursor:pointer;position:relative;
   transition:background var(--micro) var(--curva),color var(--micro) var(--curva),
-    transform var(--micro) var(--curva)}
+    transform var(--rapido) var(--curva),box-shadow var(--rapido) var(--curva)}
 .boton + .boton{border-left:0}
+@media(max-width:430px){
+  .acciones{display:grid;grid-template-columns:1fr}
+  .boton{text-align:center}
+  .boton + .boton{border-left:1px solid var(--tinta);border-top:0}
+  .plate .boton + .boton{border-left-color:var(--sobre-cobalto)}}
 .boton--lleno{background:var(--tinta);color:var(--papel)}
-.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
-.boton:active{transform:scale(.985)}
+.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo);
+  transform:translateY(-2px);box-shadow:5px 5px 0 var(--tinta);z-index:1}
+.plate .boton:hover{box-shadow:5px 5px 0 var(--cobalto-hondo)}
+.boton:active{transform:translateY(0) scale(.985);box-shadow:0 0 0 var(--tinta)}
 .plate .boton{border-color:var(--sobre-cobalto);color:var(--sobre-cobalto)}
 .plate .boton--lleno{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
 .plate .boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
 @media(hover:none){.boton:hover{background:transparent;color:var(--tinta);
-  border-color:var(--tinta)}
+  border-color:var(--tinta);transform:none;box-shadow:none}
   .boton--lleno:hover{background:var(--tinta);color:var(--papel)}
   .plate .boton:hover{background:transparent;color:var(--sobre-cobalto);
     border-color:var(--sobre-cobalto)}}
@@ -152,7 +183,12 @@ p:last-child{margin-bottom:0}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;
-    animation-iteration-count:1!important;transition-duration:.01ms!important;
+    animation-iteration-count:1!important;animation-delay:0s!important;
+    transition-duration:.01ms!important;transition-delay:0s!important;
     scroll-behavior:auto!important}
-  .sube{opacity:1!important;transform:none!important}
+  /* El !important de arriba deja la duración a cero pero NO el estado inicial:
+     lo que espera un observador o un `both` se queda invisible para siempre. */
+  .sube,.titular .linea > i,.firma,.cupo,.acciones{
+    opacity:1!important;transform:none!important}
+  .subrayado::after{transform:scaleX(1)!important}
 }

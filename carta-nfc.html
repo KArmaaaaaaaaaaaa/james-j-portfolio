@@ -5,10 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The menu, stuck to the table — James J Projects</title>
 <meta name="description" content="A sticker on every table opens your live menu. Change a price once and it changes on every table.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="preload" href="fuentes/hanken-grotesk-300-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fuentes/oswald-400-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+<noscript><style>.sube{opacity:1!important;transform:none!important}
+.titular .linea > i,.firma,.cupo,.acciones{opacity:1!important;transform:none!important;animation:none!important}
+/* Sin JS nadie pone `.dentro`, y la factura y el embudo son contenido, no
+   adorno: se quedarían invisibles para siempre. */
+.factura .lin,.factura .sum,.factura .tot,.factura .de{opacity:1!important;transform:none!important;animation:none!important}
+.embudo .via > i{transform:scaleX(1)!important;animation:none!important}</style></noscript>
 <style>
+/* Tipografías servidas desde aquí, no desde Google.
+   Se bajaron el 07/09/2026 de fonts.gstatic.com; las tres son SIL
+   Open Font License 1.1, que permite alojarlas. Solo van los
+   subconjuntos latin y latin-ext, y solo los pesos que se usan:
+   Oswald 400-500, Hanken Grotesk 300-600, IBM Plex Mono 400 y 600.
+   Motivo: el pie promete «nada de terceros» y con esto es cierto,
+   y de paso desaparecen dos conexiones antes del primer pintado. */
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:300 600;
+  font-display:swap;src:url(fuentes/hanken-grotesk-300-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:300 600;
+  font-display:swap;src:url(fuentes/hanken-grotesk-300-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;
+  font-display:swap;src:url(fuentes/ibm-plex-mono-400-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;
+  font-display:swap;src:url(fuentes/ibm-plex-mono-400-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;
+  font-display:swap;src:url(fuentes/ibm-plex-mono-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;
+  font-display:swap;src:url(fuentes/ibm-plex-mono-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Oswald';font-style:normal;font-weight:400 500;
+  font-display:swap;src:url(fuentes/oswald-400-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Oswald';font-style:normal;font-weight:400 500;
+  font-display:swap;src:url(fuentes/oswald-400-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+
 /* ═══════════════════════════════════════════════════════════════════
    James J Projects — sistema visual
    Aerografía japonesa de los 80 sobre chasis Apple.
@@ -22,7 +59,7 @@
   --curva:cubic-bezier(.4,0,.6,1);
   --entrada:cubic-bezier(.25,.1,.3,1);
   --expo:cubic-bezier(.16,1,.3,1);
-  --lento:560ms; --normal:320ms; --rapido:240ms; --micro:160ms;
+  --normal:320ms; --rapido:240ms; --micro:160ms;
 
   /* Papel. Frío, no crema: la lámina no es un libro viejo. */
   --papel:#f2f2f0; --blanco:#ffffff; --hueco:#e9e9e6;
@@ -48,7 +85,7 @@
 
   /* Acentos de servicio: cada oficio tiene el suyo, y solo aparece
      en su propia región. Contraste comprobado sobre papel. */
-  --verde:#007d55; --azul:#2563eb; --menta:#4edea3;
+  --verde:#007d55; --azul:#2563eb;
 
   --display:"Oswald","Arial Narrow",sans-serif;
   --texto:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
@@ -81,6 +118,15 @@ body{margin:0;background:var(--papel);color:var(--tinta);
 a{color:var(--fuego-texto);text-decoration-thickness:1px;text-underline-offset:.22em}
 :where(h1,h2,h3,.cifra,.dato,td,.precio){font-variant-numeric:tabular-nums}
 
+/* Lo primero que recibe el tabulador. Sin esto hay que pasar por los ocho
+   enlaces de la barra en cada página. */
+.saltar{position:fixed;z-index:100;top:16px;left:50%;
+  transform:translate(-50%,-160%);font-family:var(--mono);font-size:11px;
+  font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--tinta);color:var(--papel);text-decoration:none;
+  padding:13px 20px;transition:transform var(--rapido) var(--curva)}
+.saltar:focus{transform:translate(-50%,0)}
+
 .env{max-width:var(--ancho);margin:0 auto;padding:0 26px}
 @media(max-width:640px){.env{padding:0 18px}}
 
@@ -89,20 +135,28 @@ h1,h2,h3{margin:0;font-weight:500;font-family:var(--display);
   text-transform:uppercase;letter-spacing:-.015em;text-wrap:balance}
 h1{font-size:clamp(34px,8.4vw,112px);line-height:.9}
 h2{font-size:clamp(30px,5vw,68px);line-height:.94}
-h3{font-size:clamp(19px,2vw,25px);line-height:1.1;letter-spacing:-.005em}
+h3,.titulo-menor{font-size:clamp(19px,2vw,25px);line-height:1.1;
+  letter-spacing:-.005em}
 p{margin:0 0 1.05em;max-width:var(--medida)}
 p:last-child{margin-bottom:0}
 .guia{font-size:19px;font-weight:300;color:var(--tinta-2);max-width:var(--medida)}
+/* Para el párrafo que carga con el peso de una sección, no para el cuerpo. */
+.guia.grande{font-size:clamp(19px,2.1vw,24px);line-height:1.5}
 .guia b{font-weight:600;color:var(--tinta)}
 .plate .guia{color:var(--sobre-cobalto-2)}
 .plate .guia b{color:#fff}
 
 /* Ficha técnica: los rótulos van AL LADO del contenido o bajo un dato,
    nunca como etiqueta encima de un titular. Un titular se sostiene solo. */
-.spec{font-family:var(--mono);font-size:10px;font-weight:600;
-  letter-spacing:.26em;text-transform:uppercase;color:var(--tinta-3);
+.spec{font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-3);
   display:block}
 .plate .spec{color:var(--sobre-cobalto-2)}
+/* Letra pequeña que es una FRASE, no una etiqueta. El mono espaciado sirve
+   para dos palabras; para una línea entera hay que volver a la de lectura. */
+.nota{font-size:13.5px;line-height:1.7;font-weight:300;color:var(--tinta-3);
+  max-width:56ch}
+.plate .nota{color:var(--sobre-cobalto-2)}
 
 /* ── Plates: la inversión es la jerarquía ───────────────────────────
    Lo que manda invierte el color, no crece de tamaño. */
@@ -114,35 +168,49 @@ p:last-child{margin-bottom:0}
 .papel-sec{padding-block:clamp(72px,9vw,124px)}
 
 /* ── Cromado: bandas que cortan, no degradados que funden ────────── */
-.cromo{background:linear-gradient(104deg,
-  #e8eefc 0%,#ffffff 17%,#a8b8d8 18%,#dde5f6 34%,
-  #7f92b8 35%,#f2f6ff 52%,#9fb0d2 53%,#ffffff 72%,
-  #b9c6e2 73%,#e2e9f8 100%)}
+.cromo{background:linear-gradient(101deg,
+  #ccd7ed 0%,#f0f4ff 5%,#ffffff 6%,#f3f6ff 13%,
+  #93a6cb 14%,#bccae7 22%,#edf1fc 23%,#ffffff 31%,
+  #6b80ab 32%,#93a5ca 39%,#e2e9f8 40%,#ffffff 47%,
+  #a7b7da 48%,#f4f7ff 56%,#ffffff 63%,
+  #7d90b6 64%,#c6d2ec 72%,#ffffff 79%,
+  #9cadd0 80%,#e5ebf9 90%,#ffffff 100%)}
 
-/* Destello de cuatro puntas: dos barras cruzadas y nada más */
-.chispa{position:absolute;pointer-events:none;width:1px;height:1px}
-.chispa::before,.chispa::after{content:"";position:absolute;background:#fff;
-  left:50%;top:50%;transform:translate(-50%,-50%);opacity:.9}
-.chispa::before{width:46px;height:1.5px}
-.chispa::after{width:1.5px;height:46px}
+/* Destello de cuatro puntas. Los lados van hacia dentro: es lo que separa
+   una estrella de aerografía de una cruz. El tamaño se pasa por --chispa. */
+.chispa{position:absolute;pointer-events:none;
+  width:var(--chispa,72px);aspect-ratio:1;transform:translate(-50%,-50%)}
+.chispa::before{content:"";position:absolute;inset:0;background:#fff;
+  opacity:.92;clip-path:polygon(50% 0,54% 46%,100% 50%,54% 54%,
+    50% 100%,46% 54%,0 50%,46% 46%)}
 
 /* ── Botones: rectos, en mono, pegados entre sí ─────────────────── */
 .acciones{display:flex;flex-wrap:wrap;gap:0;margin-top:30px}
-.boton{font-family:var(--mono);font-size:12px;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
-  padding:17px 28px;border:1px solid var(--tinta);color:var(--tinta);
-  background:transparent;display:inline-block;cursor:pointer;
+/* En mono a 12px con .16em de tracking el rótulo se leía letra a letra y no
+   como una palabra. En la display, a más cuerpo y con el tracking bajado, se
+   lee de un vistazo y tiene la voz del resto del sitio. */
+.boton{font-family:var(--display);font-size:16px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;text-decoration:none;
+  padding:15px 28px;border:1px solid var(--tinta);color:var(--tinta);
+  background:transparent;display:inline-block;cursor:pointer;position:relative;
   transition:background var(--micro) var(--curva),color var(--micro) var(--curva),
-    transform var(--micro) var(--curva)}
+    transform var(--rapido) var(--curva),box-shadow var(--rapido) var(--curva)}
 .boton + .boton{border-left:0}
+@media(max-width:430px){
+  .acciones{display:grid;grid-template-columns:1fr}
+  .boton{text-align:center}
+  .boton + .boton{border-left:1px solid var(--tinta);border-top:0}
+  .plate .boton + .boton{border-left-color:var(--sobre-cobalto)}}
 .boton--lleno{background:var(--tinta);color:var(--papel)}
-.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
-.boton:active{transform:scale(.985)}
+.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo);
+  transform:translateY(-2px);box-shadow:5px 5px 0 var(--tinta);z-index:1}
+.plate .boton:hover{box-shadow:5px 5px 0 var(--cobalto-hondo)}
+.boton:active{transform:translateY(0) scale(.985);box-shadow:0 0 0 var(--tinta)}
 .plate .boton{border-color:var(--sobre-cobalto);color:var(--sobre-cobalto)}
 .plate .boton--lleno{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
 .plate .boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
 @media(hover:none){.boton:hover{background:transparent;color:var(--tinta);
-  border-color:var(--tinta)}
+  border-color:var(--tinta);transform:none;box-shadow:none}
   .boton--lleno:hover{background:var(--tinta);color:var(--papel)}
   .plate .boton:hover{background:transparent;color:var(--sobre-cobalto);
     border-color:var(--sobre-cobalto)}}
@@ -163,9 +231,14 @@ p:last-child{margin-bottom:0}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;
-    animation-iteration-count:1!important;transition-duration:.01ms!important;
+    animation-iteration-count:1!important;animation-delay:0s!important;
+    transition-duration:.01ms!important;transition-delay:0s!important;
     scroll-behavior:auto!important}
-  .sube{opacity:1!important;transform:none!important}
+  /* El !important de arriba deja la duración a cero pero NO el estado inicial:
+     lo que espera un observador o un `both` se queda invisible para siempre. */
+  .sube,.titular .linea > i,.firma,.cupo,.acciones{
+    opacity:1!important;transform:none!important}
+  .subrayado::after{transform:scaleX(1)!important}
 }
 
 
@@ -184,25 +257,115 @@ p:last-child{margin-bottom:0}
 .barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
 .barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
 .barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
-.menu-btn{display:none;background:none;border:0;padding:8px;cursor:pointer;
-  color:var(--tinta)}
+/* El botón vive en los dos tamaños: en estrecho es la única forma de llegar al
+   índice, y en ancho acompaña a los enlaces porque el sitio tiene seis páginas
+   y la barra solo enseña las que caben. */
+.menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
+  color:var(--tinta);transition:transform var(--micro) var(--curva),
+  color var(--rapido) var(--curva)}
+.menu-btn:hover{color:var(--fuego-texto)}
+.menu-btn:active{transform:scale(.94)}
 .menu-btn svg{width:21px;height:21px;display:block}
-.menu-panel{position:fixed;z-index:49;top:66px;left:50%;transform:translateX(-50%);
+.menu-btn svg path{transition:transform var(--rapido) var(--curva)}
+/* Abierto, las tres barras se convierten en una equis sin cambiar de marcado. */
+.menu-btn[aria-expanded="true"] svg{transform:rotate(90deg)}
+@media(hover:none){.menu-btn:hover{color:var(--tinta)}}
+
+/* El velo: sin él, en el móvil la única manera de cerrar era acertarle otra vez
+   al botón. Tocar fuera es el gesto que la gente hace primero. */
+.menu-velo{position:fixed;inset:0;z-index:48;background:rgba(13,13,15,.32);
+  backdrop-filter:blur(2px);animation:velo var(--rapido) var(--curva) both}
+.menu-velo[hidden]{display:none}
+@keyframes velo{from{opacity:0}to{opacity:1}}
+
+.menu-panel{position:fixed;z-index:49;top:66px;left:50%;
   width:calc(100vw - 32px);max-width:420px;background:var(--blanco);
-  border:1px solid var(--hilo);padding:8px;display:grid}
+  border:1px solid var(--hilo);padding:8px;display:grid;
+  /* Seis entradas más «Hablamos» no caben en un móvil apaisado: que el panel
+     tenga su propio scroll en vez de salirse por abajo de la pantalla. */
+  max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;
+  transform:translateX(-50%);
+  animation:panel var(--normal) var(--entrada) both}
+@keyframes panel{from{opacity:0;transform:translateX(-50%) translateY(-10px)}
+                 to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .menu-panel a{font-family:var(--mono);font-size:12px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;color:var(--tinta);
-  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo)}
+  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo);
+  transition:background var(--rapido) var(--curva),
+             padding-left var(--rapido) var(--curva)}
+.menu-panel a:hover{background:var(--hueco);padding-left:22px}
 .menu-panel a:last-child{border-bottom:0}
-@media(max-width:1080px){.barra .solo-ancho{display:none}.menu-btn{display:block}}
-@media(min-width:1081px){.menu-panel{display:none!important}}
+.menu-panel a[aria-current]{background:var(--hueco);color:var(--fuego-texto)}
+@media(hover:none){.menu-panel a:hover{background:none;padding-left:16px}}
+/* Sin esta línea el panel sale abierto: `display:grid` de la regla de clase
+   gana por especificidad al `[hidden]{display:none}` de la hoja del
+   navegador, y el atributo `hidden` del marcado no pinta nada. */
+.menu-panel[hidden]{display:none}
+/* Mientras el panel está abierto el fondo no se mueve: en el móvil, hacer
+   scroll con el índice delante desplazaba la página por detrás y el menú se
+   quedaba flotando encima de un sitio distinto del que se dejó. */
+body.menu-abierto{overflow:hidden}
+@media(max-width:1080px){.barra .solo-ancho{display:none}}
+@media(prefers-reduced-motion:reduce){
+  .menu-panel,.menu-velo{animation:none}}
 @media(hover:none){.barra a:not(.marca):hover{background:none;color:var(--tinta-2)}}
 
 .pie{border-top:1px solid var(--tinta);padding:34px 0 54px;margin-top:0}
 .pie-fila{display:flex;justify-content:space-between;align-items:baseline;
   gap:20px;flex-wrap:wrap}
 .marca-pie{font-family:var(--display);font-size:20px;text-transform:uppercase}
-.pie-nota{margin-top:16px;letter-spacing:.14em;line-height:1.9}
+.pie-nota{margin-top:16px}
+
+/* ── El mundo: la pieza cromada, su sombra dura y sus destellos ─────
+   Vive en el chasis, no en la portada: si solo aparece en una página no es
+   un mundo, es un adorno. En estrecho no se esconde, se muda a la esquina y
+   se sale del plano, que es lo que hace una lámina de aerografía. */
+.plate{position:relative;overflow:hidden}
+.plate > .env{position:relative;z-index:1}
+.pieza{position:absolute;z-index:0;pointer-events:none;
+  right:-34px;bottom:-42px;width:118px;height:156px;
+  transform:rotate(-8deg);box-shadow:16px 16px 0 rgba(0,0,0,.32)}
+@media(min-width:1080px){
+  .pieza{right:6%;bottom:auto;top:50%;width:184px;height:244px;
+    transform:translateY(-50%) rotate(-8deg);
+    box-shadow:24px 24px 0 rgba(0,0,0,.32)}}
+.pieza .chispa{--chispa:64px;left:52%;top:27%}
+/* El margen lateral de una franja solo existe por encima de 1440 px; por
+   debajo, un destello al 33% cae sobre el párrafo. Así que por defecto van a
+   las esquinas y solo bajan al margen cuando hay margen. */
+.plate .chispa.a{--chispa:72px;left:89%;top:7%;bottom:auto}
+.plate .chispa.b{--chispa:44px;left:9%;bottom:8%;top:auto}
+@media(min-width:1440px){
+  .plate .chispa.a{--chispa:104px;left:5%;top:26%}
+  .plate .chispa.b{--chispa:60px;left:10%;bottom:20%}}
+@media(prefers-reduced-motion:no-preference){
+  .plate > .chispa{animation:brillar 3.6s var(--curva) infinite}
+  .plate > .chispa.b{animation-delay:1.2s}
+  @keyframes brillar{0%,74%,100%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+                     84%{opacity:1;transform:translate(-50%,-50%) scale(1)}}}
+
+/* Pasos numerados y ficha de hechos. Viven aquí y no en el CSS de una
+   página porque los usan dos: en caso-factura.html los pasos salían sin
+   rejilla y en ficha-google.html los hechos salían sin bordes. */
+.pasos{border-top:1px solid var(--tinta);margin-top:12px}
+.paso{display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;
+  padding:26px 0;border-bottom:1px solid var(--tinta)}
+.paso .n{font-family:var(--display);font-size:30px;line-height:.9;
+  color:var(--tinta-3)}
+.paso h3{margin-bottom:8px}
+.paso p{font-size:15.5px;color:var(--tinta-2);font-weight:300}
+@media(max-width:560px){.paso{grid-template-columns:32px 1fr;gap:14px}}
+
+.hechos{display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--hilo-cobalto);margin-top:48px}
+.hechos > div{padding:18px 16px 0 0;border-right:1px solid var(--hilo-cobalto)}
+.hechos > div:last-child{border-right:0}
+.hechos .dato{font-family:var(--display);font-size:clamp(21px,2.8vw,34px);
+  line-height:1;text-transform:uppercase;color:#fff;margin-top:9px}
+@media(max-width:760px){.hechos{grid-template-columns:1fr 1fr}
+  .hechos > div:nth-child(2){border-right:0}
+  .hechos > div:nth-child(-n+2){border-bottom:1px solid var(--hilo-cobalto);
+    padding-bottom:16px}}
 
 /* La portada: la única que empieza pegada arriba */
 .portada{padding:132px 0 0}
@@ -225,11 +388,11 @@ p:last-child{margin-bottom:0}
 .onda{position:absolute;left:62%;bottom:12%;width:66px;height:66px;
   transform:translateX(-50%);border:2px solid var(--fuego);opacity:0}
 .movil{position:relative;z-index:2;width:122px;height:226px;background:var(--tinta);
-  padding:7px;box-shadow:0 18px 42px rgba(0,0,0,.4)}
+  padding:7px;box-shadow:14px 14px 0 rgba(0,0,0,.42)}
 .movil .pantalla{width:100%;height:100%;background:var(--blanco);overflow:hidden;
   position:relative}
 .cartita{position:absolute;inset:0;padding:9px;opacity:0}
-.cartita .cab{height:32px;background:var(--fuego);margin-bottom:8px;display:grid;
+.cartita .cab{height:32px;background:var(--fuego-fondo);margin-bottom:8px;display:grid;
   place-items:center;color:#fff;font-family:var(--mono);font-size:7px;
   letter-spacing:.14em}
 .cartita .ln{height:7px;background:var(--hueco);margin-bottom:5px}
@@ -250,18 +413,11 @@ p:last-child{margin-bottom:0}
 @media(prefers-reduced-motion:reduce){
   .movil{transform:translate(-64px,-16px) rotate(-3deg)}.cartita{opacity:1}}
 
-.pasos{border-top:1px solid var(--tinta);margin-top:12px}
-.paso{display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;
-  padding:26px 0;border-bottom:1px solid var(--tinta)}
-.paso .n{font-family:var(--display);font-size:30px;line-height:.9;
-  color:var(--tinta-3)}
-.paso h3{margin-bottom:8px}
-.paso p{font-size:15.5px;color:var(--tinta-2);font-weight:300}
-@media(max-width:560px){.paso{grid-template-columns:32px 1fr;gap:14px}}
 
 </style>
 </head>
 <body>
+<a class="saltar" href="#principal">Skip to the content</a>
 
 <nav class="barra" aria-label="Main">
   <a class="marca" href="index.html">James J Projects</a>
@@ -273,10 +429,11 @@ p:last-child{margin-bottom:0}
       stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
   </button>
 </nav>
-<div class="menu-panel" id="menuPanel" hidden><a href="index.html">Home</a><a href="precios.html">Pricing</a><a href="carta-nfc.html">Menu on the table</a><a href="ficha-google.html">Google profile</a><a href="caso-factura.html">Case</a><a href="panel-demo.html">Dashboard</a>
+<div class="menu-velo" id="menuVelo" hidden></div>
+<div class="menu-panel" id="menuPanel" hidden><a href="index.html">Home</a><a href="precios.html">Pricing</a><a href="carta-nfc.html" aria-current='page'>Menu on the table</a><a href="ficha-google.html">Google profile</a><a href="caso-factura.html">Case</a><a href="panel-demo.html">Dashboard</a>
   <a href="mailto:jamesjoelbenavides2004@gmail.com">Talk to me</a></div>
 
-<main>
+<main id="principal">
 <section class="papel-sec" style="padding-top:132px;padding-bottom:0">
   <div class="env">
     <h1>The menu,<br>stuck to the table</h1>
@@ -324,6 +481,9 @@ p:last-child{margin-bottom:0}
 </section>
 
 <section class="plate">
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
     <h2 class="sube">One menu,<br>two doors</h2>
     <p class="guia sube" style="margin-top:26px">What opens when the phone touches the table <b>is your website</b>. The same one that shows up on Google when somebody looks you up from home, and the same one you link from your social accounts. These are not two products: it is one, with a door in the customer's pocket and a door on the table.</p>
@@ -339,7 +499,7 @@ p:last-child{margin-bottom:0}
       <span class="marca-pie">James J Projects</span>
       <span class="spec">Barcelona and Hamburg · remote</span>
     </div>
-    <p class="spec pie-nota">Hand-built. No template, no framework, nothing loaded from a third party except the fonts.</p>
+    <p class="nota pie-nota">Hand-built. No template, no framework, no tracking, and nothing at all loaded from a third party — the typefaces are served from here.</p>
   </div>
 </footer>
 <script>
@@ -354,12 +514,31 @@ document.querySelectorAll('.sube').forEach(el=>{
    dispara nunca y la página se queda en blanco para siempre. */
 setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
 
-const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
-if(btn&&panel){btn.addEventListener('click',()=>{
-  const abierto=btn.getAttribute('aria-expanded')==='true';
-  btn.setAttribute('aria-expanded',String(!abierto));panel.hidden=abierto;});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){
-    btn.setAttribute('aria-expanded','false');panel.hidden=true;btn.focus();}});}
+const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel'),
+      velo=document.getElementById('menuVelo');
+if(btn&&panel){
+  const cerrar=(devolver)=>{
+    if(panel.hidden)return;
+    btn.setAttribute('aria-expanded','false');panel.hidden=true;
+    if(velo)velo.hidden=true;
+    document.body.classList.remove('menu-abierto');
+    if(devolver)btn.focus();};
+  const abrir=()=>{
+    btn.setAttribute('aria-expanded','true');panel.hidden=false;
+    if(velo)velo.hidden=false;
+    document.body.classList.add('menu-abierto');};
+  btn.addEventListener('click',()=>{panel.hidden?abrir():cerrar(false);});
+  /* Tocar el velo cierra. Es el gesto que se hace primero en un móvil, y sin
+     esto la única salida era volver a acertarle al botón. */
+  if(velo)velo.addEventListener('click',()=>cerrar(false));
+  /* Pulsar una entrada del índice cierra el panel además de navegar: si el
+     destino es un ancla de la misma página, la navegación no recarga nada y
+     el menú se quedaba abierto tapando justo lo que se acababa de pedir. */
+  panel.addEventListener('click',e=>{if(e.target.closest('a'))cerrar(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrar(true);});
+  /* Y si la ventana cambia de tamaño hasta el escritorio, el panel abierto se
+     queda flotando sobre una barra que ya enseña todos los enlaces. */
+  window.addEventListener('resize',()=>{if(window.innerWidth>1080)cerrar(false);});}
 
 </script>
 </body>

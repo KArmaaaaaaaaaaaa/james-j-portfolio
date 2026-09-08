@@ -1,2 +1,6 @@
 .DS_Store
 __pycache__/
+
+# La versión en castellano se genera con `python3 _build.py es` y NO se publica:
+# el sitio sale en inglés a propósito, de cara a Hamburgo.
+es/
