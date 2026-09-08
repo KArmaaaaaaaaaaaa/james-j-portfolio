@@ -67,54 +67,76 @@ document.querySelectorAll('.sube').forEach(el=>{
    dispara nunca y la página se queda en blanco para siempre. */
 setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
 
-const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel'),
-      velo=document.getElementById('menuVelo');
+/* Parallax: lo marcado con data-lento avanza a una fracción del scroll, así
+   que el nombre a sangre se queda atrás y el contenido pasa por encima. Solo
+   transform, en un rAF, y ni se enciende si se pide movimiento reducido. */
+const lentos=[...document.querySelectorAll('[data-lento]')];
+if(lentos.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  let pedido=false;
+  const mover=()=>{const y=window.scrollY;
+    for(const el of lentos){const f=parseFloat(el.dataset.lento)||0;
+      el.style.transform='translate3d(0,'+(y*f).toFixed(1)+'px,0)';}
+    pedido=false;};
+  addEventListener('scroll',()=>{if(!pedido){pedido=true;requestAnimationFrame(mover);}},
+    {passive:true});
+  mover();}
+
+/* La barra se aprieta en cuanto se baja: menos chrome delante del contenido. */
+const barraEl=document.querySelector('.barra');
+if(barraEl){let apretada=false;
+  addEventListener('scroll',()=>{const debe=window.scrollY>40;
+    if(debe!==apretada){apretada=debe;barraEl.classList.toggle('apretada',debe);}},
+    {passive:true});}
+
+const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
 if(btn&&panel){
   const cerrar=(devolver)=>{
     if(panel.hidden)return;
     btn.setAttribute('aria-expanded','false');panel.hidden=true;
-    if(velo)velo.hidden=true;
     document.body.classList.remove('menu-abierto');
     if(devolver)btn.focus();};
   const abrir=()=>{
     btn.setAttribute('aria-expanded','true');panel.hidden=false;
-    if(velo)velo.hidden=false;
     document.body.classList.add('menu-abierto');};
   btn.addEventListener('click',()=>{panel.hidden?abrir():cerrar(false);});
-  /* Tocar el velo cierra. Es el gesto que se hace primero en un móvil, y sin
-     esto la única salida era volver a acertarle al botón. */
-  if(velo)velo.addEventListener('click',()=>cerrar(false));
   /* Pulsar una entrada del índice cierra el panel además de navegar: si el
      destino es un ancla de la misma página, la navegación no recarga nada y
      el menú se quedaba abierto tapando justo lo que se acababa de pedir. */
   panel.addEventListener('click',e=>{if(e.target.closest('a'))cerrar(false);});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrar(true);});
-  /* Y si la ventana cambia de tamaño hasta el escritorio, el panel abierto se
-     queda flotando sobre una barra que ya enseña todos los enlaces. */
-  window.addEventListener('resize',()=>{if(window.innerWidth>1080)cerrar(false);});}
+}
 """
 
 def barra(actual):
-    enlaces = "".join(
-      f'<a class="solo-ancho" href="{h}"{" aria-current=\'page\'" if h==actual else ""}>{d[IDIOMA]}</a>'
-      for h, d in NAV if h != actual or True)
-    movil = "".join(
-      f'<a href="{h}"{" aria-current=\'page\'" if h == actual else ""}>{d[IDIOMA]}</a>'
-      for h, d in NAV)
+    """La barra y el índice. Los enlaces existen UNA vez, en el panel.
+
+    Antes se pintaban dos veces —inline en la barra y otra vez en el panel—,
+    que además de repetirse en pantalla se lee dos veces con un lector.
+    """
+    filas = "".join(
+      f'<a href="{h}"{" aria-current=\'page\'" if h == actual else ""}>'
+      f'<span class="n">{i:02d}</span><span>{d[IDIOMA]}</span>'
+      f'<span class="flecha" aria-hidden="true">→</span></a>'
+      for i, (h, d) in enumerate(NAV, 1))
+    correo_fila = (
+      f'<a href="mailto:{CORREO}"><span class="n">{len(NAV)+1:02d}</span>'
+      f'<span>{t("Talk to me","Hablamos")}</span>'
+      f'<span class="flecha" aria-hidden="true">→</span></a>')
     return f"""
 <nav class="barra" aria-label="{t('Main','Principal')}">
   <a class="marca" href="index.html">James J Projects</a>
-  {enlaces}
   <a class="cta" href="mailto:{CORREO}">{t('Talk to me','Hablamos')}</a>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
-    aria-label="{t('Open the menu','Abrir el menú')}">
+    aria-label="{t('Open the index','Abrir el índice')}">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-      stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      stroke-linecap="round" aria-hidden="true"><path class="r1" d="M4 8h16"/><path
+      class="r2" d="M4 16h16"/></svg>
   </button>
 </nav>
-<div class="menu-velo" id="menuVelo" hidden></div>
-<div class="menu-panel" id="menuPanel" hidden>{movil}
-  <a href="mailto:{CORREO}">{t('Talk to me','Hablamos')}</a></div>"""
+<div class="menu-panel" id="menuPanel" hidden>
+  <div class="menu-lista">{filas}{correo_fila}</div>
+</div>"""
+
 
 PIE = f"""
 <footer class="pie">
@@ -168,7 +190,7 @@ def pagina(archivo, titulo, descripcion, cuerpo, css_extra="", js_extra=""):
 
 # ── Chasis: barra, menú, pie ───────────────────────────────────────────
 CHASIS = """
-.barra{position:fixed;z-index:50;top:16px;left:50%;transform:translateX(-50%);
+.barra{position:fixed;z-index:60;top:16px;left:50%;transform:translateX(-50%);
   display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);
   backdrop-filter:saturate(180%) blur(16px);border:1px solid var(--hilo);
   padding:7px 8px 7px 18px;max-width:calc(100vw - 32px)}
@@ -183,57 +205,82 @@ CHASIS = """
 .barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
 .barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
 .barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
-/* El botón vive en los dos tamaños: en estrecho es la única forma de llegar al
-   índice, y en ancho acompaña a los enlaces porque el sitio tiene seis páginas
-   y la barra solo enseña las que caben. */
+.barra{transition:padding var(--rapido) var(--curva),
+  background var(--rapido) var(--curva),transform var(--normal) var(--curva)}
+.barra.apretada{padding-top:4px;padding-bottom:4px;background:rgba(255,255,255,.96)}
+.barra.apretada .marca{font-size:17px}
+.barra .marca{transition:font-size var(--rapido) var(--curva)}
+
+/* Un solo índice, el mismo en el móvil y en el Mac.
+   Antes la barra enseñaba los seis enlaces Y el botón abría un panel con esos
+   mismos seis: la misma lista dos veces en la misma pantalla. Ahora la barra
+   lleva marca y llamada, y el índice vive en un único sitio. De paso desaparece
+   el problema del móvil de raíz: el panel ya no «tapa» la página, ocupa la
+   pantalla entera y tiene una salida que se ve. */
 .menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
-  color:var(--tinta);transition:transform var(--micro) var(--curva),
-  color var(--rapido) var(--curva)}
+  color:var(--tinta);position:relative;z-index:60;
+  transition:transform var(--micro) var(--curva),color var(--rapido) var(--curva)}
 .menu-btn:hover{color:var(--fuego-texto)}
 .menu-btn:active{transform:scale(.94)}
 .menu-btn svg{width:21px;height:21px;display:block}
-.menu-btn svg path{transition:transform var(--rapido) var(--curva)}
-/* Abierto, las tres barras se convierten en una equis sin cambiar de marcado. */
-.menu-btn[aria-expanded="true"] svg{transform:rotate(90deg)}
+.menu-btn svg path{transform-origin:center;
+  transition:transform var(--normal) var(--expo)}
+.menu-btn[aria-expanded="true"] .r1{transform:translateY(4px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] .r2{transform:translateY(-4px) rotate(-45deg)}
 @media(hover:none){.menu-btn:hover{color:var(--tinta)}}
 
-/* El velo: sin él, en el móvil la única manera de cerrar era acertarle otra vez
-   al botón. Tocar fuera es el gesto que la gente hace primero. */
-.menu-velo{position:fixed;inset:0;z-index:48;background:rgba(13,13,15,.32);
-  backdrop-filter:blur(2px);animation:velo var(--rapido) var(--curva) both}
-.menu-velo[hidden]{display:none}
-@keyframes velo{from{opacity:0}to{opacity:1}}
-
-.menu-panel{position:fixed;z-index:49;top:66px;left:50%;
-  width:calc(100vw - 32px);max-width:420px;background:var(--blanco);
-  border:1px solid var(--hilo);padding:8px;display:grid;
-  /* Seis entradas más «Hablamos» no caben en un móvil apaisado: que el panel
-     tenga su propio scroll en vez de salirse por abajo de la pantalla. */
-  max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;
-  transform:translateX(-50%);
-  animation:panel var(--normal) var(--entrada) both}
-@keyframes panel{from{opacity:0;transform:translateX(-50%) translateY(-10px)}
-                 to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.menu-panel a{font-family:var(--mono);font-size:12px;font-weight:600;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--tinta);
-  text-decoration:none;padding:14px 16px;border-bottom:1px solid var(--hilo);
-  transition:background var(--rapido) var(--curva),
-             padding-left var(--rapido) var(--curva)}
-.menu-panel a:hover{background:var(--hueco);padding-left:22px}
-.menu-panel a:last-child{border-bottom:0}
-.menu-panel a[aria-current]{background:var(--hueco);color:var(--fuego-texto)}
-@media(hover:none){.menu-panel a:hover{background:none;padding-left:16px}}
-/* Sin esta línea el panel sale abierto: `display:grid` de la regla de clase
-   gana por especificidad al `[hidden]{display:none}` de la hoja del
-   navegador, y el atributo `hidden` del marcado no pinta nada. */
+/* El índice, a pantalla completa. Papel, no negro: este sitio vive en claro. */
+.menu-panel{position:fixed;inset:0;z-index:55;background:var(--papel);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:96px 6vw 40px;overflow-y:auto;overscroll-behavior:contain;
+  animation:panelEntra var(--normal) var(--entrada) both}
 .menu-panel[hidden]{display:none}
-/* Mientras el panel está abierto el fondo no se mueve: en el móvil, hacer
-   scroll con el índice delante desplazaba la página por detrás y el menú se
-   quedaba flotando encima de un sitio distinto del que se dejó. */
+@keyframes panelEntra{from{opacity:0;clip-path:inset(0 0 100% 0)}
+                      to{opacity:1;clip-path:inset(0 0 0 0)}}
+
+/* La cuña cobalto: el mismo plano inclinado que la lámina de la portada. */
+.menu-panel::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  right:-12vw;top:-10vh;width:46vw;height:120vh;background:var(--cobalto);
+  transform:rotate(9deg);opacity:.9}
+@media(max-width:860px){.menu-panel::before{right:-38vw;width:76vw;opacity:.86}}
+
+.menu-lista{position:relative;z-index:1;display:grid;
+  max-width:var(--ancho);width:100%;margin:0 auto;
+  border-top:1px solid var(--tinta)}
+.menu-panel a{display:grid;grid-template-columns:auto 1fr auto;gap:20px;
+  align-items:baseline;padding:clamp(14px,2.4vh,26px) 4px;
+  border-bottom:1px solid var(--tinta);text-decoration:none;color:var(--tinta);
+  font-family:var(--display);font-size:clamp(26px,5.4vw,60px);font-weight:500;
+  line-height:1;text-transform:uppercase;letter-spacing:-.01em;
+  opacity:0;transform:translateY(16px);
+  transition:color var(--rapido) var(--curva),
+             padding-left var(--rapido) var(--curva)}
+.menu-panel:not([hidden]) a{animation:filaEntra 420ms var(--expo) both}
+@keyframes filaEntra{to{opacity:1;transform:none}}
+.menu-panel a:nth-child(1){animation-delay:60ms}
+.menu-panel a:nth-child(2){animation-delay:110ms}
+.menu-panel a:nth-child(3){animation-delay:160ms}
+.menu-panel a:nth-child(4){animation-delay:210ms}
+.menu-panel a:nth-child(5){animation-delay:260ms}
+.menu-panel a:nth-child(6){animation-delay:310ms}
+.menu-panel a:nth-child(n+7){animation-delay:360ms}
+.menu-panel a .n{font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.16em;color:var(--tinta-3);align-self:center}
+.menu-panel a .flecha{font-family:var(--mono);font-size:14px;color:var(--fuego-texto);
+  opacity:0;transform:translateX(-8px);align-self:center;
+  transition:opacity var(--rapido) var(--curva),
+             transform var(--rapido) var(--curva)}
+.menu-panel a:hover{color:var(--fuego-texto);padding-left:18px}
+.menu-panel a:hover .flecha{opacity:1;transform:none}
+.menu-panel a[aria-current]{color:var(--cobalto)}
+.menu-panel a[aria-current] .n{color:var(--cobalto)}
+@media(hover:none){.menu-panel a:hover{color:var(--tinta);padding-left:4px}
+  .menu-panel a:hover .flecha{opacity:1;transform:none}}
+/* Con el índice delante el fondo no se mueve: en el móvil, hacer scroll con el
+   menú abierto desplazaba la página por detrás. */
 body.menu-abierto{overflow:hidden}
-@media(max-width:1080px){.barra .solo-ancho{display:none}}
 @media(prefers-reduced-motion:reduce){
-  .menu-panel,.menu-velo{animation:none}}
+  .menu-panel,.menu-panel a{animation:none;opacity:1;transform:none}}
 @media(hover:none){.barra a:not(.marca):hover{background:none;color:var(--tinta-2)}}
 
 .pie{border-top:1px solid var(--tinta);padding:34px 0 54px;margin-top:0}
@@ -294,8 +341,39 @@ body.menu-abierto{overflow:hidden}
     padding-bottom:16px}}
 
 /* La portada: la única que empieza pegada arriba */
-.portada{padding:132px 0 0}
+.portada{padding:132px 0 0;position:relative}
 @media(max-width:760px){.portada{padding-top:104px}}
+
+/* ── La retícula ────────────────────────────────────────────────────
+   Cruces de registro, las de una plancha de impresión y las de un HUD de
+   mecha. Van en el fondo, sin bloquear el ratón, y son un SVG de 24 bytes
+   repetido: ni una petición más, que el sitio no carga nada de fuera. */
+.reticula{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M69 75h12M75 69v12' stroke='%230d0d0f' stroke-opacity='.30' stroke-width='1'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-position:center}
+.plate .reticula{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M69 75h12M75 69v12' stroke='%23ffffff' stroke-opacity='.42' stroke-width='1'/%3E%3C/svg%3E")}
+@media(max-width:640px){.reticula{background-size:104px 104px}}
+
+/* ── El nombre, a sangre ────────────────────────────────────────────
+   El gesto es el de una portada de disco: el nombre ocupa todo el ancho, se
+   sale por los lados y el contenido pasa por encima al bajar. Va detrás de
+   todo y en fuego sobre papel, no en negro: este sitio vive en claro. */
+.sello{position:relative;z-index:0;pointer-events:none;user-select:none;
+  overflow:hidden;line-height:1;margin-top:clamp(52px,9vh,120px);
+  margin-bottom:-.2em}
+.sello span{display:block;white-space:nowrap;text-align:center;
+  font-family:var(--display);font-weight:500;letter-spacing:-.03em;
+  font-size:clamp(84px,20.5vw,300px);color:var(--fuego);
+  transform:translateY(14%);opacity:0;
+  animation:sello 720ms var(--expo) 320ms both;
+  will-change:transform}
+@keyframes sello{to{transform:translateY(0);opacity:1}}
+/* La marca registrada al vuelo, como en las láminas de los ochenta. */
+.sello i{font-style:normal;font-size:.2em;vertical-align:super;
+  letter-spacing:0;margin-left:.06em}
+@media(max-width:760px){.sello{margin-top:44px}}
+@media(prefers-reduced-motion:reduce){
+  .sello span{animation:none;opacity:1;transform:none}}
 """
 
 # ═══════════════════════════ 1. PORTADA ═══════════════════════════════
@@ -479,6 +557,7 @@ f"""
 <main id="principal">
 <div class="env">
   <header class="portada">
+    <span class="reticula" aria-hidden="true"></span>
     <span class="lamina" aria-hidden="true">
       <span class="plano"></span>
       <span class="placa cromo"></span>
@@ -531,7 +610,10 @@ f"""
   </header>
 </div>
 
+<div class="sello" data-lento="0.07" aria-hidden="true"><span>James J Projects<i>®</i></span></div>
+
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
@@ -624,6 +706,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
@@ -759,6 +842,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
@@ -907,6 +991,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
@@ -1124,6 +1209,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <div class="env">
@@ -1169,6 +1255,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
@@ -1276,6 +1363,7 @@ f"""
 </section>
 
 <section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
   <span class="chispa a" aria-hidden="true"></span>
   <span class="chispa b" aria-hidden="true"></span>
   <div class="env">
