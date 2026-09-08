@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor · James J Projects</title>
+<style>
+:root{
+  --papel:#f2f2f0; --blanco:#fff; --hueco:#e9e9e6;
+  --tinta:#0d0d0f; --tinta-2:#4a4a50; --tinta-3:#6d6d75; --hilo:#d7d6d2;
+  --cobalto:#0f3fa8; --fuego:#fe4a23; --fuego-texto:#c92e0d; --verde:#007d55;
+  --curva:cubic-bezier(.4,0,.6,1); --rapido:240ms; --micro:160ms;
+  --display:"Oswald","Arial Narrow",sans-serif;
+  --texto:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--texto);
+  font-size:14px;line-height:1.5}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;
+  padding:12px 20px;background:rgba(255,255,255,.94);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--tinta)}
+header h1{margin:0;font-family:var(--display);font-size:20px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.02em}
+.chip{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 9px;border:1px solid var(--hilo);
+  color:var(--tinta-3)}
+.chip.vivo{border-color:var(--fuego);color:var(--fuego-texto)}
+.der{margin-left:auto;display:flex;gap:0}
+button{font-family:var(--display);font-size:14px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.05em;padding:10px 18px;
+  border:1px solid var(--tinta);background:transparent;color:var(--tinta);
+  cursor:pointer;transition:background var(--micro) var(--curva),
+    color var(--micro) var(--curva),transform var(--rapido) var(--curva),
+    box-shadow var(--rapido) var(--curva)}
+button + button{border-left:0}
+button:hover:not(:disabled){background:var(--fuego-texto);color:#fff;
+  border-color:var(--fuego-texto);transform:translateY(-2px);
+  box-shadow:4px 4px 0 var(--tinta)}
+button:active:not(:disabled){transform:none;box-shadow:none}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.lleno{background:var(--tinta);color:var(--papel)}
+main{display:grid;grid-template-columns:230px 1fr;gap:0;min-height:calc(100vh - 57px)}
+nav{border-right:1px solid var(--tinta);padding:16px 0;position:sticky;top:57px;
+  align-self:start;max-height:calc(100vh - 57px);overflow-y:auto}
+nav a{display:flex;justify-content:space-between;gap:8px;padding:11px 18px;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tinta-2);text-decoration:none;cursor:pointer;
+  border-left:2px solid transparent;transition:background var(--rapido) var(--curva)}
+nav a:hover{background:var(--hueco)}
+nav a.puesta{background:var(--hueco);color:var(--tinta);border-left-color:var(--fuego)}
+nav a b{color:var(--fuego-texto)}
+section{padding:22px 26px 80px;max-width:900px}
+.buscar{width:100%;padding:11px 13px;border:1px solid var(--tinta);
+  background:var(--blanco);font-family:var(--texto);font-size:14px;margin-bottom:20px}
+.campo{border:1px solid var(--hilo);background:var(--blanco);padding:14px 16px;
+  margin-bottom:12px}
+.campo.tocado{border-color:var(--fuego);box-shadow:3px 3px 0 rgba(254,74,35,.18)}
+.campo .et{font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-3);
+  display:flex;gap:10px;align-items:center;margin-bottom:9px}
+.campo .et .marca{color:var(--fuego-texto)}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.par.uno{grid-template-columns:1fr}
+label{display:block}
+label span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tinta-3);display:block;margin-bottom:5px}
+textarea{width:100%;min-height:64px;padding:9px 11px;border:1px solid var(--hilo);
+  background:var(--papel);font-family:var(--texto);font-size:14px;line-height:1.45;
+  resize:vertical}
+textarea:focus{outline:2px solid var(--cobalto);outline-offset:1px;
+  background:var(--blanco)}
+.rejilla-img{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:12px}
+.tarjeta-img{border:1px solid var(--hilo);background:var(--blanco);padding:9px}
+.tarjeta-img img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;
+  background:var(--hueco)}
+.tarjeta-img .nom{font-family:var(--mono);font-size:10px;color:var(--tinta-3);
+  margin:7px 0;word-break:break-all}
+.tarjeta-img button{width:100%;padding:7px;font-size:12px}
+h2{font-family:var(--display);font-size:26px;font-weight:500;text-transform:uppercase;
+  margin:0 0 6px}
+.nota{color:var(--tinta-3);font-size:13px;margin:0 0 20px}
+#aviso{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+  background:var(--tinta);color:var(--papel);padding:13px 20px;font-size:14px;
+  max-width:min(560px,92vw);opacity:0;pointer-events:none;z-index:50;
+  transition:opacity var(--rapido) var(--curva),transform var(--rapido) var(--curva);
+  white-space:pre-wrap}
+#aviso.visible{opacity:1;transform:translateX(-50%)}
+#aviso.mal{background:var(--fuego-fondo,#b02607)}
+#aviso.bien{background:var(--verde)}
+@media(max-width:760px){main{grid-template-columns:1fr}
+  nav{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--tinta);
+    display:flex;overflow-x:auto}
+  .par{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor</h1>
+  <span class="chip" id="contador">—</span>
+  <span class="der">
+    <button id="bGuardar" disabled>Guardar</button>
+    <button id="bVer">Ver en local</button>
+    <button id="bPublicar" class="lleno">Publicar</button>
+  </span>
+</header>
+
+<main>
+  <nav id="nav"></nav>
+  <section>
+    <h2 id="titulo">Cargando…</h2>
+    <p class="nota" id="sub"></p>
+    <input class="buscar" id="buscar" type="search"
+      placeholder="Buscar dentro de esta página…">
+    <div id="campos"></div>
+  </section>
+</main>
+
+<div id="aviso"></div>
+
+<script>
+/* El editor no guarda lo que no cambia: manda el mapa entero de cambios y el
+   servidor descarta lo que coincide con el original. Así contenido.json solo
+   lleva lo tuyo y borrarlo devuelve el sitio a su estado de fábrica. */
+let DATOS = null, PAGINA = null;
+const CAMBIOS = new Map();
+
+const $ = s => document.querySelector(s);
+
+function avisar(texto, clase){
+  const a = $('#aviso');
+  a.textContent = texto;
+  a.className = 'visible ' + (clase || '');
+  clearTimeout(a._t);
+  a._t = setTimeout(() => { a.className = ''; }, clase === 'mal' ? 9000 : 4500);
+}
+
+function contar(){
+  const n = CAMBIOS.size;
+  const c = $('#contador');
+  c.textContent = n ? n + (n === 1 ? ' cambio sin guardar' : ' cambios sin guardar')
+                    : (DATOS ? DATOS.cambios + ' editados' : '—');
+  c.className = 'chip' + (n ? ' vivo' : '');
+  $('#bGuardar').disabled = !n;
+}
+
+async function cargar(){
+  DATOS = await (await fetch('/api/estado')).json();
+  const nav = $('#nav');
+  nav.textContent = '';
+  for (const p of DATOS.paginas){
+    const a = document.createElement('a');
+    a.dataset.pagina = p.archivo;
+    const n = DATOS.campos.filter(c => c.pagina === p.archivo && c.cambiado).length;
+    a.append(p.nombre);
+    if (n){ const b = document.createElement('b'); b.textContent = n; a.append(b); }
+    a.onclick = () => pintar(p.archivo);
+    nav.append(a);
+  }
+  const img = document.createElement('a');
+  img.dataset.pagina = '__img';
+  img.textContent = 'Imágenes';
+  img.onclick = () => pintar('__img');
+  nav.append(img);
+  pintar(PAGINA || DATOS.paginas[0].archivo);
+  contar();
+}
+
+function pintar(pagina){
+  PAGINA = pagina;
+  for (const a of document.querySelectorAll('nav a'))
+    a.classList.toggle('puesta', a.dataset.pagina === pagina);
+  const caja = $('#campos');
+  caja.textContent = '';
+  $('#buscar').value = '';
+
+  if (pagina === '__img'){
+    $('#titulo').textContent = 'Imágenes';
+    $('#sub').textContent = 'Se reemplazan por nombre. La anterior se guarda al lado con .anterior por si te arrepientes.';
+    $('#buscar').style.display = 'none';
+    /* Los huecos primero: son sitios del diseño que hoy están dibujados con
+       CSS y aceptan una imagen. Si no se listan, no hay forma de enterarse. */
+    for (const h of (DATOS.huecos || [])){
+      const t = document.createElement('div');
+      t.className = 'campo' + (h.actual ? ' tocado' : '');
+      const et = document.createElement('div');
+      et.className = 'et';
+      et.append(h.que);
+      if (h.actual){ const m = document.createElement('span');
+        m.className = 'marca'; m.textContent = '· ' + h.actual; et.append(m); }
+      const nota = document.createElement('p');
+      nota.className = 'nota'; nota.style.margin = '0 0 10px'; nota.textContent = h.nota;
+      t.append(et, nota);
+      if (h.actual){
+        const im = document.createElement('img');
+        im.src = '/img/' + h.actual + '?t=' + Date.now();
+        im.alt = h.que;
+        im.style.cssText = 'max-width:220px;display:block;margin-bottom:10px;border:1px solid var(--hilo)';
+        t.append(im);
+      }
+      const bt = document.createElement('button');
+      bt.textContent = h.actual ? 'Cambiar la imagen' : 'Poner una imagen';
+      bt.onclick = () => subir(h.actual || h.base);
+      t.append(bt);
+      if (h.actual){
+        const q = document.createElement('button');
+        q.textContent = 'Volver al cromo';
+        q.onclick = () => quitar(h.actual);
+        t.append(q);
+      }
+      caja.append(t);
+    }
+
+    const rej = document.createElement('div');
+    rej.className = 'rejilla-img';
+    for (const nombre of DATOS.imagenes){
+      const t = document.createElement('div');
+      t.className = 'tarjeta-img';
+      const im = document.createElement('img');
+      im.src = '/img/' + nombre + '?t=' + Date.now();
+      im.alt = nombre;
+      const nm = document.createElement('div');
+      nm.className = 'nom'; nm.textContent = nombre;
+      const bt = document.createElement('button');
+      bt.textContent = 'Reemplazar';
+      bt.onclick = () => subir(nombre);
+      t.append(im, nm, bt);
+      rej.append(t);
+    }
+    caja.append(rej);
+    return;
+  }
+
+  $('#buscar').style.display = '';
+  const pag = DATOS.paginas.find(p => p.archivo === pagina);
+  $('#titulo').textContent = pag ? pag.nombre : pagina;
+  const lista = DATOS.campos.filter(c => c.pagina === pagina);
+  $('#sub').textContent = lista.length + ' textos. Lo que dejes igual no se guarda.';
+
+  for (const c of lista){
+    const d = document.createElement('div');
+    d.className = 'campo' + (CAMBIOS.has(c.clave) || c.cambiado ? ' tocado' : '');
+    d.dataset.busca = (c.en + ' ' + c.es).toLowerCase();
+
+    const et = document.createElement('div');
+    et.className = 'et';
+    et.append(c.tipo === 'valor' ? 'Precio o cifra' : 'Texto');
+    if (c.cambiado){
+      const m = document.createElement('span');
+      m.className = 'marca'; m.textContent = '· editado';
+      et.append(m);
+    }
+    d.append(et);
+
+    const par = document.createElement('div');
+    par.className = 'par' + (c.tipo === 'valor' ? ' uno' : '');
+    par.append(caj(c, 'en', c.tipo === 'valor' ? 'Valor' : 'Inglés (lo que se publica)'));
+    if (c.tipo !== 'valor') par.append(caj(c, 'es', 'Castellano'));
+    d.append(par);
+    caja.append(d);
+  }
+}
+
+function caj(c, idioma, rotulo){
+  const l = document.createElement('label');
+  const s = document.createElement('span');
+  s.textContent = rotulo;
+  const ta = document.createElement('textarea');
+  ta.value = c[idioma + '_actual'];
+  ta.oninput = () => {
+    const actual = CAMBIOS.get(c.clave) || { en: c.en_actual, es: c.es_actual };
+    actual[idioma] = ta.value;
+    if (c.tipo === 'valor') actual.es = ta.value;
+    if (actual.en === c.en && actual.es === c.es) CAMBIOS.delete(c.clave);
+    else CAMBIOS.set(c.clave, actual);
+    ta.closest('.campo').classList.add('tocado');
+    contar();
+  };
+  l.append(s, ta);
+  return l;
+}
+
+$('#buscar').oninput = e => {
+  const q = e.target.value.toLowerCase().trim();
+  for (const d of document.querySelectorAll('.campo'))
+    d.hidden = q && !d.dataset.busca.includes(q);
+};
+
+$('#bGuardar').onclick = async () => {
+  const cambios = {};
+  for (const [k, v] of CAMBIOS) cambios[k] = v;
+  const r = await (await fetch('/api/guardar', {
+    method: 'POST', body: JSON.stringify({ cambios })
+  })).json();
+  if (r.ok){ CAMBIOS.clear(); await cargar(); avisar('Guardado.', 'bien'); }
+  else avisar('No se ha podido guardar: ' + (r.error || ''), 'mal');
+};
+
+$('#bVer').onclick = async () => {
+  if (CAMBIOS.size) return avisar('Guarda antes de ver, o no verás los cambios.', 'mal');
+  avisar('Generando…');
+  const r = await (await fetch('/api/ver', { method: 'POST' })).json();
+  if (r.ok){ window.open(r.url, '_blank'); avisar('Abierto en otra pestaña.', 'bien'); }
+  else avisar('No compila:\n' + r.salida, 'mal');
+};
+
+$('#bPublicar').onclick = async () => {
+  if (CAMBIOS.size) return avisar('Guarda antes de publicar.', 'mal');
+  if (!confirm('Esto sube los cambios a GitHub y los deja públicos. ¿Seguro?')) return;
+  avisar('Publicando…');
+  const r = await (await fetch('/api/publicar', { method: 'POST' })).json();
+  avisar(r.mensaje, r.ok ? 'bien' : 'mal');
+};
+
+function subir(nombre){
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.jpg,.jpeg,.png,.webp';
+  inp.onchange = async () => {
+    const f = inp.files[0];
+    if (!f) return;
+    avisar('Subiendo ' + f.name + '…');
+    const r = await (await fetch('/api/imagen/' + encodeURIComponent(nombre), {
+      method: 'POST', body: await f.arrayBuffer()
+    })).json();
+    if (r.ok){ await cargar(); pintar('__img'); avisar('Cambiada.', 'bien'); }
+    else avisar('No se ha podido subir: ' + (r.error || ''), 'mal');
+  };
+  inp.click();
+}
+
+async function quitar(nombre){
+  if (!confirm('¿Quitar ' + nombre + ' y volver al cromo dibujado?')) return;
+  const r = await (await fetch('/api/quitar/' + encodeURIComponent(nombre),
+    { method: 'POST' })).json();
+  if (r.ok){ await cargar(); pintar('__img'); avisar('Vuelto al cromo.', 'bien'); }
+  else avisar('No se ha podido quitar: ' + (r.error || ''), 'mal');
+}
+
+addEventListener('beforeunload', e => { if (CAMBIOS.size) e.preventDefault(); });
+cargar();
+</script>
+</body>
+</html>

@@ -22,6 +22,19 @@ SALIDA = BASE / "es" if IDIOMA == "es" else BASE
 # Las páginas en castellano se escriben en /es/, así que todo lo que no sea
 # HTML vive un nivel más arriba.
 A = "../" if IDIOMA == "es" else ""
+# La lámina de la portada es cromo dibujado con gradientes. Si hay una imagen
+# en img/lamina.*, manda ella: así se puede poner una ilustración de verdad
+# —un cartel, una lámina de aerografía— sin tocar una línea de código. El
+# marco, la inclinación y la sombra dura se quedan: lo que cambia es lo de
+# dentro, no la composición.
+# Orden explícito, no alfabético: si conviven un lamina.svg y un lamina.jpg
+# —pasa al probar—, el alfabeto elegiría el jpg por casualidad. El vector
+# manda, que pesa menos y no se pixela.
+_ORDEN = (".svg", ".webp", ".png", ".jpg", ".jpeg")
+LAMINA = next((n for n in
+               (f"lamina{e}" for e in _ORDEN)
+               if (BASE / "img" / n).exists()), None)
+
 FUENTES = (BASE / "_fuentes.css").read_text(encoding="utf-8").replace(
     "url(fuentes/", f"url({A}fuentes/")
 
@@ -35,9 +48,44 @@ NAV = [
   ("panel-demo.html",   {"en":"Dashboard",       "es":"Panel"}),
 ]
 
+# ── El contenido editable ──────────────────────────────────────────────
+# contenido.json NO sustituye a los textos del código: los ANULA. Lo que no
+# se haya tocado en el panel sigue saliendo de aquí, así que borrar el JSON
+# devuelve el sitio a su estado original y una clave que ya no exista no
+# rompe nada. La clave es un hash del texto en inglés: si se reescribe el
+# original a mano, la anulación de ese texto se suelta, que es lo correcto —
+# el original nuevo manda.
+import hashlib, json
+
+TEXTOS = {}
+_JSON = BASE / "contenido.json"
+if _JSON.exists():
+    try:
+        TEXTOS = json.loads(_JSON.read_text(encoding="utf-8")).get("textos", {})
+    except json.JSONDecodeError as e:
+        print(f"  ¡ojo! contenido.json ilegible ({e}); se usa el texto del código")
+
+
+def clave(original):
+    """Clave estable de un texto, para casar código y panel."""
+    return hashlib.sha1(original.encode("utf-8")).hexdigest()[:10]
+
+
 def t(en, es):
-    """Un texto en los dos idiomas."""
+    """Un texto en los dos idiomas, con la anulación del panel si la hay."""
+    puesto = TEXTOS.get(clave(en))
+    if isinstance(puesto, dict):
+        en = puesto.get("en") or en
+        es = puesto.get("es") or es
     return en if IDIOMA == "en" else es
+
+
+def v(valor):
+    """Un valor igual en los dos idiomas: un precio, una cifra, un plazo."""
+    puesto = TEXTOS.get(clave(valor))
+    if isinstance(puesto, dict):
+        return puesto.get("en") or valor
+    return valor
 
 def euros(entero, dec="00"):
     """5574 -> «5,574.00 €» en inglés, «5.574,00 €» en castellano."""
@@ -431,6 +479,14 @@ CSS_HOME = """
     animation:aparecer 640ms var(--entrada) 220ms both}
   .lamina .placa{position:absolute;inset:0;transform:rotate(5deg);
     box-shadow:22px 22px 0 var(--tinta)}
+  /* Si la lámina es una imagen, llena el mismo marco: se recorta, no se
+     deforma, y conserva la inclinación y la sombra sin desenfoque. */
+  .lamina img.placa{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* Aquí iba un barrido de luz sobre el cromo. Retirado: la capa que lo
+     recortaba tapaba la lámina entera en lugar de cruzarla. El movimiento de
+     esta zona ya lo dan los destellos y el parallax del nombre a sangre; si
+     se reintenta, que sea sin una capa a pantalla completa por encima. */
   .lamina .plano{position:absolute;left:-58px;top:96px;width:196px;height:352px;
     background:var(--cobalto);transform:rotate(-6deg)}
   .lamina .chispa{--chispa:96px;left:56%;top:23%}
@@ -560,7 +616,8 @@ f"""
     <span class="reticula" aria-hidden="true"></span>
     <span class="lamina" aria-hidden="true">
       <span class="plano"></span>
-      <span class="placa cromo"></span>
+      {f'<img class="placa" src="{A}img/{LAMINA}" alt="" width="284" height="496" fetchpriority="high" decoding="async">'
+       if LAMINA else '<span class="placa cromo"></span>'}
       <span class="chispa"></span>
       <span class="chispa baja"></span>
     </span>
@@ -583,25 +640,25 @@ f"""
 
     <div class="tarifas">
       <a href="ficha-google.html">
-        <div class="precio">150–300 €<small>{t("one-off","una vez")}</small></div>
+        <div class="precio">{v("150–300 €")}<small>{t("one-off","una vez")}</small></div>
         <h2 class="titulo-menor">{t("Google profile","Ficha de Google")}</h2>
         <p class="que">{t("The first thing anyone sees when they look you up. Usually still shows last summer's hours.",
           "Lo primero que ve quien te busca. Suele tener el horario del verano pasado.")}</p>
         <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
       <a href="precios.html">
-        <div class="precio">400–900 €<small>{t("closed price","precio cerrado")}</small></div>
+        <div class="precio">{v("400–900 €")}<small>{t("closed price","precio cerrado")}</small></div>
         <h2 class="titulo-menor">{t("Full website","Web completa")}</h2>
         <p class="que">{t("One page done properly, not six done badly. Written, not filled in.",
           "Una página bien hecha, no seis mal hechas. Escrita, no rellenada.")}</p>
         <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
       <a href="carta-nfc.html">
-        <div class="precio">120 €<small>{t("up to 20 tables","hasta 20 mesas")}</small></div>
+        <div class="precio">{v("120 €")}<small>{t("up to 20 tables","hasta 20 mesas")}</small></div>
         <h2 class="titulo-menor">{t("Menu on the table","Carta en la mesa")}</h2>
         <p class="que">{t("A sticker per table. Tap the phone, the menu opens. Change a price and it changes everywhere.",
           "Una pegatina por mesa. Acercas el móvil y sale la carta. Cambias un precio y cambia en todas.")}</p>
         <span class="ir">{t("See it live →","Verlo funcionando →")}</span></a>
       <a href="caso-factura.html">
-        <div class="precio">250 €<small>{t("+ 20 € a month","+ 20 € al mes")}</small></div>
+        <div class="precio">{v("250 €")}<small>{t("+ 20 € a month","+ 20 € al mes")}</small></div>
         <h2 class="titulo-menor">{t("Photo to invoice","De la foto a la factura")}</h2>
         <p class="que">{t("Send a photo of the day sheet, get the invoice as a PDF with VAT and withholding done.",
           "Mandas la foto de la libreta y sale la factura en PDF, con IVA e IRPF hechos.")}</p>
@@ -789,13 +846,13 @@ f"""
       "Preguntar el precio y que te digan <b>«depende»</b> es la parte que a todo el mundo le da pereza. Aquí está escrito. El presupuesto se cierra antes de empezar: lo que se dice es lo que se paga, sin extras al final.")}</p>
 
     <div class="rejilla sube">
-      {tarjeta("150–300 €", t("one-off","una vez"), t("Google profile in order","Ficha de Google en condiciones"),
+      {tarjeta(v("150–300 €"), t("one-off","una vez"), t("Google profile in order","Ficha de Google en condiciones"),
         t("The first thing a customer sees when they look you up. It is usually stuck on hours from two summers ago, with no decent photo.",
           "Lo primero que ve un cliente cuando busca tu negocio. Suele estar con el horario de hace dos veranos y sin una foto decente."),
         [t("Photos, hours and services up to date","Fotos, horarios y servicios al día"),
          t("Written replies to the reviews you owe","Respuesta escrita a las reseñas pendientes"),
          t("I teach you to answer them yourself in ten minutes","Te enseño a contestarlas tú en diez minutos")])}
-      {tarjeta("400–900 €", t("closed price","precio cerrado"), t("Full website","Web completa del negocio"),
+      {tarjeta(v("400–900 €"), t("closed price","precio cerrado"), t("Full website","Web completa del negocio"),
         t("One page done properly, not six done badly. What you do, where you are, what it costs and how to reach you.",
           "Una página bien hecha, no seis mal hechas. Qué haces, dónde estás, cuánto cuesta y cómo se te llama."),
         [t("Designed for you, no template","Diseño a medida, sin plantilla"),
@@ -804,7 +861,7 @@ f"""
          t("Shows up on Google, with a WhatsApp button","Aparecer en Google y botón de WhatsApp"),
          t("Domain and hosting sorted","Dominio y alojamiento resueltos"),
          t("Two rounds of changes included","Dos rondas de cambios incluidas")])}
-      {tarjeta("120 €", t("up to 20 tables · +3 € each extra","hasta 20 mesas · +3 € por mesa de más"),
+      {tarjeta(v("120 €"), t("up to 20 tables · +3 € each extra","hasta 20 mesas · +3 € por mesa de más"),
         t("Menu on the table","La carta, pegada en la mesa"),
         t("A sticker on every table. The customer taps their phone and your menu opens, with photos, prices and allergens.",
           "Una pegatina en cada mesa. El cliente acerca el móvil y sale tu carta con fotos, precios y alérgenos."),
@@ -815,7 +872,7 @@ f"""
          t("Allergens always current, which is a legal requirement","Alérgenos siempre al día, que es obligatorio")],
         t('Photos are yours, taken with your phone. <a href="carta-nfc.html">How it works →</a>',
           'Las fotos son tuyas, hechas con tu móvil. <a href="carta-nfc.html">Cómo funciona →</a>'))}
-      {tarjeta("250 €", t("setup, then 20 € a month","montaje, y 20 € al mes"),
+      {tarjeta(v("250 €"), t("setup, then 20 € a month","montaje, y 20 € al mes"),
         t("Photo to invoice","De la foto a la factura"),
         t("If you charge by the day, the route or the job and month-end means sitting down to add up a notebook, this does it for you.",
           "Si cobras por jornadas, rutas o servicios y a fin de mes te toca sentarte a sumar la libreta, esto lo hace por ti."),
@@ -826,13 +883,13 @@ f"""
          t("CSV summary for your accountant","Resumen en CSV para tu gestoría")],
         t('Not an advisory service and it does not tell you what to declare. <a href="caso-factura.html">The real case →</a>',
           'No es una asesoría y no te dice qué declarar. <a href="caso-factura.html">El caso real →</a>'))}
-      {tarjeta("30–50 €", t("a month, no lock-in","al mes, sin permanencia"), t("Keeping it current","Que no se quede vieja"),
+      {tarjeta(v("30–50 €"), t("a month, no lock-in","al mes, sin permanencia"), t("Keeping it current","Que no se quede vieja"),
         t("Changes to the menu, the prices, the hours and the photos whenever they are needed.",
           "Cambios de carta, de precios, de horarios y de fotos cuando hagan falta."),
         [t("Unlimited changes within 48 hours","Cambios ilimitados en 48 horas"),
          t("Backup and monitoring","Copia de seguridad y vigilancia"),
          t("One note a month on how the site is doing","Un aviso al mes con cómo va la web")])}
-      {tarjeta("0 €", t("always included","siempre incluido"), t("What I do not charge for","Lo que no te cobro"),
+      {tarjeta(v("0 €"), t("always included","siempre incluido"), t("What I do not charge for","Lo que no te cobro"),
         t("Before you commit to anything.","Antes de que te comprometas a nada."),
         [t("The first conversation","La primera conversación"),
          t("Telling you what your profile is missing","Decirte qué le falta a tu ficha"),
@@ -1224,7 +1281,7 @@ f"""
       "And I show you how to answer the next ones yourself in ten minutes, because a review answered three weeks late is worth less than one answered the same evening.",
       "Y te enseño a contestar las siguientes tú en diez minutos, porque una reseña contestada tres semanas tarde vale menos que una contestada esa misma noche.")}</p>
     <div class="acciones sube">
-      <a class="boton boton--lleno" href="precios.html">150–300 €</a>
+      <a class="boton boton--lleno" href="precios.html">{v("150–300 €")}</a>
       <a class="boton" href="mailto:{CORREO}">{t("Talk to me","Hablamos")}</a>
     </div>
   </div>

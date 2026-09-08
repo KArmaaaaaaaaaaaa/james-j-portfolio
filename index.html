@@ -481,6 +481,14 @@ body.menu-abierto{overflow:hidden}
     animation:aparecer 640ms var(--entrada) 220ms both}
   .lamina .placa{position:absolute;inset:0;transform:rotate(5deg);
     box-shadow:22px 22px 0 var(--tinta)}
+  /* Si la lámina es una imagen, llena el mismo marco: se recorta, no se
+     deforma, y conserva la inclinación y la sombra sin desenfoque. */
+  .lamina img.placa{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* Aquí iba un barrido de luz sobre el cromo. Retirado: la capa que lo
+     recortaba tapaba la lámina entera en lugar de cruzarla. El movimiento de
+     esta zona ya lo dan los destellos y el parallax del nombre a sangre; si
+     se reintenta, que sea sin una capa a pantalla completa por encima. */
   .lamina .plano{position:absolute;left:-58px;top:96px;width:196px;height:352px;
     background:var(--cobalto);transform:rotate(-6deg)}
   .lamina .chispa{--chispa:96px;left:56%;top:23%}
@@ -622,7 +630,7 @@ body.menu-abierto{overflow:hidden}
     <span class="reticula" aria-hidden="true"></span>
     <span class="lamina" aria-hidden="true">
       <span class="plano"></span>
-      <span class="placa cromo"></span>
+      <img class="placa" src="img/lamina.jpg" alt="" width="284" height="496" fetchpriority="high" decoding="async">
       <span class="chispa"></span>
       <span class="chispa baja"></span>
     </span>
