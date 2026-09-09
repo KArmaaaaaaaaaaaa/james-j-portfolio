@@ -5,8 +5,8 @@ menu that lives on the table and a photo-to-invoice tool.
 
 ## How it is built
 
-Six static HTML pages, no framework, no build step, no browser dependency
-beyond the fonts.
+Six static HTML pages, no framework, no build step, and not one request to a
+third party — the typefaces are served from this repository.
 
 ```bash
 python3 _build.py        # English — what gets published
@@ -17,7 +17,9 @@ python3 _build.py es     # Spanish, into /es/
 |---|---|
 | `_build.py` | The generator. Content lives in `t(en, es)` calls; structure and motion are shared. |
 | `_sistema.css` | The visual system: tokens, type, plates, chrome, motion. |
-| `img/` | Seven images, 84 KB total. The "before" ones are the same photo darkened and blurred, not a different photo. |
+| `img/` | Seven images, 84 KB total. The "before" ones are the same photo darkened and blurred, not a different photo — the page says so. |
+| `fuentes/` | The three typefaces, latin and latin-ext subsets, 8 files. A page pulls ~75 KB of them. All SIL OFL 1.1, which allows self-hosting. |
+| `_fuentes.css` | The `@font-face` rules, inlined into every page by the generator. |
 | `_estilo/` | The direction analysis and the Stitch prompt. |
 | `_viejo/` | The previous generator, kept as reference. |
 

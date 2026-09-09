@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 284 496" width="284" height="496"
+     role="img" aria-labelledby="t d">
+  <title id="t">Un móvil con la ficha del bar y la carta NFC sobre la mesa</title>
+  <desc id="d">Ilustración: alguien encuentra el negocio en el móvil y, ya dentro,
+  acerca el teléfono a la tarjeta de la mesa para ver la carta.</desc>
+
+  <!-- La portada tenía un casco de aerografía. Precioso, y mudo: un dueño de
+       bar lo miraba y no entendía qué se le vende. Esto dice el titular en
+       imagen — «te encuentran en Google, entran» — y sigue el mismo idioma:
+       cobalto plano, luz dura de un solo sitio, cromado por bandas con saltos
+       bruscos, un único acento bermellón y un destello de cuatro puntas.
+       Vector: pesa 4 KB, no se pixela y no hay banco de imágenes de por medio. -->
+
+  <!-- El movimiento va DENTRO del SVG, en CSS. Es la clave para que funcione
+       cargado con <img>: los scripts de un SVG no se ejecutan así, pero las
+       animaciones CSS SÍ. Cero JavaScript en la portada.
+
+       Solo `opacity` y `transform`, que van por GPU. Y el ciclo es de 2,4 s:
+       lo que dura acercar el móvil a la tarjeta. Un fondo que parpadea rápido
+       cansa; esto se lee como un gesto, no como un aviso. -->
+  <style>
+    .onda { opacity: 0; animation: ping 2.4s cubic-bezier(.4,0,.6,1) infinite; }
+    .onda:nth-child(1) { animation-delay: 0s; }
+    .onda:nth-child(2) { animation-delay: .22s; }
+    .onda:nth-child(3) { animation-delay: .44s; }
+    @keyframes ping {
+      0%   { opacity: 0; }
+      18%  { opacity: 1; }
+      46%  { opacity: .28; }
+      70%, 100% { opacity: 0; }
+    }
+
+    /* El destello respira. Cuatro segundos: se nota que está vivo y no
+       secuestra la mirada mientras se lee el titular de al lado. */
+    .destello { transform-box: fill-box; transform-origin: center;
+                animation: latir 4s ease-in-out infinite; }
+    @keyframes latir {
+      0%, 100% { transform: scale(.92); opacity: .78; }
+      50%      { transform: scale(1);   opacity: 1; }
+    }
+
+    /* La pastilla de «abierto», el único acento cálido, con un pulso muy
+       lento: es lo que quieres que mire un dueño de bar. */
+    .abierto { animation: brasa 3.2s ease-in-out infinite; }
+    @keyframes brasa { 0%,100% { opacity: .86 } 50% { opacity: 1 } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .onda, .destello, .abierto { animation: none; }
+      .onda { opacity: .55; }
+    }
+  </style>
+
+  <defs>
+    <!-- Cromado por bandas: la aerografía CORTA los filos, no los difumina.
+         De ahí los saltos de parada, en vez de un degradado suave. -->
+    <linearGradient id="cromo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#cfd8ea"/>
+      <stop offset="22%"  stop-color="#cfd8ea"/>
+      <stop offset="22%"  stop-color="#7f93c4"/>
+      <stop offset="38%"  stop-color="#7f93c4"/>
+      <stop offset="38%"  stop-color="#f4f7ff"/>
+      <stop offset="52%"  stop-color="#f4f7ff"/>
+      <stop offset="52%"  stop-color="#95a7d2"/>
+      <stop offset="78%"  stop-color="#95a7d2"/>
+      <stop offset="78%"  stop-color="#e6ecf9"/>
+    </linearGradient>
+    <linearGradient id="canto" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity=".15"/>
+      <stop offset="100%" stop-color="#0a2c78" stop-opacity=".55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo: cobalto PLANO, sin degradado de cielo. Da aire de lámina. -->
+  <rect width="284" height="496" fill="#0f3fa8"/>
+  <rect y="392" width="284" height="104" fill="#0a2c78"/>
+  <!-- El canto de la mesa: un filo recto, nada de perspectiva blanda -->
+  <rect y="388" width="284" height="5" fill="#cfd8ea"/>
+
+  <!-- Destello de cuatro puntas, uno y arriba. La firma de época. -->
+  <path class="destello" d="M212 62 L216 96 L220 100 L254 104 L220 108 L216 112 L212 146
+           L208 112 L204 108 L170 104 L204 100 L208 96 Z" fill="#eaf0ff" opacity=".92"/>
+
+  <!-- ── El móvil, inclinado y con sombra dura ─────────────────────────── -->
+  <g transform="rotate(-7 128 250)">
+    <!-- Sombra negra y nítida, nunca con blur: es la regla de la aerografía -->
+    <rect x="52" y="106" width="152" height="268" rx="18" fill="#06153f"/>
+    <rect x="44" y="98" width="152" height="268" rx="18" fill="url(#cromo)"/>
+    <rect x="50" y="104" width="140" height="256" rx="13" fill="#0b1020"/>
+
+    <!-- La ficha en pantalla. Genérica a propósito: ni logotipo ni marca
+         ajena, solo la forma que cualquiera reconoce. -->
+    <rect x="58" y="112" width="124" height="58" rx="6" fill="#1b2740"/>
+    <path d="M58 158 L92 132 L118 152 L140 138 L182 166 L182 164 L182 170
+             L58 170 Z" fill="#33507f"/>
+    <circle cx="150" cy="128" r="8" fill="#e6ecf9" opacity=".55"/>
+
+    <rect x="58" y="180" width="88" height="9" rx="2" fill="#eaf0ff"/>
+    <rect x="58" y="196" width="58" height="6" rx="2" fill="#7f93c4"/>
+
+    <!-- Estrellas de cuatro puntas, no de cinco: mantiene el idioma -->
+    <g fill="#fe4a23">
+      <path d="M60 216 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" transform="translate(3,0)"/>
+      <path d="M60 216 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" transform="translate(21,0)"/>
+      <path d="M60 216 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" transform="translate(39,0)"/>
+      <path d="M60 216 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" transform="translate(57,0)"/>
+      <path d="M60 216 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" transform="translate(75,0)" opacity=".35"/>
+    </g>
+
+    <!-- «Abierto»: el único acento cálido de toda la lámina, y va aquí -->
+    <rect class="abierto" x="58" y="242" width="52" height="16" rx="8" fill="#fe4a23"/>
+    <rect x="66" y="248" width="36" height="4" rx="2" fill="#0b1020" opacity=".55"/>
+
+    <rect x="58" y="272" width="124" height="5" rx="2" fill="#33507f"/>
+    <rect x="58" y="286" width="104" height="5" rx="2" fill="#33507f"/>
+    <rect x="58" y="300" width="116" height="5" rx="2" fill="#33507f"/>
+
+    <!-- Ondas de acercamiento: el gesto de pasar el móvil por la tarjeta -->
+    <g fill="none" stroke="#eaf0ff" stroke-width="3" stroke-linecap="round" opacity=".9">
+      <path class="onda" d="M196 300 a18 18 0 0 1 0 26"/>
+      <path class="onda" d="M204 292 a30 30 0 0 1 0 42"/>
+      <path class="onda" d="M212 284 a42 42 0 0 1 0 58"/>
+    </g>
+  </g>
+
+  <!-- ── La tarjeta NFC sobre la mesa ──────────────────────────────────── -->
+  <g transform="rotate(6 140 430)">
+    <rect x="60" y="410" width="150" height="62" rx="8" fill="#06153f"/>
+    <rect x="54" y="404" width="150" height="62" rx="8" fill="url(#cromo)"/>
+    <rect x="54" y="404" width="150" height="62" rx="8" fill="url(#canto)"/>
+    <rect x="66" y="416" width="74" height="7" rx="2" fill="#0d0d0f" opacity=".72"/>
+    <rect x="66" y="430" width="52" height="5" rx="2" fill="#0d0d0f" opacity=".42"/>
+    <rect x="66" y="446" width="34" height="8" rx="4" fill="#fe4a23"/>
+    <g fill="none" stroke="#0d0d0f" stroke-width="3" stroke-linecap="round" opacity=".72">
+      <path class="onda" d="M162 426 a12 12 0 0 1 0 18"/>
+      <path class="onda" d="M170 419 a22 22 0 0 1 0 32"/>
+      <path class="onda" d="M178 412 a32 32 0 0 1 0 46"/>
+    </g>
+  </g>
+</svg>

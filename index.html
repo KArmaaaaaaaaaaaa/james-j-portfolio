@@ -269,6 +269,12 @@ p:last-child{margin-bottom:0}
    lleva marca y llamada, y el índice vive en un único sitio. De paso desaparece
    el problema del móvil de raíz: el panel ya no «tapa» la página, ocupa la
    pantalla entera y tiene una salida que se ve. */
+/* Los enlaces, a la vista en la barra. Cambiar de sección es un clic, no dos.
+   El menú de las tres barras queda solo para el móvil, que es donde no caben. */
+.barra .enlaces{display:flex;align-items:center;gap:2px;margin-right:4px}
+@media(max-width:900px){.barra .enlaces{display:none}}
+@media(min-width:901px){.menu-btn{display:none!important}}
+
 .menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
   color:var(--tinta);position:relative;z-index:60;
   transition:transform var(--micro) var(--curva),color var(--rapido) var(--curva)}
@@ -612,6 +618,7 @@ body.menu-abierto{overflow:hidden}
 
 <nav class="barra" aria-label="Main">
   <a class="marca" href="index.html">James J Projects</a>
+  <div class="enlaces"><a href="index.html" aria-current="page">Home</a><a href="precios.html">Pricing</a><a href="carta-nfc.html">Menu on the table</a><a href="ficha-google.html">Google profile</a><a href="caso-factura.html">Case</a><a href="panel-demo.html">Dashboard</a></div>
   <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Talk to me</a>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
     aria-label="Open the index">
@@ -621,7 +628,7 @@ body.menu-abierto{overflow:hidden}
   </button>
 </nav>
 <div class="menu-panel" id="menuPanel" hidden>
-  <div class="menu-lista"><a href="index.html" aria-current='page'><span class="n">01</span><span>Home</span><span class="flecha" aria-hidden="true">→</span></a><a href="precios.html"><span class="n">02</span><span>Pricing</span><span class="flecha" aria-hidden="true">→</span></a><a href="carta-nfc.html"><span class="n">03</span><span>Menu on the table</span><span class="flecha" aria-hidden="true">→</span></a><a href="ficha-google.html"><span class="n">04</span><span>Google profile</span><span class="flecha" aria-hidden="true">→</span></a><a href="caso-factura.html"><span class="n">05</span><span>Case</span><span class="flecha" aria-hidden="true">→</span></a><a href="panel-demo.html"><span class="n">06</span><span>Dashboard</span><span class="flecha" aria-hidden="true">→</span></a><a href="mailto:jamesjoelbenavides2004@gmail.com"><span class="n">07</span><span>Talk to me</span><span class="flecha" aria-hidden="true">→</span></a></div>
+  <div class="menu-lista"><a href="index.html" aria-current="page"><span class="n">01</span><span>Home</span><span class="flecha" aria-hidden="true">→</span></a><a href="precios.html"><span class="n">02</span><span>Pricing</span><span class="flecha" aria-hidden="true">→</span></a><a href="carta-nfc.html"><span class="n">03</span><span>Menu on the table</span><span class="flecha" aria-hidden="true">→</span></a><a href="ficha-google.html"><span class="n">04</span><span>Google profile</span><span class="flecha" aria-hidden="true">→</span></a><a href="caso-factura.html"><span class="n">05</span><span>Case</span><span class="flecha" aria-hidden="true">→</span></a><a href="panel-demo.html"><span class="n">06</span><span>Dashboard</span><span class="flecha" aria-hidden="true">→</span></a><a href="mailto:jamesjoelbenavides2004@gmail.com"><span class="n">07</span><span>Talk to me</span><span class="flecha" aria-hidden="true">→</span></a></div>
 </div>
 
 <main id="principal">
@@ -630,7 +637,7 @@ body.menu-abierto{overflow:hidden}
     <span class="reticula" aria-hidden="true"></span>
     <span class="lamina" aria-hidden="true">
       <span class="plano"></span>
-      <img class="placa" src="img/lamina.jpg" alt="" width="284" height="496" fetchpriority="high" decoding="async">
+      <img class="placa" src="img/lamina.svg" alt="" width="284" height="496" fetchpriority="high" decoding="async">
       <span class="chispa"></span>
       <span class="chispa baja"></span>
     </span>

@@ -156,15 +156,31 @@ if(btn&&panel){
 """
 
 def barra(actual):
-    """La barra y el índice. Los enlaces existen UNA vez, en el panel.
+    """La barra y el índice.
 
-    Antes se pintaban dos veces —inline en la barra y otra vez en el panel—,
-    que además de repetirse en pantalla se lee dos veces con un lector.
+    En ordenador los enlaces se ven SIEMPRE en la barra. Estaban solo dentro
+    del panel de las tres barras, y obligaba a abrir un menú para cada cambio
+    de sección: dos gestos donde debería haber uno. En una web de cinco
+    páginas eso no se sostiene — el menú oculto es para cuando no caben.
+
+    Por debajo de 900 px sí siguen escondidos, que ahí no caben de verdad.
+
+    Se pintan dos veces en el HTML, pero el fuente es UNO: la lista NAV de
+    arriba. Y no se leen dos veces con un lector de pantalla, porque el panel
+    nace con `hidden` y en ordenador el botón que lo abre no existe, así que
+    nunca llega a exponerse.
     """
+    # El atributo se arma fuera de la f-string: con comillas dentro hace falta
+    # una barra invertida, y eso no lo admite toda versión de Python.
+    aqui = ' aria-current="page"'
+    enlaces = "".join(
+      '<a href="%s"%s>%s</a>' % (h, aqui if h == actual else "", d[IDIOMA])
+      for h, d in NAV)
     filas = "".join(
-      f'<a href="{h}"{" aria-current=\'page\'" if h == actual else ""}>'
-      f'<span class="n">{i:02d}</span><span>{d[IDIOMA]}</span>'
-      f'<span class="flecha" aria-hidden="true">→</span></a>'
+      '<a href="%s"%s>'
+      '<span class="n">%02d</span><span>%s</span>'
+      '<span class="flecha" aria-hidden="true">→</span></a>'
+      % (h, aqui if h == actual else "", i, d[IDIOMA])
       for i, (h, d) in enumerate(NAV, 1))
     correo_fila = (
       f'<a href="mailto:{CORREO}"><span class="n">{len(NAV)+1:02d}</span>'
@@ -173,6 +189,7 @@ def barra(actual):
     return f"""
 <nav class="barra" aria-label="{t('Main','Principal')}">
   <a class="marca" href="index.html">James J Projects</a>
+  <div class="enlaces">{enlaces}</div>
   <a class="cta" href="mailto:{CORREO}">{t('Talk to me','Hablamos')}</a>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
     aria-label="{t('Open the index','Abrir el índice')}">
@@ -265,6 +282,12 @@ CHASIS = """
    lleva marca y llamada, y el índice vive en un único sitio. De paso desaparece
    el problema del móvil de raíz: el panel ya no «tapa» la página, ocupa la
    pantalla entera y tiene una salida que se ve. */
+/* Los enlaces, a la vista en la barra. Cambiar de sección es un clic, no dos.
+   El menú de las tres barras queda solo para el móvil, que es donde no caben. */
+.barra .enlaces{display:flex;align-items:center;gap:2px;margin-right:4px}
+@media(max-width:900px){.barra .enlaces{display:none}}
+@media(min-width:901px){.menu-btn{display:none!important}}
+
 .menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
   color:var(--tinta);position:relative;z-index:60;
   transition:transform var(--micro) var(--curva),color var(--rapido) var(--curva)}
