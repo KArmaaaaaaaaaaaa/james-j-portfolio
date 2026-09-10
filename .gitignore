@@ -4,3 +4,11 @@ __pycache__/
 # La versión en castellano se genera con `python3 _build.py es` y NO se publica:
 # el sitio sale en inglés a propósito, de cara a Hamburgo.
 es/
+
+# El metodo salio del repo publico el 10/09/2026 y vive en
+# ~/dev/portfolio-metodo, dentro de jarvis-ecosistema, que es privado.
+# Aqui se publica el sitio; como se disena no.
+DESIGN.md
+PRODUCT.md
+_estilo/
+.impeccable/

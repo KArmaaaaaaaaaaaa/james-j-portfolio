@@ -9,8 +9,9 @@ Una sola fuente para los dos idiomas: los textos viven en T() y el resto
 inglés el 7/9/2026 de cara a la mudanza a Hamburgo; el castellano se mantiene
 generable porque el cliente que hoy paga es un dueño de bar español.
 
-El mundo visual está en _sistema.css y la dirección en
-.impeccable/surfaces/index-html.md. Aquí solo va lo que cambia por página.
+El mundo visual está en _sistema.css. La dirección de arte y el sistema de
+diseño viven fuera de este repo, en ~/dev/portfolio-metodo (privado).
+Aquí solo va lo que cambia por página.
 """
 import pathlib, sys, re
 
