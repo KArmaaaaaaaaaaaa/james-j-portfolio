@@ -43,7 +43,7 @@ FUENTES = (BASE / "_fuentes.css").read_text(encoding="utf-8").replace(
 NAV = [
   ("index.html",        {"en":"Home",           "es":"Inicio"}),
   ("precios.html",      {"en":"Pricing",        "es":"Precios"}),
-  ("carta-nfc.html",    {"en":"Menu on the table","es":"Carta en la mesa"}),
+  ("carta-qr.html",     {"en":"Menu on the table","es":"Carta en la mesa"}),
   ("ficha-google.html", {"en":"Google profile",  "es":"Ficha de Google"}),
   ("caso-factura.html", {"en":"Case",            "es":"Un caso"}),
   ("panel-demo.html",   {"en":"Dashboard",       "es":"Panel"}),
@@ -111,8 +111,12 @@ SITIO = "https://karmaaaaaaaaaaaa.github.io/james-j-portfolio"
 # que no declararlo: Google descarta el grupo entero y desconfía del sitemap.
 # Se mira el .gitignore en vez de suponerlo, para que el día que se publique
 # el castellano se active solo, sin que nadie tenga que acordarse de esto.
-_IGNORADOS = (BASE / ".gitignore").read_text(encoding="utf-8").split()
-PUBLICA_ES = "es/" not in _IGNORADOS and "es" not in _IGNORADOS
+# Solo las líneas de regla: partir el fichero entero por espacios metía las
+# palabras de los comentarios en la lista, y un «es» suelto en una frase
+# apagaba el bilingüe sin que se notara.
+_IGNORADOS = {l.strip() for l in (BASE / ".gitignore").read_text(encoding="utf-8").splitlines()
+              if l.strip() and not l.lstrip().startswith("#")}
+PUBLICA_ES = not (_IGNORADOS & {"es", "es/", "/es", "/es/"})
 IMAGEN_SOCIAL = f"{SITIO}/img/social.png" if IDIOMA == "en" else f"{SITIO}/img/social-es.png"
 MARCA = "James J Projects"
 
@@ -1014,8 +1018,8 @@ f"""
          t("Change a price and it changes on every table at once","Cambias un precio y cambia en todas las mesas a la vez"),
          t("Each sticker carries its table number","Cada pegatina lleva su número de mesa"),
          t("Allergens always current, which is a legal requirement","Alérgenos siempre al día, que es obligatorio")],
-        t('Photos are yours, taken with your phone. <a href="carta-nfc.html">How it works →</a>',
-          'Las fotos son tuyas, hechas con tu móvil. <a href="carta-nfc.html">Cómo funciona →</a>'))}
+        t('Photos are yours, taken with your phone. <a href="carta-qr.html">How it works →</a>',
+          'Las fotos son tuyas, hechas con tu móvil. <a href="carta-qr.html">Cómo funciona →</a>'))}
       {tarjeta(v("250 €"), t("setup, then 20 € a month","montaje, y 20 € al mes"),
         t("Photo to invoice","De la foto a la factura"),
         t("If you charge by the day, the route or the job and month-end means sitting down to add up a notebook, this does it for you.",
@@ -1129,7 +1133,7 @@ CSS_NFC = """
 
 """
 
-pagina("carta-nfc.html",
+pagina("carta-qr.html",
   t("QR menu for a bar: change one price, every table changes",
     "Carta digital QR para bar: un precio, todas las mesas"),
   t("An NFC and QR sticker on every table opens your menu. Change a price once and it changes on all of them. Allergens current. 120 € up to 20 tables.",
@@ -1640,5 +1644,33 @@ def indice_del_buscador():
     print(f"  sitemap.xml ({len(filas)} URLs)")
     print("  robots.txt")
 
+
+# ── La URL vieja no se abandona ────────────────────────────────────────
+# carta-nfc.html llevaba semanas publicada. Se deja una redireccion en su
+# sitio con canonical a la nueva, para no romper enlaces ni tirar a la basura
+# lo que Google ya supiera de ella.
+def redireccion_vieja():
+    destino = url_de("carta-qr.html", IDIOMA)
+    (SALIDA / "carta-nfc.html").write_text(f"""<!DOCTYPE html>
+<html lang="{IDIOMA}">
+<head>
+<meta charset="UTF-8">
+<title>{t('The menu on the table','La carta en la mesa')} — {MARCA}</title>
+<link rel="canonical" href="{destino}">
+<meta name="robots" content="noindex, follow">
+<meta http-equiv="refresh" content="0; url=carta-qr.html">
+<style>body{{font-family:system-ui,sans-serif;padding:3rem;max-width:34rem}}</style>
+</head>
+<body>
+<p>{t('This page moved to','Esta página se ha movido a')}
+   <a href="carta-qr.html">carta-qr.html</a>.</p>
+<script>location.replace("carta-qr.html");</script>
+</body>
+</html>
+""", encoding="utf-8")
+    print("  carta-nfc.html (redirección)")
+
+
+redireccion_vieja()
 
 indice_del_buscador()
