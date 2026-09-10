@@ -99,6 +99,124 @@ def num(n):
 DEMO = "https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev"
 CORREO = "jamesjoelbenavides2004@gmail.com"
 
+# ── Identidad del sitio en el buscador ─────────────────────────────────
+# GitHub Pages sirve el repo en un subdirectorio, así que TODA URL absoluta
+# (canonical, hreflang, og:url, sitemap) tiene que llevarlo. El día que haya
+# dominio propio, se cambia esta línea y nada más.
+SITIO = "https://karmaaaaaaaaaaaa.github.io/james-j-portfolio"
+
+# ¿Se publica el castellano? Hoy `es/` está en .gitignore, así que /es/ NO
+# existe en el servidor. Declarar un hreflang hacia una URL que da 404 es peor
+# que no declararlo: Google descarta el grupo entero y desconfía del sitemap.
+# Se mira el .gitignore en vez de suponerlo, para que el día que se publique
+# el castellano se active solo, sin que nadie tenga que acordarse de esto.
+_IGNORADOS = (BASE / ".gitignore").read_text(encoding="utf-8").split()
+PUBLICA_ES = "es/" not in _IGNORADOS and "es" not in _IGNORADOS
+IMAGEN_SOCIAL = f"{SITIO}/img/social.png" if IDIOMA == "en" else f"{SITIO}/img/social-es.png"
+MARCA = "James J Projects"
+
+
+def url_de(archivo, idioma):
+    """URL absoluta y canónica de una página. La portada va sin index.html:
+    Google trata / y /index.html como dos URLs, y la limpia es la buena."""
+    raiz = SITIO if idioma == "en" else f"{SITIO}/es"
+    return f"{raiz}/" if archivo == "index.html" else f"{raiz}/{archivo}"
+
+
+def metas(archivo, titulo, descripcion):
+    """Canonical, hreflang, tarjetas sociales y datos estructurados.
+
+    El hreflang es lo que más importa aquí: el sitio existe entero en dos
+    idiomas con el mismo contenido, y sin declarar la equivalencia Google lo
+    lee como duplicado y elige él cuál indexa. Con los tres enlaces (en, es,
+    x-default) sirve la versión que toque según quién busque.
+    """
+    import html as _html
+    esc = lambda x: _html.escape(str(x), quote=True)
+    aqui = url_de(archivo, IDIOMA)
+    en, es = url_de(archivo, "en"), url_de(archivo, "es")
+
+    cabeza = [f'<link rel="canonical" href="{aqui}">']
+    if PUBLICA_ES:
+        cabeza += [
+          f'<link rel="alternate" hreflang="en" href="{en}">',
+          f'<link rel="alternate" hreflang="es" href="{es}">',
+          # x-default apunta al inglés: es lo que ve quien llega desde fuera.
+          f'<link rel="alternate" hreflang="x-default" href="{en}">',
+        ]
+    cabeza += [
+      f'<meta property="og:type" content="website">',
+      f'<meta property="og:site_name" content="{MARCA}">',
+      f'<meta property="og:locale" content="{"en_GB" if IDIOMA == "en" else "es_ES"}">',
+      f'<meta property="og:url" content="{aqui}">',
+      f'<meta property="og:title" content="{esc(titulo)}">',
+      f'<meta property="og:description" content="{esc(descripcion)}">',
+      f'<meta property="og:image" content="{IMAGEN_SOCIAL}">',
+      f'<meta property="og:image:width" content="1200">',
+      f'<meta property="og:image:height" content="630">',
+      f'<meta property="og:image:alt" content="{esc(MARCA)}">',
+      f'<meta name="twitter:card" content="summary_large_image">',
+      f'<meta name="twitter:title" content="{esc(titulo)}">',
+      f'<meta name="twitter:description" content="{esc(descripcion)}">',
+      f'<meta name="twitter:image" content="{IMAGEN_SOCIAL}">',
+      # Sin esto, un buscador puede recortar la descripción a dos líneas.
+      f'<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">',
+    ]
+
+    # ── Datos estructurados ────────────────────────────────────────────
+    # ProfessionalService, no LocalBusiness a secas: no hay local con puerta
+    # a la calle y declarar una dirección que no existe es lo que hace que
+    # Google se desconfíe de todo el marcado.
+    negocio = {
+      "@type": "ProfessionalService",
+      "@id": f"{SITIO}/#negocio",
+      "name": MARCA,
+      "url": SITIO + "/",
+      "email": CORREO,
+      "image": IMAGEN_SOCIAL,
+      "description": descripcion,
+      "priceRange": "30-50 EUR",
+      "availableLanguage": ["es", "en"],
+      "areaServed": [
+        {"@type": "City", "name": "Barcelona", "address":
+         {"@type": "PostalAddress", "addressCountry": "ES"}},
+        {"@type": "City", "name": "Hamburg", "address":
+         {"@type": "PostalAddress", "addressCountry": "DE"}},
+      ],
+      "knowsAbout": [
+        "Google Business Profile", "local SEO", "restaurant websites",
+        "NFC menus", "small business websites",
+      ],
+    }
+    grafo = [negocio, {
+      "@type": "WebSite",
+      "@id": f"{SITIO}/#sitio",
+      "url": SITIO + "/",
+      "name": MARCA,
+      "inLanguage": IDIOMA,
+      "publisher": {"@id": f"{SITIO}/#negocio"},
+    }]
+
+    # Miga de pan solo donde hay jerarquía de verdad: la portada no la lleva.
+    if archivo != "index.html":
+        nombre = next((d[IDIOMA] for h, d in NAV if h == archivo), titulo)
+        grafo.append({
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1,
+             "name": t("Home", "Inicio"), "item": url_de("index.html", IDIOMA)},
+            {"@type": "ListItem", "position": 2, "name": nombre, "item": aqui},
+          ],
+        })
+
+    datos = json.dumps({"@context": "https://schema.org", "@graph": grafo},
+                       ensure_ascii=False, separators=(",", ":"))
+    if PUBLICA_ES:
+        cabeza.append(
+          f'<meta property="og:locale:alternate" content="{"es_ES" if IDIOMA == "en" else "en_GB"}">')
+    cabeza.append(f'<script type="application/ld+json">{datos}</script>')
+    return "\n".join(cabeza)
+
 # ── El movimiento ──────────────────────────────────────────────────────
 # Un solo momento de autor por página, no la misma entrada en cada sección:
 # lo que sube es la primera línea de cada plate, y el resto llega detrás
@@ -225,6 +343,7 @@ def pagina(archivo, titulo, descripcion, cuerpo, css_extra="", js_extra=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{titulo}</title>
 <meta name="description" content="{descripcion}">
+{metas(archivo, titulo, descripcion)}
 <link rel="preload" href="{A}fuentes/hanken-grotesk-300-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{A}fuentes/oswald-400-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <noscript><style>.sube{{opacity:1!important;transform:none!important}}
@@ -628,10 +747,10 @@ CSS_HOME = """
 """
 
 pagina("index.html",
-  t("James J Projects — websites and Google profiles for local businesses",
-    "James J Projects — webs y fichas de Google para negocios de barrio"),
-  t("Hand-built websites, Google Business Profiles and a menu that lives on the table. Closed prices, said up front.",
-    "Webs hechas a mano, fichas de Google y una carta que vive en la mesa. Precios cerrados y dichos de antemano."),
+  t("Websites and Google Maps profiles · James J Projects",
+    "Webs y fichas de Google en Barcelona · James J Projects"),
+  t("Hand-built websites from 400 €, Google Maps profiles from 150 €, and the menu on the table. Fixed price, said up front. Barcelona and remote.",
+    "Webs hechas a mano desde 400 €, fichas de Google Maps desde 150 € y la carta en la mesa. Precio cerrado dicho por delante. Barcelona y en remoto."),
 f"""
 <main id="principal">
 <div class="env">
@@ -856,9 +975,10 @@ def tarjeta(precio, unidad, titulo, que, puntos, nota="", destacada=False):
     </div></div>"""
 
 pagina("precios.html",
-  t("Pricing — James J Projects","Precios — James J Projects"),
-  t("Closed prices, written down. What each service costs and what it covers.",
-    "Precios cerrados y por escrito. Qué cuesta cada servicio y qué incluye."),
+  t("What a website for your business costs · Fixed prices",
+    "Cuánto cuesta una web para tu negocio · Precios cerrados"),
+  t("Full website 400–900 €, Google profile 150–300 €, menu on the table 120 €, upkeep 30–50 € a month. No lock-in and no small print.",
+    "Web completa 400–900 €, ficha de Google 150–300 €, carta en la mesa 120 € y mantenimiento 30–50 € al mes. Sin permanencia y sin letra pequeña."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -1009,9 +1129,10 @@ CSS_NFC = """
 """
 
 pagina("carta-nfc.html",
-  t("The menu, stuck to the table — James J Projects","La carta, pegada en la mesa — James J Projects"),
-  t("A sticker on every table opens your live menu. Change a price once and it changes on every table.",
-    "Una pegatina en cada mesa abre tu carta. Cambias un precio una vez y cambia en todas."),
+  t("QR menu for a bar: change one price, every table changes",
+    "Carta digital QR para bar: un precio, todas las mesas"),
+  t("An NFC and QR sticker on every table opens your menu. Change a price once and it changes on all of them. Allergens current. 120 € up to 20 tables.",
+    "Una pegatina NFC y QR en cada mesa abre tu carta. Cambias un precio una vez y cambia en todas. Alérgenos al día. 120 € hasta 20 mesas."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px;padding-bottom:0">
@@ -1225,9 +1346,10 @@ def ficha_google(estado, hrs, fotos, resenas, acciones):
     </div>"""
 
 pagina("ficha-google.html",
-  t("Your Google profile — James J Projects","Tu ficha de Google — James J Projects"),
-  t("The profile with the map beside it is the first thing a customer judges. Drag the bar and compare.",
-    "La ficha que sale con el mapa al lado es lo primero que juzga un cliente. Mueve la barra y compara."),
+  t("Showing up on Google Maps: your business profile, done right",
+    "Aparecer en Google Maps: la ficha de tu negocio, bien hecha"),
+  t("The profile beside the map is the first thing a customer judges. Photos, hours, reviews and categories in order, from 150 €. Drag the bar and compare.",
+    "La ficha que sale en el mapa es lo primero que juzga un cliente. Fotos, horarios, reseñas y categorías en orden, desde 150 €. Mueve la barra y compara."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -1313,10 +1435,10 @@ f"""
 """, CSS_RESTO, JS_COMPARAR)
 
 pagina("caso-factura.html",
-  t("A real case: 5,574.00 € to the cent — James J Projects",
-    "Un caso real: 5.574,00 € al céntimo — James J Projects"),
-  t("Twenty-one handwritten days turned into an invoice that matched the hand-issued one exactly.",
-    "Veintiuna jornadas escritas a mano convertidas en una factura idéntica a la emitida a mano."),
+  t("A real case: 21 handwritten days, an invoice to the cent",
+    "Un caso real: 21 jornadas a mano y una factura al céntimo"),
+  t("Twenty-one handwritten days turned into a 5,574.00 € invoice that matched the hand-issued one exactly. The case, step by step, with the numbers.",
+    "Veintiuna jornadas escritas a mano convertidas en una factura de 5.574,00 € idéntica a la emitida a mano. El caso, paso a paso y con los números."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -1380,9 +1502,10 @@ f"""
 """, CSS_RESTO)
 
 pagina("panel-demo.html",
-  t("A dashboard, demonstrated — James J Projects","Un panel, demostrado — James J Projects"),
-  t("How many people looked you up and how many called. Demonstration figures, labelled as such.",
-    "Cuánta gente te ha buscado y cuántos han llamado. Cifras de demostración, marcadas como tales."),
+  t("How many people look you up on Google: the dashboard",
+    "Cuánta gente te busca en Google: el panel, demostrado"),
+  t("How many looked you up, how many called, how many asked for directions. One email a month, read in thirty seconds. Demonstration figures, labelled.",
+    "Cuánta gente te ha buscado, cuántos han llamado y cuántos han pedido cómo llegar. Un correo al mes que se lee en treinta segundos. Cifras de demostración."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -1462,3 +1585,59 @@ f"""
 </section>
 </main>
 """, CSS_RESTO)
+
+
+# ── Sitemap y robots ───────────────────────────────────────────────────
+# Se escriben siempre en la raíz, corra el build en el idioma que corra: son
+# los mismos para todo el sitio y describen las dos versiones a la vez.
+def indice_del_buscador():
+    import datetime, xml.sax.saxutils as sx
+
+    def cuando(archivo, idioma):
+        """lastmod real del HTML, no la fecha de hoy: un sitemap que dice
+        «modificado» en cada build enseña a Google a no fiarse de la fecha."""
+        f = (BASE / "es" / archivo) if idioma == "es" else (BASE / archivo)
+        if not f.exists():
+            f = BASE / archivo
+        if not f.exists():
+            return None
+        return datetime.datetime.fromtimestamp(
+            f.stat().st_mtime, datetime.timezone.utc).date().isoformat()
+
+    filas = []
+    for archivo, _ in NAV:
+        for idioma in (("en", "es") if PUBLICA_ES else ("en",)):
+            fecha = cuando(archivo, idioma)
+            alt = "".join(
+              f'\n    <xhtml:link rel="alternate" hreflang="{h}" href="{sx.escape(u)}"/>'
+              for h, u in (("en", url_de(archivo, "en")),
+                           ("es", url_de(archivo, "es")),
+                           ("x-default", url_de(archivo, "en")))) if PUBLICA_ES else ""
+            filas.append(
+              "  <url>\n"
+              f"    <loc>{sx.escape(url_de(archivo, idioma))}</loc>"
+              + (f"\n    <lastmod>{fecha}</lastmod>" if fecha else "")
+              # La portada por encima del resto; lo demás, igual entre sí.
+              + f"\n    <priority>{'1.0' if archivo == 'index.html' else '0.8'}</priority>"
+              + alt + "\n  </url>")
+
+    (BASE / "sitemap.xml").write_text(
+      '<?xml version="1.0" encoding="UTF-8"?>\n'
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+      '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+      + "\n".join(filas) + "\n</urlset>\n", encoding="utf-8")
+
+    (BASE / "robots.txt").write_text(
+      "User-agent: *\n"
+      "Allow: /\n"
+      "\n"
+      "# El panel de contenidos no es parte del sitio publico.\n"
+      "Disallow: /editor.html\n"
+      "\n"
+      f"Sitemap: {SITIO}/sitemap.xml\n", encoding="utf-8")
+
+    print(f"  sitemap.xml ({len(filas)} URLs)")
+    print("  robots.txt")
+
+
+indice_del_buscador()

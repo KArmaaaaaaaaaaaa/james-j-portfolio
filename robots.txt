@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# El panel de contenidos no es parte del sitio publico.
+Disallow: /editor.html
+
+Sitemap: https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/sitemap.xml
