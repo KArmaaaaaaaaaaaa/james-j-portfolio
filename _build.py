@@ -35,6 +35,11 @@ NAV = [
   ("ficha-google.html", {"en":"Google profile", "es":"Perfil de Google"}),
   ("caso-factura.html", {"en":"Real case", "es":"Caso real"}),
 ]
+PAGINAS_SITIO = (
+  "index.html", "precios.html", "ficha-google.html", "caso-factura.html",
+  "carta-qr.html", "panel-demo.html", "faq.html", "privacidad.html",
+  "cookies.html",
+)
 
 # ── El contenido editable ──────────────────────────────────────────────
 # contenido.json NO sustituye a los textos del código: los ANULA. Lo que no
@@ -320,8 +325,31 @@ PIE = f"""
     <p class="nota pie-nota">{t(
       'Hand-built. No template, no framework, no tracking, and nothing at all loaded from a third party — the typefaces are served from here.',
       'Hecho a mano. Sin plantilla, sin framework, sin rastreo y sin nada de terceros: las tipografías se sirven desde aquí.')}</p>
+    <nav class="pie-enlaces" aria-label="{t('Information','Información')}">
+      <a href="faq.html">{t('FAQ','Preguntas frecuentes')}</a>
+      <a href="privacidad.html">{t('Privacy','Privacidad')}</a>
+      <a href="cookies.html">{t('Cookies','Cookies')}</a>
+    </nav>
   </div>
 </footer>"""
+
+
+def informacion_contacto(formulario=False):
+    """Primera capa junto al contacto y consentimiento listo para formularios.
+
+    Hoy los botones abren el correo del visitante: no hay formulario ni datos
+    enviados desde el sitio. Si se añade uno, este bloque aporta la casilla
+    obligatoria y la información mínima antes de que se active el envío.
+    """
+    if formulario:
+        return f"""<div class="consentimiento-formulario">
+  <label><input type="checkbox" name="privacidad" required>
+    {t('I have read the ','He leído la ')}<a href="privacidad.html">{t('privacy policy','política de privacidad')}</a>.</label>
+  <p>{t('Controller: James J Benavides. Purpose: reply to your enquiry and prepare a quote. Rights: access, rectification, erasure, objection, restriction and portability by writing to ', 'Responsable: James J Benavides. Finalidad: responder a tu consulta y preparar un presupuesto. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a ')}<a href="mailto:{CORREO}">{CORREO}</a>.</p>
+</div>"""
+    return f"""<p class="info-contacto">{t(
+      'The button opens your email app. Controller: James J Benavides; purpose: reply to your enquiry and prepare a quote. Your rights and the privacy policy are available at ',
+      'El botón abre tu aplicación de correo. Responsable: James J Benavides; finalidad: responder a tu consulta y preparar un presupuesto. Puedes consultar tus derechos y la política de privacidad en ')}<a href="privacidad.html">{t('Privacy','Privacidad')}</a>.</p>"""
 
 def pagina(archivo, titulo, descripcion, cuerpo, css_extra="", js_extra=""):
     lang = "en" if IDIOMA == "en" else "es"
@@ -586,7 +614,7 @@ f"""
             <a class="boton boton--lleno" href="{consulta()}">{t('Get a quote', 'Pedir presupuesto')}</a>
             <a class="boton" href="precios.html">{t('What’s included', 'Qué incluye')}</a>
           </div>
-          <p class="nota">{t('Tell me your business and your town. The first conversation and written quote are free.', 'Dime qué negocio tienes y en qué localidad. La primera conversación y el presupuesto escrito son gratis.')}</p>
+          {informacion_contacto()}
         </div>
         <div class="lamina" aria-hidden="true"><span class="plano"></span><span class="placa cromo"></span><span class="chispa"></span></div>
       </div>
@@ -624,8 +652,9 @@ f"""
   <section class="plate" id="contacto"><div class="env"><h2>{t('Let’s start<br>with your business.', 'Empecemos<br>por tu negocio.')}</h2>
     <p class="guia" style="margin-top:24px">{t('Tell me what you need help with. I’ll reply with the next step and a written quote.', 'Cuéntame qué necesitas poner al día. Te contesto con el siguiente paso y un presupuesto por escrito.')}</p>
     <div class="acciones"><a class="boton boton--lleno" href="{consulta()}">{t('Write to James','Escribir a James')}</a></div>
+    {informacion_contacto()}
     <a class="contacto-correo" href="{consulta()}">{CORREO}</a>
-    <p class="nota" style="margin-top:12px">{t('The button opens your email app. You can also copy the address.', 'El botón abre tu aplicación de correo. También puedes copiar la dirección.')}</p>
+    <p class="nota" style="margin-top:12px">{t('You can also copy the address.', 'También puedes copiar la dirección.')}</p>
   </div></section>
 </main>
 """, CSS_HOME)
@@ -680,6 +709,7 @@ def tarjeta(precio, unidad, titulo, que, puntos, nota="", destacada=False, ancla
     <ul class="lista">{lis}</ul>
     <div class="pie-t">{aviso}
       <a class="ir-t" href="{consulta(titulo)}">{t("Ask for this →","Pedirlo →")}</a>
+      {informacion_contacto()}
     </div></div>"""
 
 pagina("precios.html",
@@ -750,10 +780,96 @@ f"""
       <a class="boton boton--lleno" href="{consulta()}">{t("Ask for a quote","Pedir presupuesto")}</a>
       <a class="boton" href="caso-factura.html">{t("See real work","Ver un trabajo hecho")}</a>
     </div>
+    {informacion_contacto()}
   </div>
 </section>
 </main>
 """, CSS_PRECIOS)
+
+# ═══════════════════ FAQ Y POLÍTICAS ══════════════════════════════════
+CSS_INFORMACION = """
+.pagina-informacion{padding:132px 0 86px}
+.pagina-informacion .intro{margin-top:26px}
+.bloques-informacion{border-top:1px solid var(--tinta);margin-top:46px}
+.bloque-informacion{padding:28px 0;border-bottom:1px solid var(--hilo)}
+.bloque-informacion h2{font-size:clamp(25px,3.5vw,44px);margin-bottom:14px}
+.bloque-informacion p,.bloque-informacion li{color:var(--tinta-2);font-weight:300}
+.bloque-informacion ul{max-width:var(--medida);margin:0;padding-left:1.2em}
+.bloque-informacion li+li{margin-top:7px}
+.faq-completa{border-top:1px solid var(--tinta);margin-top:48px}
+.faq-completa > div{padding:28px 0;border-bottom:1px solid var(--hilo)}
+.faq-completa h2{font-size:clamp(23px,3vw,38px);margin-bottom:12px}
+.faq-completa p{color:var(--tinta-2);font-weight:300}
+"""
+
+pagina("faq.html",
+  t("Questions before you hire · FAQ", "Preguntas antes de contratar · FAQ"),
+  t("Straight answers about timing, scope, ownership, Google, payments and maintenance for small businesses.",
+    "Respuestas claras sobre plazos, alcance, propiedad, Google, pagos y mantenimiento para negocios pequeños."),
+f"""
+<main id="principal">
+<section class="pagina-informacion"><div class="env">
+  <p class="spec">{t('FAQ · JAMES J PROJECTS', 'PREGUNTAS FRECUENTES · JAMES J PROJECTS')}</p>
+  <h1>{t('Clear before<br>we start', 'Claro antes<br>de empezar')}</h1>
+  <p class="guia intro">{t('The scope, timing and final conditions are always confirmed in writing before work begins.', 'El alcance, los plazos y las condiciones finales se confirman siempre por escrito antes de empezar.')}</p>
+  <div class="faq-completa">
+    <div><h2>{t('How long does it take?', '¿Cuánto tarda?')}</h2><p>{t('After I review your material and access, we agree a date in writing. A simple presentation website is planned around the material you provide and the two included rounds of changes. Google verification can need extra steps and has its own timing.', 'Cuando revise tus materiales y accesos, acordamos una fecha por escrito. Una web de presentación sencilla se planifica según el material que aportes y las dos rondas de cambios incluidas. La verificación de Google puede requerir pasos extra y tiene sus propios plazos.')}</p></div>
+    <div><h2>{t('What do you need from me?', '¿Qué necesitas que te dé?')}</h2><p>{t('Your services, opening hours, contact details, address or service area if applicable, and real photos. If you already have a domain or Google profile, I will need the access needed for the agreed work. I help you choose the material and prepare the text.', 'Tus servicios, horarios, datos de contacto, dirección o zona de servicio si corresponde, y fotos reales. Si ya tienes dominio o perfil de Google, necesitaré los accesos necesarios para el trabajo acordado. Te ayudo a elegir el material y a preparar los textos.')}</p></div>
+    <div><h2>{t('Whose are the website and domain?', '¿De quién son la web y el dominio?')}</h2><p>{t('Yours. The domain is registered in your name and you keep your access. You can move to another provider. The written quote identifies any renewal or hosting costs that apply.', 'Tuyos. El dominio se registra a tu nombre y conservas tus accesos. Puedes cambiar de proveedor. El presupuesto escrito identifica las renovaciones o costes de alojamiento que correspondan.')}</p></div>
+    <div><h2>{t('What does the Google profile service include?', '¿Qué incluye el servicio de Perfil de Google?')}</h2><p>{t('It reviews and updates the business information, services, hours and contact details; selects and uploads your real photos; and includes guidance on reviews and keeping the profile current. The starting state determines whether the written price is 150 € or 300 €.', 'Revisa y actualiza la información del negocio, servicios, horarios y contacto; selecciona y sube tus fotos reales; e incluye orientación sobre reseñas y mantenimiento del perfil. El estado de partida determina si el precio escrito es de 150 € o de 300 €.')}</p></div>
+    <div><h2>{t('Can you promise that I will appear first on Google?', '¿Puedes prometer que saldré el primero en Google?')}</h2><p>{t('No. Google controls verification, visibility and ranking. The work is to make the profile accurate, complete and easier to keep current; it is not a promise of a position, reviews or a number of calls.', 'No. Google controla la verificación, la visibilidad y las posiciones. El trabajo sirve para que el perfil sea correcto, completo y más fácil de mantener; no es una promesa de posición, reseñas ni número de llamadas.')}</p></div>
+    <div><h2>{t('How do I pay?', '¿Cómo pago?')}</h2><p>{t('For the presentation website, half is paid at the start and the rest once you see it finished and working, before publication. The written quote sets the payment method, milestones, total and tax breakdown before anything starts.', 'Para la web de presentación se paga la mitad al empezar y el resto cuando la ves terminada y funcionando, antes de publicarla. El presupuesto escrito fija la forma de pago, los hitos, el total y el desglose de impuestos antes de empezar.')}</p></div>
+    <div><h2>{t('What if I want changes?', '¿Qué pasa si quiero cambios?')}</h2><p>{t('The presentation website includes two rounds of changes before publication. New sections, functions or work outside the agreed scope are quoted separately before they are done.', 'La web de presentación incluye dos rondas de cambios antes de publicarla. Las secciones, funciones o trabajos nuevos fuera del alcance acordado se presupuestan aparte antes de realizarlos.')}</p></div>
+    <div><h2>{t('What does maintenance include and how do I cancel it?', '¿Qué incluye el mantenimiento y cómo lo doy de baja?')}</h2><p>{t('Maintenance is optional and costs 59 € a month. It includes agreed updates to hours, services and contact details, backups, checks of links and contact access, and a monthly summary of work carried out. There is no lock-in; response times and the practical cancellation process are agreed in writing. New sections and features are quoted separately.', 'El mantenimiento es opcional y cuesta 59 € al mes. Incluye actualizaciones acordadas de horarios, servicios y contacto, copias, comprobación de enlaces y acceso al contacto, y un resumen mensual del trabajo realizado. No hay permanencia; los plazos de respuesta y la forma práctica de baja se acuerdan por escrito. Las secciones y funciones nuevas se presupuestan aparte.')}</p></div>
+    <div><h2>{t('Do you work remotely?', '¿Trabajas en remoto?')}</h2><p>{t('Yes. I work remotely and speak with you directly by email. If the work needs access to a domain or a Google profile, we agree what access is needed for that specific job.', 'Sí. Trabajo en remoto y hablas directamente conmigo por correo. Si el trabajo necesita acceso a un dominio o a un perfil de Google, acordamos qué acceso hace falta para ese encargo concreto.')}</p></div>
+    <div><h2>{t('Do you issue invoices?', '¿Emites facturas?')}</h2><p>{t('The written quote details the applicable taxes. Before accepting any work, you receive the payment conditions and tax breakdown in writing.', 'El presupuesto escrito detalla los impuestos aplicables. Antes de aceptar un encargo, recibes por escrito las condiciones de pago y el desglose de impuestos.')}</p></div>
+  </div>
+  <div class="acciones"><a class="boton boton--lleno" href="{consulta()}">{t('Ask about your business', 'Pregunta por tu negocio')}</a></div>
+  {informacion_contacto()}
+</div></section>
+</main>
+""", CSS_INFORMACION)
+
+pagina("privacidad.html",
+  t("Privacy policy · James J Projects", "Política de privacidad · James J Projects"),
+  t("How James J Projects handles personal data sent by email or through a future contact form.",
+    "Cómo trata James J Projects los datos personales enviados por correo o mediante un futuro formulario de contacto."),
+f"""
+<main id="principal">
+<section class="pagina-informacion"><div class="env">
+  <p class="spec">{t('PRIVACY · LAST UPDATED 14 SEPTEMBER 2026', 'PRIVACIDAD · ÚLTIMA ACTUALIZACIÓN 14 DE SEPTIEMBRE DE 2026')}</p>
+  <h1>{t('Your data,<br>explained clearly', 'Tus datos,<br>explicados claro')}</h1>
+  <p class="guia intro">{t('This policy explains the personal-data processing connected with enquiries to James J Projects, in accordance with the GDPR and the Spanish Organic Law 3/2018 on data protection and digital rights.', 'Esta política explica el tratamiento de datos personales vinculado a las consultas a James J Projects, conforme al RGPD y a la Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales.')}</p>
+  <div class="bloques-informacion">
+    <section class="bloque-informacion"><h2>{t('Who is responsible?', '¿Quién es el responsable?')}</h2><p>{t('James J Benavides, operating under the James J Projects brand. Contact: ', 'James J Benavides, bajo la marca James J Projects. Contacto: ')}<a href="mailto:{CORREO}">{CORREO}</a>.</p></section>
+    <section class="bloque-informacion"><h2>{t('What data is received?', '¿Qué datos se reciben?')}</h2><p>{t('The data you voluntarily send by email, such as your name, contact details, business information and the contents of your enquiry. If a contact form is added in the future, the data entered in that form will also be received. This site does not currently provide a contact form.', 'Los datos que envíes voluntariamente por correo, como tu nombre, datos de contacto, información de tu negocio y el contenido de tu consulta. Si en el futuro se añade un formulario de contacto, también se recibirán los datos introducidos en ese formulario. Actualmente este sitio no dispone de formulario de contacto.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('Why and on what legal basis?', '¿Para qué y con qué base legal?')}</h2><p>{t('The data is used to reply to your enquiry and prepare a quote when requested. The legal basis is your consent when you contact us and, where appropriate, the application of pre-contractual measures at your request.', 'Los datos se utilizan para responder a tu consulta y preparar un presupuesto cuando lo solicites. La base legal es tu consentimiento al contactar y, cuando corresponda, la aplicación de medidas precontractuales a petición tuya.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('How long is it kept?', '¿Durante cuánto tiempo se conserva?')}</h2><p>{t('Data is kept for the time needed to deal with the enquiry and prepare the requested quote. If a contractual relationship begins, it is kept for the legally required periods. It may also be retained for the time needed to address possible liabilities.', 'Los datos se conservan durante el tiempo necesario para atender la consulta y preparar el presupuesto solicitado. Si comienza una relación contractual, se conservarán durante los plazos exigidos por la ley. También podrán mantenerse durante el tiempo necesario para atender posibles responsabilidades.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('Who receives the data?', '¿Quién recibe los datos?')}</h2><p>{t('The email provider receives the data needed to operate the mailbox. GitHub Pages hosts this website. Data is not sold or disclosed to other recipients unless this is necessary to comply with a legal obligation.', 'El proveedor de correo recibe los datos necesarios para operar el buzón. GitHub Pages aloja este sitio web. Los datos no se venden ni se comunican a otros destinatarios salvo que sea necesario para cumplir una obligación legal.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('Your rights', 'Tus derechos')}</h2><p>{t('You may request access to your data, rectification, erasure, objection, restriction of processing and portability. To exercise them, write to ', 'Puedes solicitar acceso a tus datos, rectificación, supresión, oposición, limitación del tratamiento y portabilidad. Para ejercerlos, escribe a ')}<a href="mailto:{CORREO}">{CORREO}</a>{t('. You also have the right to lodge a complaint with the Spanish Data Protection Agency (AEPD).', '. También tienes derecho a presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD).')}</p></section>
+  </div>
+</div></section>
+</main>
+""", CSS_INFORMACION)
+
+pagina("cookies.html",
+  t("Cookie policy · James J Projects", "Política de cookies · James J Projects"),
+  t("This website does not use analytics, advertising or tracking cookies.",
+    "Este sitio web no utiliza cookies de análisis, publicidad ni rastreo."),
+f"""
+<main id="principal">
+<section class="pagina-informacion"><div class="env">
+  <p class="spec">{t('COOKIES · LAST UPDATED 14 SEPTEMBER 2026', 'COOKIES · ÚLTIMA ACTUALIZACIÓN 14 DE SEPTIEMBRE DE 2026')}</p>
+  <h1>{t('No tracking.<br>No banner.', 'Sin rastreo.<br>Sin banner.')}</h1>
+  <p class="guia intro">{t('This site does not use analytics, advertising or tracking cookies. It also does not use browser local storage, session storage or IndexedDB.', 'Este sitio no utiliza cookies de análisis, publicidad ni rastreo. Tampoco utiliza almacenamiento local del navegador, almacenamiento de sesión ni IndexedDB.')}</p>
+  <div class="bloques-informacion">
+    <section class="bloque-informacion"><h2>{t('What happens when you visit?', '¿Qué ocurre al visitar el sitio?')}</h2><p>{t('The pages are static. Their interface script only manages the navigation menu and on-page visual effects; it does not create cookies or store information in your browser. The contact buttons open your email application and do not send a form through this site.', 'Las páginas son estáticas. Su script de interfaz solo gestiona el menú de navegación y los efectos visuales de la propia página; no crea cookies ni guarda información en tu navegador. Los botones de contacto abren tu aplicación de correo y no envían un formulario a través de este sitio.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('Why is there no cookie banner?', '¿Por qué no hay banner de cookies?')}</h2><p>{t('Because the site does not use non-essential cookies or comparable tracking technologies, there is no consent banner to accept. If this changes in the future, this policy and the consent mechanism will be updated before the technology is used.', 'Como el sitio no utiliza cookies no esenciales ni tecnologías comparables de rastreo, no hay un banner de consentimiento que aceptar. Si esto cambia en el futuro, se actualizarán esta política y el mecanismo de consentimiento antes de utilizar esa tecnología.')}</p></section>
+    <section class="bloque-informacion"><h2>{t('Questions', 'Dudas')}</h2><p>{t('For questions about privacy or this policy, write to ', 'Para dudas sobre privacidad o esta política, escribe a ')}<a href="mailto:{CORREO}">{CORREO}</a>.</p></section>
+  </div>
+</div></section>
+</main>
+""", CSS_INFORMACION)
 
 # ═══════════════════ 3. LA CARTA EN LA MESA ═══════════════════════════
 CSS_NFC = """
@@ -1101,6 +1217,7 @@ f"""
       <a class="boton boton--lleno" href="precios.html">{v("150–300 €")}</a>
       <a class="boton" href="{consulta()}">{t("Talk to me","Hablamos")}</a>
     </div>
+    {informacion_contacto()}
   </div>
 </section>
 </main>
@@ -1168,6 +1285,7 @@ f"""
       <a class="boton boton--lleno" href="{consulta(t('Automation enquiry','Consulta de automatización'))}">{t("Ask about a similar case","Consultar un caso parecido")}</a>
       <a class="boton" href="{consulta()}">{t("Talk to me","Hablamos")}</a>
     </div>
+    {informacion_contacto()}
   </div>
 </section>
 </main>
@@ -1277,7 +1395,7 @@ def indice_del_buscador():
             f.stat().st_mtime, datetime.timezone.utc).date().isoformat()
 
     filas = []
-    for archivo in ("index.html", "precios.html", "ficha-google.html", "caso-factura.html", "carta-qr.html", "panel-demo.html"):
+    for archivo in PAGINAS_SITIO:
         for idioma in (("en", "es") if PUBLICA_ES else ("en",)):
             fecha = cuando(archivo, idioma)
             alt = "".join(

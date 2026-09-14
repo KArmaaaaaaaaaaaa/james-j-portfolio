@@ -97,4 +97,52 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/panel-demo.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/panel-demo.html"/>
   </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/faq.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/faq.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/faq.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/faq.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/privacidad.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/privacidad.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/cookies.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/cookies.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/cookies.html</loc>
+    <lastmod>2026-09-14</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/cookies.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/cookies.html"/>
+  </url>
 </urlset>

@@ -207,3 +207,14 @@ p:last-child{margin-bottom:0}
 @media(prefers-reduced-transparency:reduce){.barra{background:var(--papel)!important;backdrop-filter:none!important}}
 @media(prefers-contrast:more){:root{--tinta-2:#0d0d0f;--tinta-3:#4a4a50;--hilo:#4a4a50}.boton{border-width:2px}}
 @media(hover:none){.plate .boton--lleno:hover{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}}
+
+/* Información de primera capa para el correo y formularios futuros. */
+.info-contacto{font-size:13.5px;line-height:1.65;color:var(--tinta-3);margin-top:13px;max-width:72ch}
+.plate .info-contacto{color:var(--sobre-cobalto-2)}
+.pie-enlaces{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px}
+.pie-enlaces a{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.consentimiento-formulario{margin-top:16px;max-width:72ch;font-size:14px;line-height:1.6;color:var(--tinta-2)}
+.consentimiento-formulario label{display:flex;gap:9px;align-items:flex-start;font-weight:600}
+.consentimiento-formulario input{margin:.35em 0 0;flex:0 0 auto}
+.consentimiento-formulario p{margin:8px 0 0}
+.pie-t .info-contacto{margin:12px 0 0;font-size:12px}
