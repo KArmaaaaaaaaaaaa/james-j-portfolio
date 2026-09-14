@@ -6,47 +6,34 @@
 
 Una sola fuente para los dos idiomas: los textos viven en T() y el resto
 —estructura, sistema visual, movimiento— se comparte. Se decidió publicar en
-inglés el 7/9/2026 de cara a la mudanza a Hamburgo; el castellano se mantiene
-generable porque el cliente que hoy paga es un dueño de bar español.
+ambos idiomas; el idioma de entrada publicado se decide por separado.
+La oferta vigente es Google, web de presentación y mantenimiento.
 
 El mundo visual está en _sistema.css. La dirección de arte y el sistema de
 diseño viven fuera de este repo, en ~/dev/portfolio-metodo (privado).
 Aquí solo va lo que cambia por página.
 """
 import pathlib, sys, re
+from urllib.parse import urlencode
+from html import escape
 
 BASE = pathlib.Path(__file__).parent
-SISTEMA = (BASE / "_sistema.css").read_text(encoding="utf-8")
 IDIOMA = "es" if len(sys.argv) > 1 and sys.argv[1] == "es" else "en"
 SALIDA = BASE / "es" if IDIOMA == "es" else BASE
 
 # Las páginas en castellano se escriben en /es/, así que todo lo que no sea
 # HTML vive un nivel más arriba.
 A = "../" if IDIOMA == "es" else ""
-# La lámina de la portada es cromo dibujado con gradientes. Si hay una imagen
-# en img/lamina.*, manda ella: así se puede poner una ilustración de verdad
-# —un cartel, una lámina de aerografía— sin tocar una línea de código. El
-# marco, la inclinación y la sombra dura se quedan: lo que cambia es lo de
-# dentro, no la composición.
-# Orden explícito, no alfabético: si conviven un lamina.svg y un lamina.jpg
-# —pasa al probar—, el alfabeto elegiría el jpg por casualidad. El vector
-# manda, que pesa menos y no se pixela.
-_ORDEN = (".svg", ".webp", ".png", ".jpg", ".jpeg")
-LAMINA = next((n for n in
-               (f"lamina{e}" for e in _ORDEN)
-               if (BASE / "img" / n).exists()), None)
-
+# La portada comercial usa solo cromo CSS; nunca selecciona imágenes por presencia.
 FUENTES = (BASE / "_fuentes.css").read_text(encoding="utf-8").replace(
     "url(fuentes/", f"url({A}fuentes/")
 
 # ── Menú ───────────────────────────────────────────────────────────────
 NAV = [
-  ("index.html",        {"en":"Home",           "es":"Inicio"}),
-  ("precios.html",      {"en":"Pricing",        "es":"Precios"}),
-  ("carta-qr.html",     {"en":"Menu on the table","es":"Carta en la mesa"}),
-  ("ficha-google.html", {"en":"Google profile",  "es":"Ficha de Google"}),
-  ("caso-factura.html", {"en":"Case",            "es":"Un caso"}),
-  ("panel-demo.html",   {"en":"Dashboard",       "es":"Panel"}),
+  ("index.html", {"en":"Home", "es":"Inicio"}),
+  ("precios.html", {"en":"Pricing", "es":"Precios"}),
+  ("ficha-google.html", {"en":"Google profile", "es":"Perfil de Google"}),
+  ("caso-factura.html", {"en":"Real case", "es":"Caso real"}),
 ]
 
 # ── El contenido editable ──────────────────────────────────────────────
@@ -92,13 +79,19 @@ def euros(entero, dec="00"):
     """5574 -> «5,574.00 €» en inglés, «5.574,00 €» en castellano."""
     miles = f"{entero:,}".replace(",", "." if IDIOMA == "es" else ",")
     coma = "," if IDIOMA == "es" else "."
-    return f"{miles}{coma}{dec}\u00a0€"
+    return f"{miles}{coma + dec if dec else ''}\u00a0€"
 
 def num(n):
     return f"{n:,}".replace(",", "." if IDIOMA == "es" else ",")
 
 DEMO = "https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev"
 CORREO = "jamesjoelbenavides2004@gmail.com"
+
+def consulta(servicio=None):
+    asunto = servicio or t("My business", "Mi negocio")
+    cuerpo = t("Hello James,\nMy business is:\nTown or city:\nWebsite or Google profile (if any):\nI need help with:\n",
+               "Hola James,\nMi negocio es:\nLocalidad:\nWeb o perfil de Google (si tengo):\nNecesito ayuda con:\n")
+    return escape(f"mailto:{CORREO}?" + urlencode({"subject": asunto, "body": cuerpo}), quote=True)
 
 # ── Identidad del sitio en el buscador ─────────────────────────────────
 # GitHub Pages sirve el repo en un subdirectorio, así que TODA URL absoluta
@@ -180,13 +173,11 @@ def metas(archivo, titulo, descripcion):
       "email": CORREO,
       "image": IMAGEN_SOCIAL,
       "description": descripcion,
-      "priceRange": "30-50 EUR",
+      "priceRange": "150–650 EUR",
       "availableLanguage": ["es", "en"],
       "areaServed": [
         {"@type": "City", "name": "Barcelona", "address":
          {"@type": "PostalAddress", "addressCountry": "ES"}},
-        {"@type": "City", "name": "Hamburg", "address":
-         {"@type": "PostalAddress", "addressCountry": "DE"}},
       ],
       "knowsAbout": [
         "Google Business Profile", "local SEO", "restaurant websites",
@@ -227,37 +218,17 @@ def metas(archivo, titulo, descripcion):
 # lo que sube es la primera línea de cada plate, y el resto llega detrás
 # escalonado 60 ms y parando a los seis.
 JS = r"""
-const obs=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){
-  e.target.classList.add('dentro');obs.unobserve(e.target);}},
-  {threshold:.14,rootMargin:'0px 0px -8% 0px'});
-const cuenta=new Map();
-document.querySelectorAll('.sube').forEach(el=>{
-  const p=el.parentElement;const n=cuenta.get(p)??0;cuenta.set(p,n+1);
-  el.style.transitionDelay=Math.min(n,5)*60+'ms';obs.observe(el);});
-/* Red de seguridad: si la pestaña se abre en segundo plano el observador no
-   dispara nunca y la página se queda en blanco para siempre. */
-setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
-
-/* Parallax: lo marcado con data-lento avanza a una fracción del scroll, así
-   que el nombre a sangre se queda atrás y el contenido pasa por encima. Solo
-   transform, en un rAF, y ni se enciende si se pide movimiento reducido. */
-const lentos=[...document.querySelectorAll('[data-lento]')];
-if(lentos.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-  let pedido=false;
-  const mover=()=>{const y=window.scrollY;
-    for(const el of lentos){const f=parseFloat(el.dataset.lento)||0;
-      el.style.transform='translate3d(0,'+(y*f).toFixed(1)+'px,0)';}
-    pedido=false;};
-  addEventListener('scroll',()=>{if(!pedido){pedido=true;requestAnimationFrame(mover);}},
-    {passive:true});
-  mover();}
-
-/* La barra se aprieta en cuanto se baja: menos chrome delante del contenido. */
-const barraEl=document.querySelector('.barra');
-if(barraEl){let apretada=false;
-  addEventListener('scroll',()=>{const debe=window.scrollY>40;
-    if(debe!==apretada){apretada=debe;barraEl.classList.toggle('apretada',debe);}},
-    {passive:true});}
+const quieto=matchMedia('(prefers-reduced-motion: reduce)');
+if('IntersectionObserver' in window&&!quieto.matches){
+  const obs=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){
+    e.target.classList.add('dentro');obs.unobserve(e.target);}},
+    {threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  const cuenta=new Map();
+  document.querySelectorAll('.sube').forEach(el=>{
+    const p=el.parentElement,n=cuenta.get(p)??0;cuenta.set(p,n+1);
+    el.classList.add('preparada');el.style.transitionDelay=Math.min(n,5)*60+'ms';obs.observe(el);});
+  setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
+}
 
 const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
 if(btn&&panel){
@@ -265,16 +236,25 @@ if(btn&&panel){
     if(panel.hidden)return;
     btn.setAttribute('aria-expanded','false');panel.hidden=true;
     document.body.classList.remove('menu-abierto');
+    document.querySelector('main').inert=false;
     if(devolver)btn.focus();};
   const abrir=()=>{
     btn.setAttribute('aria-expanded','true');panel.hidden=false;
-    document.body.classList.add('menu-abierto');};
+    document.body.classList.add('menu-abierto');
+    document.querySelector('main').inert=true;panel.querySelector('a').focus();};
   btn.addEventListener('click',()=>{panel.hidden?abrir():cerrar(false);});
   /* Pulsar una entrada del índice cierra el panel además de navegar: si el
      destino es un ancla de la misma página, la navegación no recarga nada y
      el menú se quedaba abierto tapando justo lo que se acababa de pedir. */
   panel.addEventListener('click',e=>{if(e.target.closest('a'))cerrar(false);});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrar(true);});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')cerrar(true);
+    if(e.key==='Tab'&&!panel.hidden){
+      const links=[btn,...panel.querySelectorAll('a')];
+      const i=links.indexOf(document.activeElement);
+      e.preventDefault();links[(i+(e.shiftKey?-1:1)+links.length)%links.length].focus();
+    }});
+  matchMedia('(min-width:1081px)').addEventListener('change',e=>{if(e.matches&&!panel.hidden){cerrar(false);document.querySelector('.barra .marca').focus();}});
 }
 """
 
@@ -306,14 +286,17 @@ def barra(actual):
       % (h, aqui if h == actual else "", i, d[IDIOMA])
       for i, (h, d) in enumerate(NAV, 1))
     correo_fila = (
-      f'<a href="mailto:{CORREO}"><span class="n">{len(NAV)+1:02d}</span>'
+      f'<a href="{consulta()}"><span class="n">{len(NAV)+1:02d}</span>'
       f'<span>{t("Talk to me","Hablamos")}</span>'
       f'<span class="flecha" aria-hidden="true">→</span></a>')
+    otro = ("../" + actual) if IDIOMA == "es" else ("es/" + actual)
+    idioma_enlace = f'<a class="idioma" href="{otro}" hreflang="{t("es","en")}" lang="{t("es","en")}" aria-label="{t("Ver en castellano","Read in English")}">{t("ES","EN")}</a>' if PUBLICA_ES else ""
     return f"""
 <nav class="barra" aria-label="{t('Main','Principal')}">
   <a class="marca" href="index.html">James J Projects</a>
   <div class="enlaces">{enlaces}</div>
-  <a class="cta" href="mailto:{CORREO}">{t('Talk to me','Hablamos')}</a>
+  {idioma_enlace}
+  <a class="cta" href="{consulta()}">{t('Get a quote','Presupuesto')}</a>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
     aria-label="{t('Open the index','Abrir el índice')}">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -323,7 +306,8 @@ def barra(actual):
 </nav>
 <div class="menu-panel" id="menuPanel" hidden>
   <div class="menu-lista">{filas}{correo_fila}</div>
-</div>"""
+</div>
+<noscript><nav class="nav-sin-js" aria-label="{t('Pages','Páginas')}">{enlaces}</nav></noscript>"""
 
 
 PIE = f"""
@@ -331,7 +315,7 @@ PIE = f"""
   <div class="env">
     <div class="pie-fila">
       <span class="marca-pie">James J Projects</span>
-      <span class="spec">{t('Barcelona and Hamburg · remote','Barcelona y Hamburgo · en remoto')}</span>
+      <span class="spec">{t('Barcelona · remote','Barcelona · en remoto')}</span>
     </div>
     <p class="nota pie-nota">{t(
       'Hand-built. No template, no framework, no tracking, and nothing at all loaded from a third party — the typefaces are served from here.',
@@ -356,10 +340,11 @@ def pagina(archivo, titulo, descripcion, cuerpo, css_extra="", js_extra=""):
 /* Sin JS nadie pone `.dentro`, y la factura y el embudo son contenido, no
    adorno: se quedarían invisibles para siempre. */
 .factura .lin,.factura .sum,.factura .tot,.factura .de{{opacity:1!important;transform:none!important;animation:none!important}}
-.embudo .via > i{{transform:scaleX(1)!important;animation:none!important}}</style></noscript>
+.embudo .via > i{{transform:scaleX(1)!important;animation:none!important}}
+.comparar{{display:block!important}}.lado{{position:relative!important}}.lado.desp{{clip-path:none!important}}.tirador,.rot-lado{{display:none!important}}</style></noscript>
+<link rel="stylesheet" href="{A}_sistema.css">
 <style>
 {FUENTES}
-{SISTEMA}
 {CHASIS}
 {css_extra}
 </style>
@@ -394,11 +379,7 @@ CHASIS = """
 .barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
 .barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
 .barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
-.barra{transition:padding var(--rapido) var(--curva),
-  background var(--rapido) var(--curva),transform var(--normal) var(--curva)}
-.barra.apretada{padding-top:4px;padding-bottom:4px;background:rgba(255,255,255,.96)}
-.barra.apretada .marca{font-size:17px}
-.barra .marca{transition:font-size var(--rapido) var(--curva)}
+.barra{transition:background-color var(--rapido) var(--curva)}
 
 /* Un solo índice, el mismo en el móvil y en el Mac.
    Antes la barra enseñaba los seis enlaces Y el botón abría un panel con esos
@@ -409,8 +390,8 @@ CHASIS = """
 /* Los enlaces, a la vista en la barra. Cambiar de sección es un clic, no dos.
    El menú de las tres barras queda solo para el móvil, que es donde no caben. */
 .barra .enlaces{display:flex;align-items:center;gap:2px;margin-right:4px}
-@media(max-width:900px){.barra .enlaces{display:none}}
-@media(min-width:901px){.menu-btn{display:none!important}}
+@media(max-width:1080px){.barra .enlaces{display:none}}
+@media(min-width:1081px){.menu-btn{display:none!important}}
 
 .menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
   color:var(--tinta);position:relative;z-index:60;
@@ -430,11 +411,10 @@ CHASIS = """
   padding:96px 6vw 40px;overflow-y:auto;overscroll-behavior:contain;
   animation:panelEntra var(--normal) var(--entrada) both}
 .menu-panel[hidden]{display:none}
-@keyframes panelEntra{from{opacity:0;clip-path:inset(0 0 100% 0)}
-                      to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes panelEntra{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 
 /* La cuña cobalto: el mismo plano inclinado que la lámina de la portada. */
-.menu-panel::before{content:"";position:absolute;z-index:0;pointer-events:none;
+.menu-panel::before{content:none;position:absolute;z-index:0;pointer-events:none;
   right:-12vw;top:-10vh;width:46vw;height:120vh;background:var(--cobalto);
   transform:rotate(9deg);opacity:.9}
 @media(max-width:860px){.menu-panel::before{right:-38vw;width:76vw;opacity:.86}}
@@ -448,24 +428,23 @@ CHASIS = """
   font-family:var(--display);font-size:clamp(26px,5.4vw,60px);font-weight:500;
   line-height:1;text-transform:uppercase;letter-spacing:-.01em;
   opacity:0;transform:translateY(16px);
-  transition:color var(--rapido) var(--curva),
-             padding-left var(--rapido) var(--curva)}
-.menu-panel:not([hidden]) a{animation:filaEntra 420ms var(--expo) both}
+  transition:color var(--rapido) var(--curva),transform var(--rapido) var(--curva)}
+.menu-panel:not([hidden]) a{animation:filaEntra var(--normal) var(--expo) both}
 @keyframes filaEntra{to{opacity:1;transform:none}}
 .menu-panel a:nth-child(1){animation-delay:60ms}
 .menu-panel a:nth-child(2){animation-delay:110ms}
 .menu-panel a:nth-child(3){animation-delay:160ms}
 .menu-panel a:nth-child(4){animation-delay:210ms}
 .menu-panel a:nth-child(5){animation-delay:260ms}
-.menu-panel a:nth-child(6){animation-delay:310ms}
-.menu-panel a:nth-child(n+7){animation-delay:360ms}
+.menu-panel a:nth-child(6){animation-delay:300ms}
+.menu-panel a:nth-child(n+7){animation-delay:300ms}
 .menu-panel a .n{font-family:var(--mono);font-size:11px;font-weight:600;
   letter-spacing:.16em;color:var(--tinta-3);align-self:center}
 .menu-panel a .flecha{font-family:var(--mono);font-size:14px;color:var(--fuego-texto);
   opacity:0;transform:translateX(-8px);align-self:center;
   transition:opacity var(--rapido) var(--curva),
              transform var(--rapido) var(--curva)}
-.menu-panel a:hover{color:var(--fuego-texto);padding-left:18px}
+.menu-panel a:hover{color:var(--fuego-texto);transform:translateX(8px)}
 .menu-panel a:hover .flecha{opacity:1;transform:none}
 .menu-panel a[aria-current]{color:var(--cobalto)}
 .menu-panel a[aria-current] .n{color:var(--cobalto)}
@@ -549,381 +528,105 @@ body.menu-abierto{overflow:hidden}
 .plate .reticula{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M69 75h12M75 69v12' stroke='%23ffffff' stroke-opacity='.42' stroke-width='1'/%3E%3C/svg%3E")}
 @media(max-width:640px){.reticula{background-size:104px 104px}}
 
-/* ── El nombre, a sangre ────────────────────────────────────────────
-   El gesto es el de una portada de disco: el nombre ocupa todo el ancho, se
-   sale por los lados y el contenido pasa por encima al bajar. Va detrás de
-   todo y en fuego sobre papel, no en negro: este sitio vive en claro. */
-.sello{position:relative;z-index:0;pointer-events:none;user-select:none;
-  overflow:hidden;line-height:1;margin-top:clamp(52px,9vh,120px);
-  margin-bottom:-.2em}
-.sello span{display:block;white-space:nowrap;text-align:center;
-  font-family:var(--display);font-weight:500;letter-spacing:-.03em;
-  font-size:clamp(84px,20.5vw,300px);color:var(--fuego);
-  transform:translateY(14%);opacity:0;
-  animation:sello 720ms var(--expo) 320ms both;
-  will-change:transform}
-@keyframes sello{to{transform:translateY(0);opacity:1}}
-/* La marca registrada al vuelo, como en las láminas de los ochenta. */
-.sello i{font-style:normal;font-size:.2em;vertical-align:super;
-  letter-spacing:0;margin-left:.06em}
-@media(max-width:760px){.sello{margin-top:44px}}
-@media(prefers-reduced-motion:reduce){
-  .sello span{animation:none;opacity:1;transform:none}}
+/* Ajustes táctiles después del chasis. */
+.barra .marca{min-height:44px;display:inline-flex;align-items:center}
+.barra a:not(.marca),.menu-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.nav-sin-js{position:relative;padding:92px 18px 12px;display:flex;flex-wrap:wrap;gap:16px}
+.nav-sin-js a{min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:430px){.barra{padding:4px 6px 4px 10px;width:calc(100vw - 24px);max-width:calc(100vw - 24px)}.barra .marca{font-size:15px;margin-right:auto}.barra a:not(.marca){font-size:11px;padding-inline:6px;letter-spacing:0}.menu-btn{padding:6px;min-width:36px}}
+@media(prefers-reduced-transparency:reduce){.barra{background:var(--papel);backdrop-filter:none}}
 """
 
 # ═══════════════════════════ 1. PORTADA ═══════════════════════════════
 CSS_HOME = """
-/* La portada pide más presencia que el resto de páginas: es lo primero y a
-   veces lo único que alguien mira. Sube solo aquí, no en los h1 del resto. */
-.portada .titular{font-size:clamp(40px,9.4vw,132px);letter-spacing:-.015em}
-.titular .linea{display:block;overflow:hidden;padding-bottom:.2em}
-.titular .linea > i{display:block;font-style:normal;transform:translateY(105%);
-  opacity:0;animation:subir 640ms var(--expo) both}
-.titular .linea:nth-child(1) > i{animation-delay:60ms}
-.titular .linea:nth-child(2) > i{animation-delay:130ms}
-.titular .linea:nth-child(3) > i{animation-delay:200ms}
-@keyframes subir{to{transform:none;opacity:1}}
-.titular .apagado{color:var(--tinta-3)}
-.subrayado{position:relative;display:inline-block;line-height:1;font-style:normal}
-.subrayado::after{content:"";position:absolute;left:0;right:0;top:1.02em;
-  height:.05em;background:var(--fuego);transform:scaleX(0);transform-origin:left;
-  animation:trazar 560ms var(--curva) 700ms both}
-@keyframes trazar{to{transform:scaleX(1)}}
-
-.firma{margin-top:36px;display:grid;gap:13px;max-width:42rem;
-  border-left:2px solid var(--fuego);padding-left:22px;
-  animation:aparecer 560ms var(--entrada) 300ms both}
-.firma .guia{font-size:clamp(19px,2.1vw,23.5px);line-height:1.5;
-  color:var(--tinta-2)}
-@keyframes aparecer{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.cupo{display:inline-flex;align-items:center;gap:11px;margin-top:26px;
-  font-family:var(--display);font-size:15px;font-weight:500;letter-spacing:.05em;
-  text-transform:uppercase;border:1px solid var(--tinta);padding:11px 19px;
-  animation:aparecer 560ms var(--entrada) 380ms both;
-  transition:transform var(--rapido) var(--curva),
-             box-shadow var(--rapido) var(--curva)}
-.cupo:hover{transform:translateY(-2px);box-shadow:5px 5px 0 var(--tinta)}
-@media(hover:none){.cupo:hover{transform:none;box-shadow:none}}
-.cupo i{width:8px;height:8px;background:var(--verde);flex:0 0 auto;
-  box-shadow:0 0 0 3px rgba(0,125,85,.18)}
-/* El punto respira: dice «hay hueco ahora», y un punto quieto no lo dice. */
-@media(prefers-reduced-motion:no-preference){
-  .cupo i{animation:latir 2.8s var(--curva) infinite}
-  @keyframes latir{0%,100%{box-shadow:0 0 0 3px rgba(0,125,85,.18)}
-                   50%{box-shadow:0 0 0 6px rgba(0,125,85,.10)}}}
-.acciones{animation:aparecer 560ms var(--entrada) 460ms both}
-
-/* La lámina de la portada. El titular ocupa la izquierda y la derecha se
-   quedaba en blanco: esto es lo que la llena, y es el mismo objeto que
-   reaparece en cada franja azul. Se retira en cuanto le quitaría sitio al
-   texto, no antes. */
-.lamina{display:none}
-@media(min-width:1120px){
-  .portada{position:relative}
-  .portada > *{position:relative;z-index:1}
-  .lamina{display:block;position:absolute;z-index:0;pointer-events:none;
-    right:8px;top:74px;width:284px;height:496px;
-    animation:aparecer 640ms var(--entrada) 220ms both}
-  .lamina .placa{position:absolute;inset:0;transform:rotate(5deg);
-    box-shadow:22px 22px 0 var(--tinta)}
-  /* Si la lámina es una imagen, llena el mismo marco: se recorta, no se
-     deforma, y conserva la inclinación y la sombra sin desenfoque. */
-  .lamina img.placa{width:100%;height:100%;object-fit:cover;display:block}
-
-  /* Aquí iba un barrido de luz sobre el cromo. Retirado: la capa que lo
-     recortaba tapaba la lámina entera en lugar de cruzarla. El movimiento de
-     esta zona ya lo dan los destellos y el parallax del nombre a sangre; si
-     se reintenta, que sea sin una capa a pantalla completa por encima. */
-  .lamina .plano{position:absolute;left:-58px;top:96px;width:196px;height:352px;
-    background:var(--cobalto);transform:rotate(-6deg)}
-  .lamina .chispa{--chispa:96px;left:56%;top:23%}
-  .lamina .chispa.baja{--chispa:52px;left:22%;top:71%}}
-@media(prefers-reduced-motion:no-preference){
-  .lamina .chispa{animation:brillar 4.4s var(--curva) 1s infinite}
-  .lamina .chispa.baja{animation-delay:2.6s}}
-
-/* Las cantidades son la interfaz: la tarifa es el objeto más grande de su
-   región y los dígitos guardan su sitio. */
-.tarifas{display:grid;grid-template-columns:repeat(4,1fr);
-  border:1px solid var(--tinta);margin-top:72px}
-.tarifas > a{padding:24px 20px 26px;border-right:1px solid var(--tinta);
-  text-decoration:none;color:inherit;display:block;position:relative;
-  transition:background var(--rapido) var(--curva),
-             transform var(--rapido) var(--curva),
-             box-shadow var(--rapido) var(--curva)}
-.tarifas > a:last-child{border-right:0}
-.tarifas > a:hover{background:var(--blanco);transform:translateY(-3px);
-  box-shadow:7px 7px 0 var(--tinta);z-index:1}
-.tarifas > a:active{transform:translateY(-1px);box-shadow:3px 3px 0 var(--tinta)}
-/* El rótulo de la flecha avanza con la tarjeta, que es lo que se ha pulsado. */
-.tarifas > a .ir{transition:transform var(--rapido) var(--curva)}
-.tarifas > a:hover .ir{transform:translateX(5px)}
-.tarifas .que{font-size:15px;color:var(--tinta-2);margin-top:12px;font-weight:300;
-  max-width:none}
-.tarifas .ir{font-family:var(--display);font-size:14px;font-weight:500;
-  letter-spacing:.05em;text-transform:uppercase;color:var(--fuego-texto);
-  margin-top:14px;display:block}
-@media(hover:none){.tarifas > a:hover{background:transparent;transform:none;
-  box-shadow:none}.tarifas > a:hover .ir{transform:none}}
-@media(max-width:900px){.tarifas{grid-template-columns:1fr 1fr}
-  .tarifas > a:nth-child(2){border-right:0}
-  .tarifas > a:nth-child(-n+2){border-bottom:1px solid var(--tinta)}}
-@media(max-width:540px){.tarifas{grid-template-columns:1fr}
-  .tarifas > a{border-right:0;border-bottom:1px solid var(--tinta)}
-  .tarifas > a:last-child{border-bottom:0}}
-
-
-.prueba{display:grid;gap:38px;align-items:center;margin-top:20px}
-@media(min-width:900px){.prueba{grid-template-columns:288px minmax(0,1fr);gap:72px}}
-.grandota{font-family:var(--display);font-size:clamp(56px,9vw,124px);line-height:.86;
-  letter-spacing:-.02em}
-.cero{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:12px;
-  font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  border:1px solid var(--fuego-texto);color:var(--fuego-texto);padding:7px 13px}
-/* La factura de agosto, con sus cifras de verdad. Antes aquí había barras
-   grises simulando un papel: enseñaba la forma de una factura y ninguna de las
-   cuentas, que es justo lo único que había que demostrar. Los datos fiscales
-   —quién factura, a quién, matrícula e IBAN— van tapados en negro, y se ve que
-   están tapados a propósito. */
-.factura{width:100%;max-width:340px;justify-self:start;
-  border:1px solid var(--tinta);background:var(--blanco);
-  padding:22px 22px 24px;display:grid;align-content:start;
-  box-shadow:14px 14px 0 var(--tinta);font-family:var(--mono);font-size:11.5px;
-  color:var(--tinta-2);line-height:1.5}
-.factura .cab{display:flex;justify-content:space-between;align-items:flex-start;
-  gap:12px;border-bottom:1px solid var(--tinta);padding-bottom:12px}
-.factura .rot{font-family:var(--display);font-size:17px;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--tinta);line-height:1}
-.factura .serie-f{text-align:right;font-size:10.5px;color:var(--tinta-3);
-  white-space:nowrap}
-.factura .tapado{display:inline-block;height:9px;background:var(--tinta);
-  vertical-align:middle;opacity:.86}
-.factura .de{padding:11px 0;border-bottom:1px dashed var(--hilo);
-  display:grid;gap:6px}
-.factura .et{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--tinta-3)}
-.factura .lin{display:grid;grid-template-columns:1fr auto;gap:10px;
-  padding:7px 0;border-bottom:1px solid var(--hilo)}
-.factura .lin .u{font-size:10px;color:var(--tinta-3);display:block}
-.factura .lin .im{color:var(--tinta);white-space:nowrap;align-self:center}
-.factura .sum{display:grid;grid-template-columns:1fr auto;gap:10px;
-  padding:5px 0;font-size:11px}
-.factura .sum:first-of-type{padding-top:11px}
-.factura .sum .im{color:var(--tinta);white-space:nowrap}
-.factura .sum.resta .im{color:var(--fuego-texto)}
-.factura .tot{display:grid;grid-template-columns:1fr auto;gap:10px;
-  align-items:baseline;margin-top:11px;padding-top:12px;
-  border-top:1px solid var(--tinta)}
-.factura .tot .et{align-self:center}
-.factura .tot .im{font-family:var(--display);font-size:26px;color:var(--tinta);
-  line-height:1;letter-spacing:.01em}
-@media(max-width:900px){.factura{max-width:100%;font-size:12px}}
-
-/* Entra línea a línea, como se lee una factura: de arriba abajo. El escalonado
-   arranca cuando el bloque entra en pantalla, no al cargar, y para a los 60 ms
-   por línea para que la última no llegue tardísimo. */
-@media(prefers-reduced-motion:no-preference){
-  .factura .lin,.factura .sum,.factura .tot,.factura .de{opacity:0;
-    transform:translateY(9px)}
-  .factura.dentro .lin,.factura.dentro .sum,.factura.dentro .tot,
-  .factura.dentro .de{animation:lin var(--normal) var(--entrada) both}
-  .factura.dentro .de{animation-delay:40ms}
-  .factura.dentro .lin:nth-of-type(1){animation-delay:120ms}
-  .factura.dentro .lin:nth-of-type(2){animation-delay:180ms}
-  .factura.dentro .lin:nth-of-type(3){animation-delay:240ms}
-  .factura.dentro .sum:nth-of-type(1){animation-delay:300ms}
-  .factura.dentro .sum:nth-of-type(2){animation-delay:340ms}
-  .factura.dentro .sum:nth-of-type(3){animation-delay:380ms}
-  .factura.dentro .tot{animation-delay:440ms}
-  @keyframes lin{to{opacity:1;transform:none}}}
-
-.obras{border-top:1px solid var(--tinta);margin-top:8px}
-.obra{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;
-  padding:28px 0;border-bottom:1px solid var(--tinta);text-decoration:none;
-  color:inherit;transition:transform var(--normal) var(--expo)}
-.obra:hover{transform:translateX(14px)}
-@media(hover:none){.obra:hover{transform:none}}
-.obra h3{margin-bottom:9px}
-.obra .que{font-size:15px;color:var(--tinta-2);font-weight:300;max-width:38rem}
-.obra .ir{font-family:var(--mono);font-size:11px;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--fuego-texto);
-  white-space:nowrap}
-@media(max-width:640px){.obra{grid-template-columns:1fr}.obra .ir{margin-top:12px}}
+.portada{padding-bottom:56px}
+.portada-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:64px;align-items:center}
+.portada h1{font-size:clamp(44px,7.1vw,88px);line-height:1.04;max-width:14ch}
+.portada h1 em{font-style:normal;color:var(--fuego-texto)}
+.portada .guia{margin-top:24px;max-width:47ch}
+.portada .nota{margin-top:16px}
+.lamina{height:330px;position:relative;isolation:isolate}
+.lamina .plano{position:absolute;inset:20px 30px 0 0;background:var(--cobalto);transform:rotate(-6deg)}
+.lamina .placa{position:absolute;inset:0 15px 30px 40px;transform:rotate(5deg);box-shadow:18px 18px 0 var(--tinta)}
+.lamina .chispa{--chispa:76px;top:24%;left:70%}
+.tarifas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--tinta);margin-top:44px}
+.tarifas a{padding:24px;text-decoration:none;color:inherit;border-right:1px solid var(--tinta)}
+.tarifas a:last-child{border:0}
+.tarifas h2{margin:20px 0 12px}
+.tarifas p{font-size:16px;color:var(--tinta-2)}
+.tarifas .precio{font-size:clamp(38px,4.6vw,60px)}
+.tarifas .ir{color:var(--fuego-texto);text-decoration:underline;text-underline-offset:4px}
+.obras{border-top:1px solid var(--tinta);margin-top:32px}
+.obra{display:grid;grid-template-columns:1fr auto;gap:24px;padding:28px 0;border-bottom:1px solid var(--tinta);color:inherit;text-decoration:none}
+.obra p{margin-top:12px;color:var(--tinta-2);max-width:60ch}
+.obra .ir{color:var(--fuego-texto);align-self:center;text-decoration:underline}
+.obra .spec{margin-bottom:12px}
+.contacto-correo{display:inline-block;margin-top:20px;overflow-wrap:anywhere}
+.plate .contacto-correo{color:var(--sobre-cobalto)}
+@media(hover:hover){.tarifas a:hover{background:var(--blanco)}.obra:hover .ir{color:var(--tinta)}}
+@media(max-width:800px){.portada-grid{grid-template-columns:1fr}.lamina{display:none}}
+@media(max-width:600px){.tarifas{grid-template-columns:1fr;margin-top:32px}.tarifas a{border-right:0;border-bottom:1px solid var(--tinta)}.obra{grid-template-columns:1fr}.portada h1{font-size:clamp(42px,10.6vw,62px)}}
 """
 
 pagina("index.html",
-  t("Websites and Google Maps profiles · James J Projects",
-    "Webs y fichas de Google en Barcelona · James J Projects"),
-  t("Hand-built websites from 400 €, Google Maps profiles from 150 €, and the menu on the table. Fixed price, said up front. Barcelona and remote.",
-    "Webs hechas a mano desde 400 €, fichas de Google Maps desde 150 € y la carta en la mesa. Precio cerrado dicho por delante. Barcelona y en remoto."),
+  t("Websites and Google profiles for local businesses · James J Projects",
+    "Webs y perfil de Google para negocios · James J Projects"),
+  t("Google profile 150–300 €, a presentation website 650 €, optional maintenance 59 €/month. Hand-built for bars, garages and shops. Ask James for a written quote.",
+    "Perfil de Google 150–300 €, web de presentación 650 € y mantenimiento opcional 59 €/mes. Para bares, talleres y tiendas. Pide presupuesto a James."),
 f"""
 <main id="principal">
-<div class="env">
-  <header class="portada">
-    <span class="reticula" aria-hidden="true"></span>
-    <span class="lamina" aria-hidden="true">
-      <span class="plano"></span>
-      {f'<img class="placa" src="{A}img/{LAMINA}" alt="" width="284" height="496" fetchpriority="high" decoding="async">'
-       if LAMINA else '<span class="placa cromo"></span>'}
-      <span class="chispa"></span>
-      <span class="chispa baja"></span>
-    </span>
-    <h1 class="titular">
-      <span class="linea"><i>{t("Found","Que te")}</i></span>
-      <span class="linea"><i><span class="apagado">{t("on Google.","encuentren en Google")}</span></i></span>
-      <span class="linea"><i><em class="subrayado">{t("Walked into.","y entren por la puerta")}</em></i></span>
-    </h1>
-    <div class="firma">
-      <span class="spec">James J Benavides</span>
-      <p class="guia">{t(
-        "I build the website and put the Google profile in order for bars, garages and corner shops — the ones somebody finds on a phone at nine at night, deciding where to go. I work remotely, so where you are changes nothing.",
-        "Hago la web y pongo en orden la ficha de Google de bares, talleres y tiendas de barrio: los negocios que alguien busca en el móvil a las nueve de la noche, decidiendo dónde ir. Trabajo en remoto, así que da igual dónde estés.")}</p>
-    </div>
-    <div class="cupo"><i></i>{t("Two jobs at a time","Cojo dos encargos a la vez")}</div>
-    <div class="acciones">
-      <a class="boton boton--lleno" href="mailto:{CORREO}">{t("Ask for a quote","Pedir presupuesto")}</a>
-      <a class="boton" href="precios.html">{t("See the prices","Ver los precios")}</a>
-    </div>
-
-    <div class="tarifas">
-      <a href="ficha-google.html">
-        <div class="precio">{v("150–300 €")}<small>{t("one-off","una vez")}</small></div>
-        <h2 class="titulo-menor">{t("Google profile","Ficha de Google")}</h2>
-        <p class="que">{t("The first thing anyone sees when they look you up. Usually still shows last summer's hours.",
-          "Lo primero que ve quien te busca. Suele tener el horario del verano pasado.")}</p>
-        <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
-      <a href="precios.html">
-        <div class="precio">{v("400–900 €")}<small>{t("closed price","precio cerrado")}</small></div>
-        <h2 class="titulo-menor">{t("Full website","Web completa")}</h2>
-        <p class="que">{t("One page done properly, not six done badly. Written, not filled in.",
-          "Una página bien hecha, no seis mal hechas. Escrita, no rellenada.")}</p>
-        <span class="ir">{t("What it covers →","Qué incluye →")}</span></a>
-      <a href="carta-nfc.html">
-        <div class="precio">{v("120 €")}<small>{t("up to 20 tables","hasta 20 mesas")}</small></div>
-        <h2 class="titulo-menor">{t("Menu on the table","Carta en la mesa")}</h2>
-        <p class="que">{t("A sticker per table. Tap the phone, the menu opens. Change a price and it changes everywhere.",
-          "Una pegatina por mesa. Acercas el móvil y sale la carta. Cambias un precio y cambia en todas.")}</p>
-        <span class="ir">{t("See it live →","Verlo funcionando →")}</span></a>
-      <a href="caso-factura.html">
-        <div class="precio">{v("250 €")}<small>{t("+ 20 € a month","+ 20 € al mes")}</small></div>
-        <h2 class="titulo-menor">{t("Photo to invoice","De la foto a la factura")}</h2>
-        <p class="que">{t("Send a photo of the day sheet, get the invoice as a PDF with VAT and withholding done.",
-          "Mandas la foto de la libreta y sale la factura en PDF, con IVA e IRPF hechos.")}</p>
-        <span class="ir">{t("Read the case →","Leer el caso →")}</span></a>
-    </div>
-  </header>
-</div>
-
-<div class="sello" data-lento="0.07" aria-hidden="true"><span>James J Projects<i>®</i></span></div>
-
-<section class="plate">
-  <span class="reticula" aria-hidden="true"></span>
-  <span class="chispa a" aria-hidden="true"></span>
-  <span class="chispa b" aria-hidden="true"></span>
-  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
   <div class="env">
-    <h2 class="sube">{t("A website is not<br>a printed leaflet","Una web no es<br>un folleto")}</h2>
-    <p class="guia sube grande" style="margin-top:28px">{t(
-      "A leaflet is printed once and starts going stale that same afternoon. A website gets changed on a Tuesday because you put the set menu up to fourteen euros, and by Wednesday it is right everywhere anyone looks. <b>What I hand you can be changed without calling me, and without paying me twice.</b>",
-      "Un folleto se imprime una vez y empieza a quedarse viejo esa misma tarde. Una web se cambia un martes porque has subido el menú a catorce euros, y el miércoles ya está bien en todas partes donde alguien mire. <b>Lo que te entrego se puede cambiar sin llamarme y sin pagarme dos veces.</b>")}</p>
-    <div class="hechos sube">
-      <div><span class="spec">{t("Owner","Dueño")}</span><div class="dato">{t("You","Tú")}</div></div>
-      <div><span class="spec">{t("Template","Plantilla")}</span><div class="dato">{t("None","Ninguna")}</div></div>
-      <div><span class="spec">{t("Lock-in","Permanencia")}</span><div class="dato">{t("None","No hay")}</div></div>
-      <div><span class="spec">{t("Who builds it","Quién la hace")}</span><div class="dato">{t("Me","Yo")}</div></div>
-    </div>
-  </div>
-</section>
-
-<section class="papel-sec">
-  <div class="env">
-    <div class="prueba">
-      <figure class="factura sube" style="margin:0">
-        <div class="cab">
-          <span class="rot">{t("Invoice","Factura")}</span>
-          <span class="serie-f">Nº 2026/08/001<br>{t("31 August 2026","31 de agosto de 2026")}</span>
+    <header class="portada">
+      <div class="portada-grid">
+        <div>
+          <h1>{t('Your business.<br>On Google.<br><em>With its own website.</em>', 'Tu negocio.<br>En Google.<br><em>Con su propia web.</em>')}</h1>
+          <p class="guia">{t('I’m James. I put your Google profile in order and build your website by hand. For bars, garages and neighbourhood shops.', 'Soy James. Pongo en orden tu perfil de Google y hago tu web a mano. Para bares, talleres y tiendas de barrio.')}</p>
+          <p class="resumen-precios">{t('Google 150–300 € · Website 650 € · Maintenance 59 €/month', 'Google 150–300 € · Web 650 € · Mantenimiento 59 €/mes')}</p>
+          <div class="acciones">
+            <a class="boton boton--lleno" href="{consulta()}">{t('Get a quote', 'Pedir presupuesto')}</a>
+            <a class="boton" href="precios.html">{t('What’s included', 'Qué incluye')}</a>
+          </div>
+          <p class="nota">{t('Tell me your business and your town. The first conversation and written quote are free.', 'Dime qué negocio tienes y en qué localidad. La primera conversación y el presupuesto escrito son gratis.')}</p>
         </div>
-        <div class="de">
-          <div><span class="et">{t("From","De")}</span><br>
-            <i class="tapado" style="width:118px"></i></div>
-          <div><span class="et">{t("Billed to","Facturar a")}</span><br>
-            <i class="tapado" style="width:96px"></i></div>
-        </div>
-        <div class="lin"><span>{t("Barcelona","Barcelona")}
-          <span class="u">{t("14 days","14 días")} · {euros(215)}</span></span>
-          <span class="im">{euros(3010)}</span></div>
-        <div class="lin"><span>{t("Outside routes","Rutas externas")}
-          <span class="u">{t("7 days","7 días")} · {euros(225)}</span></span>
-          <span class="im">{euros(1575)}</span></div>
-        <div class="lin"><span>{t("Second delivery","2ª entrega")}
-          <span class="u">{t("2 extras","2 extras")} · {euros(30)}</span></span>
-          <span class="im">{euros(60)}</span></div>
-        <div class="sum"><span>{t("Net","Base imponible")}</span>
-          <span class="im">{euros(4645)}</span></div>
-        <div class="sum"><span>{t("VAT 21%","IVA 21 %")}</span>
-          <span class="im">{euros(975,"45")}</span></div>
-        <div class="sum resta"><span>{t("Withholding 1%","Retención IRPF 1 %")}</span>
-          <span class="im">−{euros(46,"45")}</span></div>
-        <div class="tot"><span class="et">{t("Total","Total")}</span>
-          <span class="im">{euros(5574)}</span></div>
-      </figure>
-      <div class="sube">
-        <div class="grandota">{euros(5574)}</div>
-        <span class="spec" style="margin-top:16px">{t(
-          "August 2026 · a real invoice","Agosto de 2026 · una factura real")}</span>
-        <div class="cero">{t(f"{euros(0)} difference", f"{euros(0)} de diferencia")}</div>
-        <p class="guia" style="margin-top:22px">{t(
-          "Twenty-one days written by hand in a notebook. The invoice the system produced came out identical, to the cent, to the one issued by hand. <b>This is the only real proof on this site; everything else is an honest demo and says so.</b>",
-          "Veintiuna jornadas apuntadas a mano en una libreta. La factura que sacó el sistema salió idéntica, al céntimo, a la que se emitió a mano. <b>Es la única prueba real de este sitio; lo demás son demos honestas y lo dicen.</b>")}</p>
-        <div class="acciones">
-          <a class="boton" href="caso-factura.html">{t("Read the whole case","Leer el caso entero")}</a>
-        </div>
+        <div class="lamina" aria-hidden="true"><span class="plano"></span><span class="placa cromo"></span><span class="chispa"></span></div>
       </div>
-    </div>
+      <div class="tarifas" aria-label="{t('Services and prices','Servicios y precios')}">
+        <a href="ficha-google.html"><div class="precio">{num(150)}–{num(300)} €<small>{t('one-off','pago único')}</small></div>
+          <h2 class="titulo-menor">{t('Google profile','Perfil de Google')}</h2><p>{t('Hours, photos and services ready for the people looking for you.', 'Horarios, fotos y servicios al día para quien te busca.')}</p><span class="ir">{t('See what I update →','Ver qué pongo al día →')}</span></a>
+        <a href="precios.html#web"><div class="precio">{num(650)} €<small>{t('one-off','pago único')}</small></div>
+          <h2 class="titulo-menor">{t('Presentation website','Web de presentación')}</h2><p>{t('What you do, where you are and how to contact you. Made for mobile.', 'Qué haces, dónde estás y cómo contactar contigo. Pensada para el móvil.')}</p><span class="ir">{t('See the scope →','Ver el alcance →')}</span></a>
+        <a href="precios.html#mantenimiento"><div class="precio">{num(59)} €<small>{t('per month · optional','al mes · opcional')}</small></div>
+          <h2 class="titulo-menor">{t('Maintenance','Mantenimiento')}</h2><p>{t('Keep your content current, with backups and checks. No lock-in.', 'Contenido al día, copias y comprobaciones. Sin permanencia.')}</p><span class="ir">{t('See what it covers →','Ver qué cubre →')}</span></a>
+      </div>
+    </header>
   </div>
-</section>
-
-<section class="papel-sec" id="trabajos">
-  <div class="env">
-    <h2 class="sube">{t("Every business<br>its own face","Cada negocio<br>su propia cara")}</h2>
-    <p class="guia sube" style="margin:24px 0 40px">{t(
-      "This site has my face. The ones below have theirs, because a hairdresser and a garage should not look alike, and neither should look like me. <b>None uses a template.</b>",
-      "Esta web tiene mi cara. Las de abajo tienen la suya, porque una peluquería y un taller no deberían parecerse, y ninguno debería parecerse a mí. <b>Ninguna usa plantilla.</b>")}</p>
+  <section class="plate">
+    <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
+    <div class="env"><h2 class="sube">{t('You run the business.<br>I take care of the website.', 'Tú llevas el negocio.<br>Yo me encargo de la web.')}</h2>
+      <p class="guia grande sube" style="margin-top:28px">{t('You talk directly to the person who builds it. <b>Your name, your domain and a written scope before we start.</b> You can hire just the Google profile; you don’t have to buy a website.', 'Hablas directamente con quien la hace. <b>Tu nombre, tu dominio y el alcance por escrito antes de empezar.</b> Puedes encargar solo el perfil de Google; no hace falta comprar una web.')}</p>
+      <div class="acciones sube"><a class="boton boton--lleno" href="precios.html">{t('See prices and conditions','Ver precios y condiciones')}</a></div>
+    </div>
+  </section>
+  <section class="papel-sec" id="trabajos"><div class="env">
+    <h2 class="sube">{t('See the work.<br>Know what you’re looking at.', 'Mira cómo trabajo.<br>Con ejemplos claros.')}</h2>
+    <p class="guia sube" style="margin-top:24px">{t('The website and Google examples are demonstrations, not customer results. The invoice is an existing automation case.', 'Los ejemplos de web y Google son demostraciones, no resultados de clientes. La factura es un caso de automatización existente.')}</p>
     <div class="obras">
-      <a class="obra sube" href="{DEMO}?mesa=7" target="_blank" rel="noopener">
-        <div><h3>{t("A bar, live","Un bar, en vivo")}</h3>
-          <p class="que">{t("A working site with its own admin panel. Open it: the top bar says which table you came from, because the sticker carries the number.",
-            "Un sitio real con su panel. Ábrelo: la barra de arriba dice desde qué mesa entras, porque la pegatina lleva el número.")}</p></div>
-        <span class="ir">{t("Open it →","Abrirlo →")}</span></a>
-      <a class="obra sube" href="ficha-google.html">
-        <div><h3>{t("A Google profile, before and after","Una ficha de Google, antes y después")}</h3>
-          <p class="que">{t("What someone sees on a Saturday at nine at night. Drag the bar and compare.",
-            "Lo que ve alguien un sábado a las nueve de la noche. Mueve la barra y compara.")}</p></div>
-        <span class="ir">{t("Compare →","Comparar →")}</span></a>
-      <a class="obra sube" href="panel-demo.html">
-        <div><h3>{t("A dashboard","Un panel")}</h3>
-          <p class="que">{t("How many people looked you up and how many called. The figures are invented and the page says so.",
-            "Cuánta gente te ha buscado y cuántos han llamado. Las cifras son inventadas y la página lo dice.")}</p></div>
-        <span class="ir">{t("See it →","Verlo →")}</span></a>
+      <a class="obra sube" href="{DEMO}?mesa=7" target="_blank" rel="noopener"><div><span class="spec">{t('Working demo','Demo funcional')}</span><h3>{t('A bar’s website','Una web para un bar')}</h3><p>{t('Try a menu that knows your table. A sample business with an admin panel; this is an extended demo, not everything included in the 650 € website.', 'Prueba una carta que reconoce tu mesa. Negocio de ejemplo con panel; es una demo ampliada, no todo lo incluido en la web de 650 €.')}</p></div><span class="ir">{t('Open demo ↗','Abrir demo ↗')}</span></a>
+      <a class="obra sube" href="ficha-google.html"><div><span class="spec">{t('Illustrative comparison','Comparación ilustrativa')}</span><h3>{t('A clearer Google profile','Un perfil de Google más claro')}</h3><p>{t('Compare presentation, photos and hours. A mock-up, with no claimed ranking or sales results.', 'Compara presentación, fotos y horarios. Una maqueta, sin atribuirle posiciones ni ventas.')}</p></div><span class="ir">{t('Compare →','Comparar →')}</span></a>
+      <a class="obra sube" href="caso-factura.html"><div><span class="spec">{t('Real automation case','Caso real · automatización')}</span><h3>{t('From a notebook to an invoice','De una libreta a una factura')}</h3><p>{t('21 handwritten entries. An invoice matching the one issued by hand to the cent. It shows care with data, not a customer acquisition result.', '21 jornadas apuntadas a mano. Una factura que coincide al céntimo con la emitida a mano. Demuestra cuidado con los datos, no captación de clientes.')}</p></div><span class="ir">{t('Read the case →','Leer el caso →')}</span></a>
     </div>
-  </div>
-</section>
-
-<section class="plate">
-  <span class="reticula" aria-hidden="true"></span>
-  <span class="chispa a" aria-hidden="true"></span>
-  <span class="chispa b" aria-hidden="true"></span>
-  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
-  <div class="env">
-    <h2 class="sube">{t("Tell me about<br>the business","Cuéntame<br>el negocio")}</h2>
-    <p class="guia sube" style="margin-top:26px">{t(
-      "Twenty minutes on the phone and you get a written quote. <b>The first conversation and the quote cost nothing</b>, and if after the second round of changes you are not convinced, I give back the first half and we owe each other nothing.",
-      "Veinte minutos por teléfono y sales con el presupuesto por escrito. <b>La primera conversación y el presupuesto no se cobran</b>, y si a la segunda ronda de cambios no te convence, te devuelvo la primera mitad y no nos debemos nada.")}</p>
-    <div class="acciones sube">
-      <a class="boton boton--lleno" href="mailto:{CORREO}">{CORREO}</a>
-    </div>
-  </div>
-</section>
+  </div></section>
+  <section class="papel-sec" id="como"><div class="env"><h2>{t('Three steps to get started','Así empezamos')}</h2><div class="pasos">
+    <div class="paso"><span class="n">01</span><div><h3>{t('Tell me about your business','Cuéntame tu negocio')}</h3><p>{t('Send its name, town and website or Google link, if you have one.', 'Envíame el nombre, la localidad y el enlace a tu web o a Google, si lo tienes.')}</p></div></div>
+    <div class="paso"><span class="n">02</span><div><h3>{t('Receive a written quote','Recibe el presupuesto')}</h3><p>{t('We agree the scope, total price and delivery date before starting.', 'Acordamos el alcance, el precio total y la fecha de entrega antes de empezar.')}</p></div></div>
+    <div class="paso"><span class="n">03</span><div><h3>{t('Review it on your phone','Revísalo desde tu móvil')}</h3><p>{t('You see the work and request the agreed changes before publication.', 'Ves el trabajo y pides los cambios acordados antes de publicarlo.')}</p></div></div>
+  </div></div></section>
+  <section class="plate" id="contacto"><div class="env"><h2>{t('Let’s start<br>with your business.', 'Empecemos<br>por tu negocio.')}</h2>
+    <p class="guia" style="margin-top:24px">{t('Tell me what you need help with. I’ll reply with the next step and a written quote.', 'Cuéntame qué necesitas poner al día. Te contesto con el siguiente paso y un presupuesto por escrito.')}</p>
+    <div class="acciones"><a class="boton boton--lleno" href="{consulta()}">{t('Write to James','Escribir a James')}</a></div>
+    <a class="contacto-correo" href="{consulta()}">{CORREO}</a>
+    <p class="nota" style="margin-top:12px">{t('The button opens your email app. You can also copy the address.', 'El botón abre tu aplicación de correo. También puedes copiar la dirección.')}</p>
+  </div></section>
 </main>
 """, CSS_HOME)
 
@@ -968,22 +671,22 @@ CSS_PRECIOS = """
 .faq p{color:var(--tinta-2);font-weight:300;font-size:16px}
 """
 
-def tarjeta(precio, unidad, titulo, que, puntos, nota="", destacada=False):
+def tarjeta(precio, unidad, titulo, que, puntos, nota="", destacada=False, ancla=""):
     lis = "".join(f"<li>{x}</li>" for x in puntos)
     aviso = f'<p class="aviso-t">{nota}</p>' if nota else '<span></span>'
-    return f"""<div class="tarjeta{' destacada' if destacada else ''}">
+    return f"""<div id="{ancla}" class="tarjeta{' destacada' if destacada else ''}">
     <div class="precio">{precio}<small>{unidad}</small></div>
     <h2 class="titulo-menor">{titulo}</h2><p class="que">{que}</p>
     <ul class="lista">{lis}</ul>
     <div class="pie-t">{aviso}
-      <a class="ir-t" href="mailto:{CORREO}">{t("Ask for this →","Pedirlo →")}</a>
+      <a class="ir-t" href="{consulta(titulo)}">{t("Ask for this →","Pedirlo →")}</a>
     </div></div>"""
 
 pagina("precios.html",
   t("What a website for your business costs · Fixed prices",
     "Cuánto cuesta una web para tu negocio · Precios cerrados"),
-  t("Full website 400–900 €, Google profile 150–300 €, menu on the table 120 €, upkeep 30–50 € a month. No lock-in and no small print.",
-    "Web completa 400–900 €, ficha de Google 150–300 €, carta en la mesa 120 € y mantenimiento 30–50 € al mes. Sin permanencia y sin letra pequeña."),
+  t("Presentation website 650 €, Google profile 150–300 € and optional maintenance 59 € a month. See the scope and ask for a written quote.",
+    "Web de presentación 650 €, perfil de Google 150–300 € y mantenimiento opcional 59 € al mes. Consulta el alcance y pide presupuesto por escrito."),
 f"""
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -993,55 +696,28 @@ f"""
       "Asking a price and being told <b>“it depends”</b> is the part everyone dreads. Here it is written down. The quote closes before the work starts: what is said is what is paid, with nothing added at the end.",
       "Preguntar el precio y que te digan <b>«depende»</b> es la parte que a todo el mundo le da pereza. Aquí está escrito. El presupuesto se cierra antes de empezar: lo que se dice es lo que se paga, sin extras al final.")}</p>
 
-    <div class="rejilla sube">
-      {tarjeta(v("150–300 €"), t("one-off","una vez"), t("Google profile in order","Ficha de Google en condiciones"),
-        t("The first thing a customer sees when they look you up. It is usually stuck on hours from two summers ago, with no decent photo.",
-          "Lo primero que ve un cliente cuando busca tu negocio. Suele estar con el horario de hace dos veranos y sin una foto decente."),
-        [t("Photos, hours and services up to date","Fotos, horarios y servicios al día"),
-         t("Written replies to the reviews you owe","Respuesta escrita a las reseñas pendientes"),
-         t("I teach you to answer them yourself in ten minutes","Te enseño a contestarlas tú en diez minutos")])}
-      {tarjeta(v("400–900 €"), t("closed price","precio cerrado"), t("Full website","Web completa del negocio"),
-        t("One page done properly, not six done badly. What you do, where you are, what it costs and how to reach you.",
-          "Una página bien hecha, no seis mal hechas. Qué haces, dónde estás, cuánto cuesta y cómo se te llama."),
-        [t("Designed for you, no template","Diseño a medida, sin plantilla"),
-         t("Copy written, not filled in","Textos escritos, no rellenados"),
-         t("Loads fast on a bad connection","Carga rápido aunque haya poca cobertura"),
-         t("Shows up on Google, with a WhatsApp button","Aparecer en Google y botón de WhatsApp"),
-         t("Domain and hosting sorted","Dominio y alojamiento resueltos"),
-         t("Two rounds of changes included","Dos rondas de cambios incluidas")])}
-      {tarjeta(v("120 €"), t("up to 20 tables · +3 € each extra","hasta 20 mesas · +3 € por mesa de más"),
-        t("Menu on the table","La carta, pegada en la mesa"),
-        t("A sticker on every table. The customer taps their phone and your menu opens, with photos, prices and allergens.",
-          "Una pegatina en cada mesa. El cliente acerca el móvil y sale tu carta con fotos, precios y alérgenos."),
-        [t("Chip inside <b>and the code printed on top</b>: works on any phone","Chip dentro <b>y el código impreso encima</b>: funciona con cualquier móvil"),
-         t("Survives daily cleaning","Aguanta la limpieza diaria"),
-         t("Change a price and it changes on every table at once","Cambias un precio y cambia en todas las mesas a la vez"),
-         t("Each sticker carries its table number","Cada pegatina lleva su número de mesa"),
-         t("Allergens always current, which is a legal requirement","Alérgenos siempre al día, que es obligatorio")],
-        t('Photos are yours, taken with your phone. <a href="carta-qr.html">How it works →</a>',
-          'Las fotos son tuyas, hechas con tu móvil. <a href="carta-qr.html">Cómo funciona →</a>'))}
-      {tarjeta(v("250 €"), t("setup, then 20 € a month","montaje, y 20 € al mes"),
-        t("Photo to invoice","De la foto a la factura"),
-        t("If you charge by the day, the route or the job and month-end means sitting down to add up a notebook, this does it for you.",
-          "Si cobras por jornadas, rutas o servicios y a fin de mes te toca sentarte a sumar la libreta, esto lo hace por ti."),
-        [t("Reads handwriting and shows you line by line what it understood","Lee la letra a mano y te enseña línea por línea lo que ha entendido"),
-         t("Issues nothing until you confirm the money","No emite nada hasta que tú confirmas el dinero"),
-         t("Fuel and toll receipts filed as expenses","Los tickets de gasoil y peajes se guardan como gasto"),
-         t("Reminder on the 28th so it does not slip","Aviso el día 28 para que no se te pase"),
-         t("CSV summary for your accountant","Resumen en CSV para tu gestoría")],
-        t('Not an advisory service and it does not tell you what to declare. <a href="caso-factura.html">The real case →</a>',
-          'No es una asesoría y no te dice qué declarar. <a href="caso-factura.html">El caso real →</a>'))}
-      {tarjeta(v("30–50 €"), t("a month, no lock-in","al mes, sin permanencia"), t("Keeping it current","Que no se quede vieja"),
-        t("Changes to the menu, the prices, the hours and the photos whenever they are needed.",
-          "Cambios de carta, de precios, de horarios y de fotos cuando hagan falta."),
-        [t("Unlimited changes within 48 hours","Cambios ilimitados en 48 horas"),
-         t("Backup and monitoring","Copia de seguridad y vigilancia"),
-         t("One note a month on how the site is doing","Un aviso al mes con cómo va la web")])}
-      {tarjeta(v("0 €"), t("always included","siempre incluido"), t("What I do not charge for","Lo que no te cobro"),
-        t("Before you commit to anything.","Antes de que te comprometas a nada."),
-        [t("The first conversation","La primera conversación"),
-         t("Telling you what your profile is missing","Decirte qué le falta a tu ficha"),
-         t("The written quote","El presupuesto por escrito")])}
+    <div class="rejilla">
+      {tarjeta(num(150) + "–" + euros(300, ""), t("one-off","pago único"), t("Google profile","Perfil de Google"),
+        t("Get your business information in order.","Pon en orden la información de tu negocio."),
+        [t("Review and update hours, services and contact details","Revisión y actualización de horarios, servicios y contacto"),
+         t("Select and upload your real photos","Selección y subida de tus fotos reales"),
+         t("Review replies and guidance to keep it current","Respuestas a reseñas y explicación para mantenerlo al día")],
+        t("150–300 € depending on the starting state; the written quote fixes the total. Google controls verification and ranking.","150–300 € según el estado de partida; el presupuesto escrito fija el total. La verificación y las posiciones dependen de Google."), ancla="google")}
+      {tarjeta(euros(650, ""), t("one-off","pago único"), t("Presentation website","Web de presentación"),
+        t("One page with your services, location and contact details.","Una página con tus servicios, ubicación y contacto."),
+        [t("Hand-built design and copy for your business","Diseño y textos a medida para tu negocio"),
+         t("Mobile layout, accessible navigation and fast loading","Diseño móvil, navegación accesible y carga rápida"),
+         t("Basic search metadata and contact links","Metadatos básicos para buscadores y enlaces de contacto"),
+         t("Domain setup in your name and hosting configuration","Configuración de dominio a tu nombre y alojamiento"),
+         t("Two rounds of changes before publication","Dos rondas de cambios antes de publicar")],
+        t("Online sales, bookings, a content panel and table menus are outside this scope. Domain renewals and any hosting fees are detailed in the quote.","Tienda, reservas, panel de contenidos y carta en mesa quedan fuera de este alcance. Las renovaciones de dominio y los posibles costes de alojamiento se detallan en el presupuesto."), ancla="web")}
+      {tarjeta(euros(59, ""), t("per month · optional","al mes · opcional"), t("Maintenance","Mantenimiento"),
+        t("Keep the website you already have up to date.","Para mantener al día la web que ya tienes."),
+        [t("Updates to existing text, hours, prices and photos","Actualizaciones de textos, horarios, precios y fotos existentes"),
+         t("Backups and checks of links and contact access","Copias y comprobación de enlaces y acceso al contacto"),
+         t("Monthly summary of work carried out","Resumen mensual de lo realizado"),
+         t("No lock-in","Sin permanencia")],
+        t("New sections and features are quoted separately. We agree response times in writing.","Las secciones y funciones nuevas se presupuestan aparte. Acordamos los plazos de respuesta por escrito."), ancla="mantenimiento")}
     </div>
   </div>
 </section>
@@ -1054,33 +730,24 @@ f"""
   <div class="env">
     <h2 class="sube">{t("Half up front,<br>half when you like it","La mitad al empezar,<br>la mitad cuando te gusta")}</h2>
     <p class="guia sube" style="margin-top:26px">{t(
-      "You see the site finished and working before you pay the rest, not a mock-up. If after the second round of changes it does not convince you, I return the first half and we owe each other nothing. Transfer, Bizum or a proper invoice with VAT.",
-      "Ves la web terminada y funcionando antes de pagar el resto, no un boceto. Si a la segunda ronda de cambios no te convence, te devuelvo la primera mitad y no nos debemos nada. Transferencia, Bizum o factura con IVA.")}</p>
+      "You see the site finished and working before you pay the rest, not a mock-up. If after the second round of changes it does not convince you, I return the first half and we owe each other nothing. The written quote includes payment terms and the tax breakdown.",
+      "Ves la web terminada y funcionando antes de pagar el resto, no un boceto. Si a la segunda ronda de cambios no te convence, te devuelvo la primera mitad y no nos debemos nada. El presupuesto escrito incluye la forma de pago y el desglose de impuestos.")}</p>
   </div>
 </section>
 
 <section class="papel-sec">
   <div class="env">
     <h2 class="sube">{t("What people ask","Lo que suelen preguntar")}</h2>
-    <div class="faq sube">
-      <div><h3>{t("Why so cheap compared to an agency?","¿Por qué tan barato comparado con una agencia?")}</h3>
-        <p>{t("Because there is no agency. You are not paying for salespeople, an office, or the person who passes your work to someone else. I work alone and in the afternoons, and that is also my limit: I cannot take ten sites at once.",
-          "Porque no hay agencia. No pagas comerciales, ni oficina, ni al que le pasa el trabajo a otro. Trabajo solo y por las tardes, y por eso también tengo un límite: no puedo coger diez webs a la vez.")}</p></div>
-      <div><h3>{t("Is the site actually mine?","¿La web es mía de verdad?")}</h3>
-        <p>{t("Yes. The domain is registered in your name and the keys stay with you. If tomorrow you want to go elsewhere, you take everything. I do not hold websites hostage, which is the practice that makes so many people distrust this trade.",
-          "Sí. El dominio se pone a tu nombre y las claves quedan en tu mano. Si mañana quieres irte con otro, te vas con todo. No secuestro webs, que es la práctica que hace que tanta gente desconfíe.")}</p></div>
-      <div><h3>{t("How long does it take?","¿Cuánto tarda?")}</h3>
-        <p>{t("A week from the moment you send me the photos and the text. The Google profile, the same day. What usually delays a job is not me: it is the material taking time to arrive.",
-          "Una semana desde que me pasas las fotos y los textos. La ficha de Google, el mismo día. Lo que suele retrasar un encargo no soy yo: es que el material tarda en llegar.")}</p></div>
-      <div><h3>{t("I have no good photos of the place.","No tengo fotos buenas del local.")}</h3>
-        <p>{t("I go and take them. It is included in the website and in the profile. With a current phone and good light it comes out better than most stock photography — and better than anything generated by a computer, which Google rejects on business profiles.",
-          "Voy y las hago. Va incluido en la web y en la ficha. Con un móvil actual y buena luz sale mejor que la mayoría de las fotos de banco, y mejor que cualquier cosa generada por ordenador, que Google rechaza en las fichas de negocio.")}</p></div>
-      <div><h3>{t("Does the table sticker work for my trade?","¿Lo de la pegatina vale para mi oficio?")}</h3>
-        <p>{t("It works anywhere a customer sits down: bars, restaurants, terraces, waiting rooms. What it does not cover is a shop with no seating — there the profile and the website do more.",
-          "Vale donde el cliente se sienta: bares, restaurantes, terrazas, salas de espera. Lo que no cubre es una tienda sin mesas: ahí hacen más la ficha y la web.")}</p></div>
+    <div class="faq">
+      <div><h3>{t("Can I start with just Google?","¿Puedo empezar solo por Google?")}</h3><p>{t("Yes. Each service is independent and maintenance is optional.","Sí. Cada servicio se contrata por separado y el mantenimiento es opcional.")}</p></div>
+      <div><h3>{t("Is the website mine?","¿La web es mía?")}</h3><p>{t("Yes. The domain is registered in your name and you keep your access. You can move to another provider.","Sí. El dominio se registra a tu nombre y conservas los accesos. Puedes cambiar de proveedor.")}</p></div>
+      <div><h3>{t("When will it be ready?","¿Cuándo estará listo?")}</h3><p>{t("We set a date after reviewing your material and access. Google verification may require additional steps and has its own timing.","Fijamos una fecha al revisar tus materiales y accesos. La verificación de Google puede pedir pasos adicionales y tiene sus propios plazos.")}</p></div>
+      <div><h3>{t("What do I need to provide?","¿Qué tengo que preparar?")}</h3><p>{t("Your services, hours, contact details and real photos. I help you choose the material and write the copy.","Tus servicios, horarios, datos de contacto y fotos reales. Te ayudo a elegir el material y a redactar los textos.")}</p></div>
+      <div><h3>{t("What is the final total?","¿Cuál es el importe final?")}</h3><p>{t("Before payment, the written quote details taxes, any domain or hosting fees and the total. Nothing starts until you accept it.","Antes de pagar, el presupuesto escrito detalla impuestos, posibles costes de dominio o alojamiento y el total. No empezamos hasta que lo aceptes.")}</p></div>
+      <div><h3>{t("Can I see more examples?","¿Puedo ver más ejemplos?")}</h3><p><a href="carta-qr.html">{t("Table menu demo","Demo de carta en mesa")}</a> · <a href="panel-demo.html">{t("Illustrative dashboard","Panel ilustrativo")}</a>. {t("These are additional examples, outside the presentation website scope.","Son ejemplos adicionales, fuera del alcance de la web de presentación.")}</p></div>
     </div>
     <div class="acciones sube">
-      <a class="boton boton--lleno" href="mailto:{CORREO}">{t("Ask for a quote","Pedir presupuesto")}</a>
+      <a class="boton boton--lleno" href="{consulta()}">{t("Ask for a quote","Pedir presupuesto")}</a>
       <a class="boton" href="caso-factura.html">{t("See real work","Ver un trabajo hecho")}</a>
     </div>
   </div>
@@ -1175,8 +842,8 @@ f"""
           "Un papel, una foto, un PDF viejo. Yo la paso al sistema con sus precios, sus alérgenos y sus categorías.")}</p></div></div>
       <div class="paso"><span class="n">02</span><div>
         <h3>{t("You take the photos with your phone","Haces las fotos con tu móvil")}</h3>
-        <p>{t("In daylight, no filters. Nothing generated by a computer: Google rejects generated photos on business profiles, and since 2 August 2026 European law requires labelling them. A real photo avoids both, and it is what is actually on the plate.",
-          "Con luz de día y sin filtros. Nada generado por ordenador: Google rechaza las fotos generadas en la ficha, y desde el 2 de agosto de 2026 el reglamento europeo obliga a etiquetarlas. Una foto real evita las dos cosas y además es lo que hay en el plato.")}</p></div></div>
+        <p>{t("In daylight, without filters, using real photos of your own dishes so customers see what you serve.",
+          "Con luz de día y sin filtros. Fotos reales de tus propios platos para que el cliente vea lo que sirves.")}</p></div></div>
       <div class="paso"><span class="n">03</span><div>
         <h3>{t("I stick one on every table","Pego una pegatina en cada mesa")}</h3>
         <p>{t("Each one carries its number inside. When someone opens it from table 7, the WhatsApp button arrives already written: “I'm at table 7”. A photocopied code cannot do that.",
@@ -1300,10 +967,10 @@ CSS_RESTO = """
   letter-spacing:.1em;color:var(--tinta-3);margin-left:9px}
 .embudo .via{height:13px;background:var(--hueco);overflow:hidden}
 .embudo .via > i{display:block;height:100%;background:var(--cobalto);
-  transform-origin:left;transform:scaleX(0)}
+  transform-origin:left;transform:scaleX(1)}
 .embudo .paso-e:last-of-type .via > i{background:var(--fuego)}
 .embudo.dentro .via > i{animation:medir 520ms var(--expo) both}
-@keyframes medir{to{transform:scaleX(1)}}
+@keyframes medir{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .embudo .paso-e:nth-of-type(2) .via > i{animation-delay:110ms}
 .embudo .paso-e:nth-of-type(3) .via > i{animation-delay:220ms}
 @media(prefers-reduced-motion:reduce){
@@ -1410,8 +1077,8 @@ f"""
       "Example business. What changes is not the design: it is that the hours are true, that you took the photos yourself, and that the reviews have been answered.",
       "Negocio de ejemplo. Lo que cambia no es el diseño: es que el horario sea el de verdad, que las fotos las hayas hecho tú y que las reseñas estén contestadas.")}</p>
     <p class="nota" style="margin-top:14px">{t(
-      "About these photos: the four on the right are ordinary photographs. The two on the left are two of those same photographs, darkened and blurred on purpose — a neglected profile does not have different photos, it has these ones taken badly. Nothing here is computer-generated, because Google rejects generated photos on a business profile.",
-      "Sobre estas fotos: las cuatro de la derecha son fotografías normales. Las dos de la izquierda son dos de esas mismas fotografías, oscurecidas y desenfocadas a propósito — una ficha abandonada no tiene otras fotos, tiene estas mal hechas. Aquí no hay nada generado por ordenador, porque Google rechaza las fotos generadas en una ficha de negocio.")}</p>
+      "About these photos: the four on the right are ordinary photographs. The two on the left are two of those same photographs, darkened and blurred on purpose — a neglected profile does not have different photos, it has these ones taken badly. Nothing here is computer-generated.",
+      "Sobre estas fotos: las cuatro de la derecha son fotografías normales. Las dos de la izquierda son dos de esas mismas fotografías, oscurecidas y desenfocadas a propósito — una ficha abandonada no tiene otras fotos, tiene estas mal hechas. Aquí no hay nada generado por ordenador.")}</p>
   </div>
 </section>
 
@@ -1432,7 +1099,7 @@ f"""
       "Y te enseño a contestar las siguientes tú en diez minutos, porque una reseña contestada tres semanas tarde vale menos que una contestada esa misma noche.")}</p>
     <div class="acciones sube">
       <a class="boton boton--lleno" href="precios.html">{v("150–300 €")}</a>
-      <a class="boton" href="mailto:{CORREO}">{t("Talk to me","Hablamos")}</a>
+      <a class="boton" href="{consulta()}">{t("Talk to me","Hablamos")}</a>
     </div>
   </div>
 </section>
@@ -1456,7 +1123,7 @@ f"""
     <div class="numeros sube">
       <div><span class="spec">{t("Invoice total","Total de la factura")}</span><div class="dato">{euros(5574)}</div></div>
       <div><span class="spec">{t("Difference vs. by hand","Diferencia con la de mano")}</span><div class="dato">{euros(0)}</div></div>
-      <div><span class="spec">{t("Time it now takes","Lo que tarda ahora")}</span><div class="dato">{t("1 minute","1 minuto")}</div></div>
+      <div><span class="spec">{t("Handwritten entries","Jornadas a mano")}</span><div class="dato">{num(21)}</div></div>
     </div>
   </div>
 </section>
@@ -1498,8 +1165,8 @@ f"""
       "<b>This is the only real proof on this site.</b> The figures are from an actual August 2026 invoice; the client's tax details are covered. Everything else you will see here is an honest demo and says so on its own page.",
       "<b>Esta es la única prueba real de este sitio.</b> Las cifras son de una factura de agosto de 2026; los datos fiscales del cliente están tapados. Todo lo demás que verás aquí es una demo honesta y lo dice en su propia página.")}</div>
     <div class="acciones sube">
-      <a class="boton boton--lleno" href="precios.html">{t("250 € + 20 € a month","250 € + 20 € al mes")}</a>
-      <a class="boton" href="mailto:{CORREO}">{t("Talk to me","Hablamos")}</a>
+      <a class="boton boton--lleno" href="{consulta(t('Automation enquiry','Consulta de automatización'))}">{t("Ask about a similar case","Consultar un caso parecido")}</a>
+      <a class="boton" href="{consulta()}">{t("Talk to me","Hablamos")}</a>
     </div>
   </div>
 </section>
@@ -1527,7 +1194,7 @@ f"""
     </div>
 
     <figure class="serie sube" style="margin:0">
-      <div class="barras" aria-hidden="true"><i style="height:62.6%;animation-delay:0ms"></i><i style="height:69.5%;animation-delay:34ms"></i><i style="height:67.2%;animation-delay:68ms"></i><i style="height:74.0%;animation-delay:102ms"></i><i style="height:79.4%;animation-delay:136ms"></i><i style="height:75.6%;animation-delay:170ms"></i><i style="height:85.5%;animation-delay:204ms"></i><i style="height:90.1%;animation-delay:238ms"></i><i style="height:81.7%;animation-delay:272ms"></i><i style="height:96.2%;animation-delay:306ms"></i><i class="cima" style="height:100.0%;animation-delay:340ms"></i><i style="height:98.5%;animation-delay:374ms"></i></div>
+      <div class="barras" aria-hidden="true"><i style="height:62.6%;animation-delay:0ms"></i><i style="height:69.5%;animation-delay:34ms"></i><i style="height:67.2%;animation-delay:68ms"></i><i style="height:74.0%;animation-delay:102ms"></i><i style="height:79.4%;animation-delay:136ms"></i><i style="height:75.6%;animation-delay:170ms"></i><i style="height:85.5%;animation-delay:204ms"></i><i style="height:90.1%;animation-delay:238ms"></i><i style="height:81.7%;animation-delay:272ms"></i><i style="height:96.2%;animation-delay:300ms"></i><i class="cima" style="height:100.0%;animation-delay:340ms"></i><i style="height:98.5%;animation-delay:300ms"></i></div>
       <div class="eje">
         <span class="spec">{t("12 weeks ago","Hace 12 semanas")}</span>
         <span class="spec">{t("This week","Esta semana")}</span>
@@ -1583,7 +1250,7 @@ f"""
       "It arrives once a month, in an email you can read in thirty seconds. If a month goes badly, the email says so.",
       "Llega una vez al mes, en un correo que se lee en treinta segundos. Si un mes va mal, el correo lo dice.")}</p>
     <div class="acciones sube">
-      <a class="boton boton--lleno" href="precios.html">{t("30–50 € a month","30–50 € al mes")}</a>
+      <a class="boton boton--lleno" href="precios.html">{t("59 € a month","59 € al mes")}</a>
       <a class="boton" href="index.html">{t("Back to the start","Volver al principio")}</a>
     </div>
   </div>
@@ -1610,7 +1277,7 @@ def indice_del_buscador():
             f.stat().st_mtime, datetime.timezone.utc).date().isoformat()
 
     filas = []
-    for archivo, _ in NAV:
+    for archivo in ("index.html", "precios.html", "ficha-google.html", "caso-factura.html", "carta-qr.html", "panel-demo.html"):
         for idioma in (("en", "es") if PUBLICA_ES else ("en",)):
             fecha = cuando(archivo, idioma)
             alt = "".join(

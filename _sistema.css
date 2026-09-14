@@ -177,14 +177,16 @@ p:last-child{margin-bottom:0}
 .plate .precio small{color:var(--sobre-cobalto-2)}
 
 /* ── El movimiento ───────────────────────────────────────────────── */
-.sube{opacity:0;transform:translateY(20px);
+.sube{opacity:1;transform:none;
   transition:opacity var(--normal) var(--entrada),transform var(--normal) var(--entrada)}
+.sube.preparada:not(.dentro){opacity:0;transform:translateY(20px)}
 .sube.dentro{opacity:1;transform:none}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;
     animation-iteration-count:1!important;animation-delay:0s!important;
-    transition-duration:.01ms!important;transition-delay:0s!important;
+    transition-property:opacity,background-color,color,border-color!important;
+    transition-duration:200ms!important;transition-delay:0s!important;
     scroll-behavior:auto!important}
   /* El !important de arriba deja la duración a cero pero NO el estado inicial:
      lo que espera un observador o un `both` se queda invisible para siempre. */
@@ -192,3 +194,16 @@ p:last-child{margin-bottom:0}
     opacity:1!important;transform:none!important}
   .subrayado::after{transform:scaleX(1)!important}
 }
+
+/* Reforma 14-09-2026: lectura y contacto desde el móvil. */
+[id]{scroll-margin-top:100px}
+.resumen-precios{font-size:17px;font-weight:600;margin-top:20px;max-width:46ch}
+.boton{min-height:48px;overflow-wrap:anywhere}
+.boton:active{transition-duration:var(--micro)}
+.barra .cta,.barra .enlaces a,.menu-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.barra .marca{min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:430px){.barra{padding-left:10px;max-width:calc(100vw - 24px);width:calc(100vw - 24px)}.barra .marca{font-size:16px;margin-right:auto}.barra a.cta{font-size:11px;letter-spacing:0;padding-inline:8px}.menu-btn{padding:8px;min-width:40px}}
+@media(prefers-reduced-motion:reduce){.sube.preparada,.boton:hover,.boton:active,.obra:hover{transform:none!important;opacity:1!important}}
+@media(prefers-reduced-transparency:reduce){.barra{background:var(--papel)!important;backdrop-filter:none!important}}
+@media(prefers-contrast:more){:root{--tinta-2:#0d0d0f;--tinta-3:#4a4a50;--hilo:#4a4a50}.boton{border-width:2px}}
+@media(hover:none){.plate .boton--lleno:hover{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}}

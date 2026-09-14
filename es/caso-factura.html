@@ -25,7 +25,7 @@
 <meta name="twitter:image" content="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/img/social-es.png">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 <meta property="og:locale:alternate" content="en_GB">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"ProfessionalService","@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#negocio","name":"James J Projects","url":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/","email":"jamesjoelbenavides2004@gmail.com","image":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/img/social-es.png","description":"Veintiuna jornadas escritas a mano convertidas en una factura de 5.574,00 € idéntica a la emitida a mano. El caso, paso a paso y con los números.","priceRange":"30-50 EUR","availableLanguage":["es","en"],"areaServed":[{"@type":"City","name":"Barcelona","address":{"@type":"PostalAddress","addressCountry":"ES"}},{"@type":"City","name":"Hamburg","address":{"@type":"PostalAddress","addressCountry":"DE"}}],"knowsAbout":["Google Business Profile","local SEO","restaurant websites","NFC menus","small business websites"]},{"@type":"WebSite","@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#sitio","url":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/","name":"James J Projects","inLanguage":"es","publisher":{"@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#negocio"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/"},{"@type":"ListItem","position":2,"name":"Un caso","item":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/caso-factura.html"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"ProfessionalService","@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#negocio","name":"James J Projects","url":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/","email":"jamesjoelbenavides2004@gmail.com","image":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/img/social-es.png","description":"Veintiuna jornadas escritas a mano convertidas en una factura de 5.574,00 € idéntica a la emitida a mano. El caso, paso a paso y con los números.","priceRange":"150–650 EUR","availableLanguage":["es","en"],"areaServed":[{"@type":"City","name":"Barcelona","address":{"@type":"PostalAddress","addressCountry":"ES"}}],"knowsAbout":["Google Business Profile","local SEO","restaurant websites","NFC menus","small business websites"]},{"@type":"WebSite","@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#sitio","url":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/","name":"James J Projects","inLanguage":"es","publisher":{"@id":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/#negocio"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/"},{"@type":"ListItem","position":2,"name":"Caso real","item":"https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/caso-factura.html"}]}]}</script>
 <link rel="preload" href="../fuentes/hanken-grotesk-300-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fuentes/oswald-400-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <noscript><style>.sube{opacity:1!important;transform:none!important}
@@ -33,7 +33,9 @@
 /* Sin JS nadie pone `.dentro`, y la factura y el embudo son contenido, no
    adorno: se quedarían invisibles para siempre. */
 .factura .lin,.factura .sum,.factura .tot,.factura .de{opacity:1!important;transform:none!important;animation:none!important}
-.embudo .via > i{transform:scaleX(1)!important;animation:none!important}</style></noscript>
+.embudo .via > i{transform:scaleX(1)!important;animation:none!important}
+.comparar{display:block!important}.lado{position:relative!important}.lado.desp{clip-path:none!important}.tirador,.rot-lado{display:none!important}</style></noscript>
+<link rel="stylesheet" href="../_sistema.css">
 <style>
 /* Tipografías servidas desde aquí, no desde Google.
    Se bajaron el 07/09/2026 de fonts.gstatic.com; las tres son SIL
@@ -67,201 +69,6 @@
   font-display:swap;src:url(../fuentes/oswald-400-500-latin.woff2) format('woff2');
   unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 
-/* ═══════════════════════════════════════════════════════════════════
-   James J Projects — sistema visual
-   Aerografía japonesa de los 80 sobre chasis Apple.
-   El mundo: campos de cobalto plano alternando con papel; cromados por
-   bandas que cortan en vez de fundir; sombras negras sin desenfoque;
-   destellos de cuatro puntas; un solo acento cálido, nunca dos.
-   ═══════════════════════════════════════════════════════════════════ */
-
-:root{
-  /* Movimiento medido sobre el CSS real de apple.com */
-  --curva:cubic-bezier(.4,0,.6,1);
-  --entrada:cubic-bezier(.25,.1,.3,1);
-  --expo:cubic-bezier(.16,1,.3,1);
-  --normal:320ms; --rapido:240ms; --micro:160ms;
-
-  /* Papel. Frío, no crema: la lámina no es un libro viejo. */
-  --papel:#f2f2f0; --blanco:#ffffff; --hueco:#e9e9e6;
-  --tinta:#0d0d0f; --tinta-2:#4a4a50;
-  /* 4,58:1 sobre papel. El gris anterior (#83838b) daba 3,35 y los spec
-     son de 10 px: texto pequeño, hace falta 4,5. */
-  --tinta-3:#6d6d75;
-  --hilo:#d7d6d2;
-
-  /* Cobalto. Un campo, no un degradado de cielo. */
-  --cobalto:#0f3fa8; --cobalto-hondo:#0a2c78;
-  /* Tono sobre tono, pero legible: #2f60d6 daba 1,64:1 y el mínimo para
-     texto grande es 3,0. Este da 3,07 y sigue siendo azul sobre azul. */
-  --cobalto-alto:#6493f7;
-  --sobre-cobalto:#e8eeff; --sobre-cobalto-2:#a9c0f5; --hilo-cobalto:#3a63bd;
-
-  /* Un solo acento cálido. Nunca dos.
-     El bermellón de marca vale como SUPERFICIE; para texto sobre papel da
-     3,01:1, así que enlaces y etiquetas usan la variante oscura (4,83:1), y
-     el fondo del botón en hover también, porque blanco sobre el bermellón
-     claro se queda en 3,38. */
-  --fuego:#fe4a23; --fuego-texto:#c92e0d; --fuego-fondo:#b02607;
-
-  /* Acentos de servicio: cada oficio tiene el suyo, y solo aparece
-     en su propia región. Contraste comprobado sobre papel. */
-  --verde:#007d55; --azul:#2563eb;
-
-  --display:"Oswald","Arial Narrow",sans-serif;
-  --texto:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-
-  --medida:68ch;     /* medida de lectura, dentro de 65-75ch */
-  --ancho:74rem;
-  color-scheme:light;
-
-  /* Las superficies del navegador también son diseño */
-  accent-color:var(--fuego-fondo);
-}
-
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--papel);color:var(--tinta);
-  font:400 17px/1.6 var(--texto);-webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;overflow-x:hidden}
-
-/* Las partes que no dibujé también llevan el diseño. Es la señal más
-   barata de que una página está construida y no ensamblada. */
-::selection{background:var(--fuego-fondo);color:#fff}
-.plate ::selection{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
-:focus-visible{outline:2px solid var(--fuego-fondo);outline-offset:3px;border-radius:2px}
-.plate :focus-visible{outline-color:var(--sobre-cobalto)}
-::-webkit-scrollbar{width:12px;height:12px}
-::-webkit-scrollbar-track{background:var(--hueco)}
-::-webkit-scrollbar-thumb{background:var(--tinta-3);border:3px solid var(--hueco)}
-::-webkit-scrollbar-thumb:hover{background:var(--tinta-2)}
-a{color:var(--fuego-texto);text-decoration-thickness:1px;text-underline-offset:.22em}
-:where(h1,h2,h3,.cifra,.dato,td,.precio){font-variant-numeric:tabular-nums}
-
-/* Lo primero que recibe el tabulador. Sin esto hay que pasar por los ocho
-   enlaces de la barra en cada página. */
-.saltar{position:fixed;z-index:100;top:16px;left:50%;
-  transform:translate(-50%,-160%);font-family:var(--mono);font-size:11px;
-  font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  background:var(--tinta);color:var(--papel);text-decoration:none;
-  padding:13px 20px;transition:transform var(--rapido) var(--curva)}
-.saltar:focus{transform:translate(-50%,0)}
-
-.env{max-width:var(--ancho);margin:0 auto;padding:0 26px}
-@media(max-width:640px){.env{padding:0 18px}}
-
-/* ── Tipografía ─────────────────────────────────────────────────── */
-h1,h2,h3{margin:0;font-weight:500;font-family:var(--display);
-  text-transform:uppercase;letter-spacing:-.015em;text-wrap:balance}
-h1{font-size:clamp(34px,8.4vw,112px);line-height:.9}
-h2{font-size:clamp(30px,5vw,68px);line-height:.94}
-h3,.titulo-menor{font-size:clamp(19px,2vw,25px);line-height:1.1;
-  letter-spacing:-.005em}
-p{margin:0 0 1.05em;max-width:var(--medida)}
-p:last-child{margin-bottom:0}
-.guia{font-size:19px;font-weight:300;color:var(--tinta-2);max-width:var(--medida)}
-/* Para el párrafo que carga con el peso de una sección, no para el cuerpo. */
-.guia.grande{font-size:clamp(19px,2.1vw,24px);line-height:1.5}
-.guia b{font-weight:600;color:var(--tinta)}
-.plate .guia{color:var(--sobre-cobalto-2)}
-.plate .guia b{color:#fff}
-
-/* Ficha técnica: los rótulos van AL LADO del contenido o bajo un dato,
-   nunca como etiqueta encima de un titular. Un titular se sostiene solo. */
-.spec{font-family:var(--mono);font-size:11px;font-weight:600;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-3);
-  display:block}
-.plate .spec{color:var(--sobre-cobalto-2)}
-/* Letra pequeña que es una FRASE, no una etiqueta. El mono espaciado sirve
-   para dos palabras; para una línea entera hay que volver a la de lectura. */
-.nota{font-size:13.5px;line-height:1.7;font-weight:300;color:var(--tinta-3);
-  max-width:56ch}
-.plate .nota{color:var(--sobre-cobalto-2)}
-
-/* ── Plates: la inversión es la jerarquía ───────────────────────────
-   Lo que manda invierte el color, no crece de tamaño. */
-.plate{background:var(--cobalto);color:var(--sobre-cobalto);
-  margin-inline:calc(50% - 50vw);padding-block:clamp(72px,9vw,124px)}
-.plate > .env{padding-inline:max(26px,calc(50vw - var(--ancho)/2 + 26px))}
-.plate h1,.plate h2{color:var(--cobalto-alto)}   /* tono sobre tono */
-.plate h3{color:#fff}
-.papel-sec{padding-block:clamp(72px,9vw,124px)}
-
-/* ── Cromado: bandas que cortan, no degradados que funden ────────── */
-.cromo{background:linear-gradient(101deg,
-  #ccd7ed 0%,#f0f4ff 5%,#ffffff 6%,#f3f6ff 13%,
-  #93a6cb 14%,#bccae7 22%,#edf1fc 23%,#ffffff 31%,
-  #6b80ab 32%,#93a5ca 39%,#e2e9f8 40%,#ffffff 47%,
-  #a7b7da 48%,#f4f7ff 56%,#ffffff 63%,
-  #7d90b6 64%,#c6d2ec 72%,#ffffff 79%,
-  #9cadd0 80%,#e5ebf9 90%,#ffffff 100%)}
-
-/* Destello de cuatro puntas. Los lados van hacia dentro: es lo que separa
-   una estrella de aerografía de una cruz. El tamaño se pasa por --chispa. */
-.chispa{position:absolute;pointer-events:none;
-  width:var(--chispa,72px);aspect-ratio:1;transform:translate(-50%,-50%)}
-.chispa::before{content:"";position:absolute;inset:0;background:#fff;
-  opacity:.92;clip-path:polygon(50% 0,54% 46%,100% 50%,54% 54%,
-    50% 100%,46% 54%,0 50%,46% 46%)}
-
-/* ── Botones: rectos, en mono, pegados entre sí ─────────────────── */
-.acciones{display:flex;flex-wrap:wrap;gap:0;margin-top:30px}
-/* En mono a 12px con .16em de tracking el rótulo se leía letra a letra y no
-   como una palabra. En la display, a más cuerpo y con el tracking bajado, se
-   lee de un vistazo y tiene la voz del resto del sitio. */
-.boton{font-family:var(--display);font-size:16px;font-weight:500;
-  letter-spacing:.05em;text-transform:uppercase;text-decoration:none;
-  padding:15px 28px;border:1px solid var(--tinta);color:var(--tinta);
-  background:transparent;display:inline-block;cursor:pointer;position:relative;
-  transition:background var(--micro) var(--curva),color var(--micro) var(--curva),
-    transform var(--rapido) var(--curva),box-shadow var(--rapido) var(--curva)}
-.boton + .boton{border-left:0}
-@media(max-width:430px){
-  .acciones{display:grid;grid-template-columns:1fr}
-  .boton{text-align:center}
-  .boton + .boton{border-left:1px solid var(--tinta);border-top:0}
-  .plate .boton + .boton{border-left-color:var(--sobre-cobalto)}}
-.boton--lleno{background:var(--tinta);color:var(--papel)}
-.boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo);
-  transform:translateY(-2px);box-shadow:5px 5px 0 var(--tinta);z-index:1}
-.plate .boton:hover{box-shadow:5px 5px 0 var(--cobalto-hondo)}
-.boton:active{transform:translateY(0) scale(.985);box-shadow:0 0 0 var(--tinta)}
-.plate .boton{border-color:var(--sobre-cobalto);color:var(--sobre-cobalto)}
-.plate .boton--lleno{background:var(--sobre-cobalto);color:var(--cobalto-hondo)}
-.plate .boton:hover{background:var(--fuego-fondo);color:#fff;border-color:var(--fuego-fondo)}
-@media(hover:none){.boton:hover{background:transparent;color:var(--tinta);
-  border-color:var(--tinta);transform:none;box-shadow:none}
-  .boton--lleno:hover{background:var(--tinta);color:var(--papel)}
-  .plate .boton:hover{background:transparent;color:var(--sobre-cobalto);
-    border-color:var(--sobre-cobalto)}}
-
-/* ── Las cantidades son la interfaz ──────────────────────────────── */
-.precio{font-family:var(--display);font-weight:500;line-height:1;
-  font-size:clamp(38px,5.4vw,72px);letter-spacing:-.02em;color:var(--tinta)}
-.precio small{font-family:var(--mono);font-size:11px;font-weight:600;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--tinta-3);
-  display:block;margin-top:10px;letter-spacing:.16em}
-.plate .precio{color:#fff}
-.plate .precio small{color:var(--sobre-cobalto-2)}
-
-/* ── El movimiento ───────────────────────────────────────────────── */
-.sube{opacity:0;transform:translateY(20px);
-  transition:opacity var(--normal) var(--entrada),transform var(--normal) var(--entrada)}
-.sube.dentro{opacity:1;transform:none}
-
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;
-    animation-iteration-count:1!important;animation-delay:0s!important;
-    transition-duration:.01ms!important;transition-delay:0s!important;
-    scroll-behavior:auto!important}
-  /* El !important de arriba deja la duración a cero pero NO el estado inicial:
-     lo que espera un observador o un `both` se queda invisible para siempre. */
-  .sube,.titular .linea > i,.firma,.cupo,.acciones{
-    opacity:1!important;transform:none!important}
-  .subrayado::after{transform:scaleX(1)!important}
-}
-
 
 .barra{position:fixed;z-index:60;top:16px;left:50%;transform:translateX(-50%);
   display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);
@@ -278,11 +85,7 @@ p:last-child{margin-bottom:0}
 .barra a[aria-current]{color:var(--tinta);background:var(--hueco)}
 .barra .cta{background:var(--tinta)!important;color:var(--papel)!important}
 .barra .cta:hover{background:var(--fuego-fondo)!important;color:#fff!important}
-.barra{transition:padding var(--rapido) var(--curva),
-  background var(--rapido) var(--curva),transform var(--normal) var(--curva)}
-.barra.apretada{padding-top:4px;padding-bottom:4px;background:rgba(255,255,255,.96)}
-.barra.apretada .marca{font-size:17px}
-.barra .marca{transition:font-size var(--rapido) var(--curva)}
+.barra{transition:background-color var(--rapido) var(--curva)}
 
 /* Un solo índice, el mismo en el móvil y en el Mac.
    Antes la barra enseñaba los seis enlaces Y el botón abría un panel con esos
@@ -293,8 +96,8 @@ p:last-child{margin-bottom:0}
 /* Los enlaces, a la vista en la barra. Cambiar de sección es un clic, no dos.
    El menú de las tres barras queda solo para el móvil, que es donde no caben. */
 .barra .enlaces{display:flex;align-items:center;gap:2px;margin-right:4px}
-@media(max-width:900px){.barra .enlaces{display:none}}
-@media(min-width:901px){.menu-btn{display:none!important}}
+@media(max-width:1080px){.barra .enlaces{display:none}}
+@media(min-width:1081px){.menu-btn{display:none!important}}
 
 .menu-btn{display:block;background:none;border:0;padding:8px;cursor:pointer;
   color:var(--tinta);position:relative;z-index:60;
@@ -314,11 +117,10 @@ p:last-child{margin-bottom:0}
   padding:96px 6vw 40px;overflow-y:auto;overscroll-behavior:contain;
   animation:panelEntra var(--normal) var(--entrada) both}
 .menu-panel[hidden]{display:none}
-@keyframes panelEntra{from{opacity:0;clip-path:inset(0 0 100% 0)}
-                      to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes panelEntra{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 
 /* La cuña cobalto: el mismo plano inclinado que la lámina de la portada. */
-.menu-panel::before{content:"";position:absolute;z-index:0;pointer-events:none;
+.menu-panel::before{content:none;position:absolute;z-index:0;pointer-events:none;
   right:-12vw;top:-10vh;width:46vw;height:120vh;background:var(--cobalto);
   transform:rotate(9deg);opacity:.9}
 @media(max-width:860px){.menu-panel::before{right:-38vw;width:76vw;opacity:.86}}
@@ -332,24 +134,23 @@ p:last-child{margin-bottom:0}
   font-family:var(--display);font-size:clamp(26px,5.4vw,60px);font-weight:500;
   line-height:1;text-transform:uppercase;letter-spacing:-.01em;
   opacity:0;transform:translateY(16px);
-  transition:color var(--rapido) var(--curva),
-             padding-left var(--rapido) var(--curva)}
-.menu-panel:not([hidden]) a{animation:filaEntra 420ms var(--expo) both}
+  transition:color var(--rapido) var(--curva),transform var(--rapido) var(--curva)}
+.menu-panel:not([hidden]) a{animation:filaEntra var(--normal) var(--expo) both}
 @keyframes filaEntra{to{opacity:1;transform:none}}
 .menu-panel a:nth-child(1){animation-delay:60ms}
 .menu-panel a:nth-child(2){animation-delay:110ms}
 .menu-panel a:nth-child(3){animation-delay:160ms}
 .menu-panel a:nth-child(4){animation-delay:210ms}
 .menu-panel a:nth-child(5){animation-delay:260ms}
-.menu-panel a:nth-child(6){animation-delay:310ms}
-.menu-panel a:nth-child(n+7){animation-delay:360ms}
+.menu-panel a:nth-child(6){animation-delay:300ms}
+.menu-panel a:nth-child(n+7){animation-delay:300ms}
 .menu-panel a .n{font-family:var(--mono);font-size:11px;font-weight:600;
   letter-spacing:.16em;color:var(--tinta-3);align-self:center}
 .menu-panel a .flecha{font-family:var(--mono);font-size:14px;color:var(--fuego-texto);
   opacity:0;transform:translateX(-8px);align-self:center;
   transition:opacity var(--rapido) var(--curva),
              transform var(--rapido) var(--curva)}
-.menu-panel a:hover{color:var(--fuego-texto);padding-left:18px}
+.menu-panel a:hover{color:var(--fuego-texto);transform:translateX(8px)}
 .menu-panel a:hover .flecha{opacity:1;transform:none}
 .menu-panel a[aria-current]{color:var(--cobalto)}
 .menu-panel a[aria-current] .n{color:var(--cobalto)}
@@ -433,26 +234,13 @@ body.menu-abierto{overflow:hidden}
 .plate .reticula{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M69 75h12M75 69v12' stroke='%23ffffff' stroke-opacity='.42' stroke-width='1'/%3E%3C/svg%3E")}
 @media(max-width:640px){.reticula{background-size:104px 104px}}
 
-/* ── El nombre, a sangre ────────────────────────────────────────────
-   El gesto es el de una portada de disco: el nombre ocupa todo el ancho, se
-   sale por los lados y el contenido pasa por encima al bajar. Va detrás de
-   todo y en fuego sobre papel, no en negro: este sitio vive en claro. */
-.sello{position:relative;z-index:0;pointer-events:none;user-select:none;
-  overflow:hidden;line-height:1;margin-top:clamp(52px,9vh,120px);
-  margin-bottom:-.2em}
-.sello span{display:block;white-space:nowrap;text-align:center;
-  font-family:var(--display);font-weight:500;letter-spacing:-.03em;
-  font-size:clamp(84px,20.5vw,300px);color:var(--fuego);
-  transform:translateY(14%);opacity:0;
-  animation:sello 720ms var(--expo) 320ms both;
-  will-change:transform}
-@keyframes sello{to{transform:translateY(0);opacity:1}}
-/* La marca registrada al vuelo, como en las láminas de los ochenta. */
-.sello i{font-style:normal;font-size:.2em;vertical-align:super;
-  letter-spacing:0;margin-left:.06em}
-@media(max-width:760px){.sello{margin-top:44px}}
-@media(prefers-reduced-motion:reduce){
-  .sello span{animation:none;opacity:1;transform:none}}
+/* Ajustes táctiles después del chasis. */
+.barra .marca{min-height:44px;display:inline-flex;align-items:center}
+.barra a:not(.marca),.menu-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.nav-sin-js{position:relative;padding:92px 18px 12px;display:flex;flex-wrap:wrap;gap:16px}
+.nav-sin-js a{min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:430px){.barra{padding:4px 6px 4px 10px;width:calc(100vw - 24px);max-width:calc(100vw - 24px)}.barra .marca{font-size:15px;margin-right:auto}.barra a:not(.marca){font-size:11px;padding-inline:6px;letter-spacing:0}.menu-btn{padding:6px;min-width:36px}}
+@media(prefers-reduced-transparency:reduce){.barra{background:var(--papel);backdrop-filter:none}}
 
 
 .comparar{position:relative;border:1px solid var(--tinta);overflow:hidden;
@@ -539,10 +327,10 @@ body.menu-abierto{overflow:hidden}
   letter-spacing:.1em;color:var(--tinta-3);margin-left:9px}
 .embudo .via{height:13px;background:var(--hueco);overflow:hidden}
 .embudo .via > i{display:block;height:100%;background:var(--cobalto);
-  transform-origin:left;transform:scaleX(0)}
+  transform-origin:left;transform:scaleX(1)}
 .embudo .paso-e:last-of-type .via > i{background:var(--fuego)}
 .embudo.dentro .via > i{animation:medir 520ms var(--expo) both}
-@keyframes medir{to{transform:scaleX(1)}}
+@keyframes medir{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .embudo .paso-e:nth-of-type(2) .via > i{animation-delay:110ms}
 .embudo .paso-e:nth-of-type(3) .via > i{animation-delay:220ms}
 @media(prefers-reduced-motion:reduce){
@@ -559,8 +347,9 @@ body.menu-abierto{overflow:hidden}
 
 <nav class="barra" aria-label="Principal">
   <a class="marca" href="index.html">James J Projects</a>
-  <div class="enlaces"><a href="index.html">Inicio</a><a href="precios.html">Precios</a><a href="carta-qr.html">Carta en la mesa</a><a href="ficha-google.html">Ficha de Google</a><a href="caso-factura.html" aria-current="page">Un caso</a><a href="panel-demo.html">Panel</a></div>
-  <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
+  <div class="enlaces"><a href="index.html">Inicio</a><a href="precios.html">Precios</a><a href="ficha-google.html">Perfil de Google</a><a href="caso-factura.html" aria-current="page">Caso real</a></div>
+  <a class="idioma" href="../caso-factura.html" hreflang="en" lang="en" aria-label="Read in English">EN</a>
+  <a class="cta" href="mailto:jamesjoelbenavides2004@gmail.com?subject=Mi+negocio&amp;body=Hola+James%2C%0AMi+negocio+es%3A%0ALocalidad%3A%0AWeb+o+perfil+de+Google+%28si+tengo%29%3A%0ANecesito+ayuda+con%3A%0A">Presupuesto</a>
   <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel"
     aria-label="Abrir el índice">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -569,8 +358,9 @@ body.menu-abierto{overflow:hidden}
   </button>
 </nav>
 <div class="menu-panel" id="menuPanel" hidden>
-  <div class="menu-lista"><a href="index.html"><span class="n">01</span><span>Inicio</span><span class="flecha" aria-hidden="true">→</span></a><a href="precios.html"><span class="n">02</span><span>Precios</span><span class="flecha" aria-hidden="true">→</span></a><a href="carta-qr.html"><span class="n">03</span><span>Carta en la mesa</span><span class="flecha" aria-hidden="true">→</span></a><a href="ficha-google.html"><span class="n">04</span><span>Ficha de Google</span><span class="flecha" aria-hidden="true">→</span></a><a href="caso-factura.html" aria-current="page"><span class="n">05</span><span>Un caso</span><span class="flecha" aria-hidden="true">→</span></a><a href="panel-demo.html"><span class="n">06</span><span>Panel</span><span class="flecha" aria-hidden="true">→</span></a><a href="mailto:jamesjoelbenavides2004@gmail.com"><span class="n">07</span><span>Hablamos</span><span class="flecha" aria-hidden="true">→</span></a></div>
+  <div class="menu-lista"><a href="index.html"><span class="n">01</span><span>Inicio</span><span class="flecha" aria-hidden="true">→</span></a><a href="precios.html"><span class="n">02</span><span>Precios</span><span class="flecha" aria-hidden="true">→</span></a><a href="ficha-google.html"><span class="n">03</span><span>Perfil de Google</span><span class="flecha" aria-hidden="true">→</span></a><a href="caso-factura.html" aria-current="page"><span class="n">04</span><span>Caso real</span><span class="flecha" aria-hidden="true">→</span></a><a href="mailto:jamesjoelbenavides2004@gmail.com?subject=Mi+negocio&amp;body=Hola+James%2C%0AMi+negocio+es%3A%0ALocalidad%3A%0AWeb+o+perfil+de+Google+%28si+tengo%29%3A%0ANecesito+ayuda+con%3A%0A"><span class="n">05</span><span>Hablamos</span><span class="flecha" aria-hidden="true">→</span></a></div>
 </div>
+<noscript><nav class="nav-sin-js" aria-label="Páginas"><a href="index.html">Inicio</a><a href="precios.html">Precios</a><a href="ficha-google.html">Perfil de Google</a><a href="caso-factura.html" aria-current="page">Caso real</a></nav></noscript>
 
 <main id="principal">
 <section class="papel-sec" style="padding-top:132px">
@@ -581,7 +371,7 @@ body.menu-abierto{overflow:hidden}
     <div class="numeros sube">
       <div><span class="spec">Total de la factura</span><div class="dato">5.574,00 €</div></div>
       <div><span class="spec">Diferencia con la de mano</span><div class="dato">0,00 €</div></div>
-      <div><span class="spec">Lo que tarda ahora</span><div class="dato">1 minuto</div></div>
+      <div><span class="spec">Jornadas a mano</span><div class="dato">21</div></div>
     </div>
   </div>
 </section>
@@ -614,8 +404,8 @@ body.menu-abierto{overflow:hidden}
     </div>
     <div class="aviso-demo sube"><b>Esta es la única prueba real de este sitio.</b> Las cifras son de una factura de agosto de 2026; los datos fiscales del cliente están tapados. Todo lo demás que verás aquí es una demo honesta y lo dice en su propia página.</div>
     <div class="acciones sube">
-      <a class="boton boton--lleno" href="precios.html">250 € + 20 € al mes</a>
-      <a class="boton" href="mailto:jamesjoelbenavides2004@gmail.com">Hablamos</a>
+      <a class="boton boton--lleno" href="mailto:jamesjoelbenavides2004@gmail.com?subject=Consulta+de+automatizaci%C3%B3n&amp;body=Hola+James%2C%0AMi+negocio+es%3A%0ALocalidad%3A%0AWeb+o+perfil+de+Google+%28si+tengo%29%3A%0ANecesito+ayuda+con%3A%0A">Consultar un caso parecido</a>
+      <a class="boton" href="mailto:jamesjoelbenavides2004@gmail.com?subject=Mi+negocio&amp;body=Hola+James%2C%0AMi+negocio+es%3A%0ALocalidad%3A%0AWeb+o+perfil+de+Google+%28si+tengo%29%3A%0ANecesito+ayuda+con%3A%0A">Hablamos</a>
     </div>
   </div>
 </section>
@@ -626,43 +416,23 @@ body.menu-abierto{overflow:hidden}
   <div class="env">
     <div class="pie-fila">
       <span class="marca-pie">James J Projects</span>
-      <span class="spec">Barcelona y Hamburgo · en remoto</span>
+      <span class="spec">Barcelona · en remoto</span>
     </div>
     <p class="nota pie-nota">Hecho a mano. Sin plantilla, sin framework, sin rastreo y sin nada de terceros: las tipografías se sirven desde aquí.</p>
   </div>
 </footer>
 <script>
-const obs=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){
-  e.target.classList.add('dentro');obs.unobserve(e.target);}},
-  {threshold:.14,rootMargin:'0px 0px -8% 0px'});
-const cuenta=new Map();
-document.querySelectorAll('.sube').forEach(el=>{
-  const p=el.parentElement;const n=cuenta.get(p)??0;cuenta.set(p,n+1);
-  el.style.transitionDelay=Math.min(n,5)*60+'ms';obs.observe(el);});
-/* Red de seguridad: si la pestaña se abre en segundo plano el observador no
-   dispara nunca y la página se queda en blanco para siempre. */
-setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
-
-/* Parallax: lo marcado con data-lento avanza a una fracción del scroll, así
-   que el nombre a sangre se queda atrás y el contenido pasa por encima. Solo
-   transform, en un rAF, y ni se enciende si se pide movimiento reducido. */
-const lentos=[...document.querySelectorAll('[data-lento]')];
-if(lentos.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-  let pedido=false;
-  const mover=()=>{const y=window.scrollY;
-    for(const el of lentos){const f=parseFloat(el.dataset.lento)||0;
-      el.style.transform='translate3d(0,'+(y*f).toFixed(1)+'px,0)';}
-    pedido=false;};
-  addEventListener('scroll',()=>{if(!pedido){pedido=true;requestAnimationFrame(mover);}},
-    {passive:true});
-  mover();}
-
-/* La barra se aprieta en cuanto se baja: menos chrome delante del contenido. */
-const barraEl=document.querySelector('.barra');
-if(barraEl){let apretada=false;
-  addEventListener('scroll',()=>{const debe=window.scrollY>40;
-    if(debe!==apretada){apretada=debe;barraEl.classList.toggle('apretada',debe);}},
-    {passive:true});}
+const quieto=matchMedia('(prefers-reduced-motion: reduce)');
+if('IntersectionObserver' in window&&!quieto.matches){
+  const obs=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){
+    e.target.classList.add('dentro');obs.unobserve(e.target);}},
+    {threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  const cuenta=new Map();
+  document.querySelectorAll('.sube').forEach(el=>{
+    const p=el.parentElement,n=cuenta.get(p)??0;cuenta.set(p,n+1);
+    el.classList.add('preparada');el.style.transitionDelay=Math.min(n,5)*60+'ms';obs.observe(el);});
+  setTimeout(()=>document.querySelectorAll('.sube').forEach(el=>el.classList.add('dentro')),2600);
+}
 
 const btn=document.getElementById('menuBtn'),panel=document.getElementById('menuPanel');
 if(btn&&panel){
@@ -670,16 +440,25 @@ if(btn&&panel){
     if(panel.hidden)return;
     btn.setAttribute('aria-expanded','false');panel.hidden=true;
     document.body.classList.remove('menu-abierto');
+    document.querySelector('main').inert=false;
     if(devolver)btn.focus();};
   const abrir=()=>{
     btn.setAttribute('aria-expanded','true');panel.hidden=false;
-    document.body.classList.add('menu-abierto');};
+    document.body.classList.add('menu-abierto');
+    document.querySelector('main').inert=true;panel.querySelector('a').focus();};
   btn.addEventListener('click',()=>{panel.hidden?abrir():cerrar(false);});
   /* Pulsar una entrada del índice cierra el panel además de navegar: si el
      destino es un ancla de la misma página, la navegación no recarga nada y
      el menú se quedaba abierto tapando justo lo que se acababa de pedir. */
   panel.addEventListener('click',e=>{if(e.target.closest('a'))cerrar(false);});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrar(true);});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')cerrar(true);
+    if(e.key==='Tab'&&!panel.hidden){
+      const links=[btn,...panel.querySelectorAll('a')];
+      const i=links.indexOf(document.activeElement);
+      e.preventDefault();links[(i+(e.shiftKey?-1:1)+links.length)%links.length].focus();
+    }});
+  matchMedia('(min-width:1081px)').addEventListener('change',e=>{if(e.matches&&!panel.hidden){cerrar(false);document.querySelector('.barra .marca').focus();}});
 }
 
 </script>
