@@ -1381,23 +1381,11 @@ f"""
 # Se escriben siempre en la raíz, corra el build en el idioma que corra: son
 # los mismos para todo el sitio y describen las dos versiones a la vez.
 def indice_del_buscador():
-    import datetime, xml.sax.saxutils as sx
-
-    def cuando(archivo, idioma):
-        """lastmod real del HTML, no la fecha de hoy: un sitemap que dice
-        «modificado» en cada build enseña a Google a no fiarse de la fecha."""
-        f = (BASE / "es" / archivo) if idioma == "es" else (BASE / archivo)
-        if not f.exists():
-            f = BASE / archivo
-        if not f.exists():
-            return None
-        return datetime.datetime.fromtimestamp(
-            f.stat().st_mtime, datetime.timezone.utc).date().isoformat()
+    import xml.sax.saxutils as sx
 
     filas = []
     for archivo in PAGINAS_SITIO:
         for idioma in (("en", "es") if PUBLICA_ES else ("en",)):
-            fecha = cuando(archivo, idioma)
             alt = "".join(
               f'\n    <xhtml:link rel="alternate" hreflang="{h}" href="{sx.escape(u)}"/>'
               for h, u in (("en", url_de(archivo, "en")),
@@ -1406,7 +1394,6 @@ def indice_del_buscador():
             filas.append(
               "  <url>\n"
               f"    <loc>{sx.escape(url_de(archivo, idioma))}</loc>"
-              + (f"\n    <lastmod>{fecha}</lastmod>" if fecha else "")
               # La portada por encima del resto; lo demás, igual entre sí.
               + f"\n    <priority>{'1.0' if archivo == 'index.html' else '0.8'}</priority>"
               + alt + "\n  </url>")
