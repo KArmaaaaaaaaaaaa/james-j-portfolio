@@ -44,6 +44,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/ficha-google.html"/>
   </url>
   <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-bar.html</loc>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-bar.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/caso-bar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-bar.html"/>
+  </url>
+  <url>
+    <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/caso-bar.html</loc>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-bar.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/es/caso-bar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-bar.html"/>
+  </url>
+  <url>
     <loc>https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-factura.html</loc>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://karmaaaaaaaaaaaa.github.io/james-j-portfolio/caso-factura.html"/>

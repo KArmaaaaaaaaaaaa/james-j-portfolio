@@ -33,10 +33,12 @@ NAV = [
   ("index.html", {"en":"Home", "es":"Inicio"}),
   ("precios.html", {"en":"Pricing", "es":"Precios"}),
   ("ficha-google.html", {"en":"Google profile", "es":"Perfil de Google"}),
+  ("caso-bar.html", {"en":"Bar case", "es":"Caso bar"}),
   ("caso-factura.html", {"en":"Real case", "es":"Caso real"}),
 ]
 PAGINAS_SITIO = (
-  "index.html", "precios.html", "ficha-google.html", "caso-factura.html",
+  "index.html", "precios.html", "ficha-google.html", "caso-bar.html",
+  "caso-factura.html",
   "carta-qr.html", "panel-demo.html", "faq.html", "privacidad.html",
   "cookies.html",
 )
@@ -89,7 +91,11 @@ def euros(entero, dec="00"):
 def num(n):
     return f"{n:,}".replace(",", "." if IDIOMA == "es" else ",")
 
-DEMO = "https://sitio-demo-bar.jamesjoelbenavides2004.workers.dev"
+# La demo vive en Pages, no en workers.dev: el subdominio de workers.dev es
+# el de la cuenta, y el de esta lleva el correo personal dentro de la URL.
+# Un cliente que abre la demo desde aquí lo ve. Pages da un subdominio por
+# proyecto, que no lo lleva. Fuente en ~/dev/sitio-negocio/demo-pages.
+DEMO = "https://demo-bar.pages.dev"
 CORREO = "jamesjoelbenavides2004@gmail.com"
 
 def consulta(servicio=None):
@@ -637,11 +643,12 @@ f"""
   </section>
   <section class="papel-sec" id="trabajos"><div class="env">
     <h2 class="sube">{t('See the work.<br>Know what you’re looking at.', 'Mira cómo trabajo.<br>Con ejemplos claros.')}</h2>
-    <p class="guia sube" style="margin-top:24px">{t('The website and Google examples are demonstrations, not customer results. The invoice is an existing automation case.', 'Los ejemplos de web y Google son demostraciones, no resultados de clientes. La factura es un caso de automatización existente.')}</p>
+    <p class="guia sube" style="margin-top:24px">{t('Two of these are real, published work and say whose. The other two are demonstrations, not customer results, and say so on their own page.', 'Dos de estos son trabajo real y publicado, y dicen de quién. Los otros dos son demostraciones, no resultados de clientes, y lo dicen en su propia página.')}</p>
     <div class="obras">
+      <a class="obra sube" href="caso-bar.html"><div><span class="spec">{t('Real case · a bar','Caso real · un bar')}</span><h3>{t('A bar you can finally find','Un bar que ya se encuentra')}</h3><p>{t('Ecuadorian food in L\u2019Hospitalet, open since 2006, invisible on Google. A profile that says what is cooked, a one-page website and six photos taken in the bar. Family business, and the page says so.', 'Cocina ecuatoriana en L\u2019Hospitalet, abierto desde 2006 e invisible en Google. Un perfil que dice qu\u00e9 se come, una web de una p\u00e1gina y seis fotos hechas en el bar. Es un negocio familiar y la p\u00e1gina lo dice.')}</p></div><span class="ir">{t('Read the case \u2192','Leer el caso \u2192')}</span></a>
+      <a class="obra sube" href="caso-factura.html"><div><span class="spec">{t('Real automation case','Caso real · automatización')}</span><h3>{t('From a notebook to an invoice','De una libreta a una factura')}</h3><p>{t('21 handwritten entries. An invoice matching the one issued by hand to the cent. It shows care with data, not a customer acquisition result.', '21 jornadas apuntadas a mano. Una factura que coincide al céntimo con la emitida a mano. Demuestra cuidado con los datos, no captación de clientes.')}</p></div><span class="ir">{t('Read the case →','Leer el caso →')}</span></a>
       <a class="obra sube" href="{DEMO}?mesa=7" target="_blank" rel="noopener"><div><span class="spec">{t('Working demo','Demo funcional')}</span><h3>{t('A bar’s website','Una web para un bar')}</h3><p>{t('Try a menu that knows your table. A sample business with an admin panel; this is an extended demo, not everything included in the 650 € website.', 'Prueba una carta que reconoce tu mesa. Negocio de ejemplo con panel; es una demo ampliada, no todo lo incluido en la web de 650 €.')}</p></div><span class="ir">{t('Open demo ↗','Abrir demo ↗')}</span></a>
       <a class="obra sube" href="ficha-google.html"><div><span class="spec">{t('Illustrative comparison','Comparación ilustrativa')}</span><h3>{t('A clearer Google profile','Un perfil de Google más claro')}</h3><p>{t('Compare presentation, photos and hours. A mock-up, with no claimed ranking or sales results.', 'Compara presentación, fotos y horarios. Una maqueta, sin atribuirle posiciones ni ventas.')}</p></div><span class="ir">{t('Compare →','Comparar →')}</span></a>
-      <a class="obra sube" href="caso-factura.html"><div><span class="spec">{t('Real automation case','Caso real · automatización')}</span><h3>{t('From a notebook to an invoice','De una libreta a una factura')}</h3><p>{t('21 handwritten entries. An invoice matching the one issued by hand to the cent. It shows care with data, not a customer acquisition result.', '21 jornadas apuntadas a mano. Una factura que coincide al céntimo con la emitida a mano. Demuestra cuidado con los datos, no captación de clientes.')}</p></div><span class="ir">{t('Read the case →','Leer el caso →')}</span></a>
     </div>
   </div></section>
   <section class="papel-sec" id="como"><div class="env"><h2>{t('Three steps to get started','Así empezamos')}</h2><div class="pasos">
@@ -1279,8 +1286,8 @@ f"""
           "Con su número de serie, su IVA y su retención. En agosto salió idéntica, al céntimo, a la que se emitió a mano.")}</p></div></div>
     </div>
     <div class="aviso-demo sube">{t(
-      "<b>This is the only real proof on this site.</b> The figures are from an actual August 2026 invoice; the client's tax details are covered. Everything else you will see here is an honest demo and says so on its own page.",
-      "<b>Esta es la única prueba real de este sitio.</b> Las cifras son de una factura de agosto de 2026; los datos fiscales del cliente están tapados. Todo lo demás que verás aquí es una demo honesta y lo dice en su propia página.")}</div>
+      "<b>These figures are real.</b> They come from an actual August 2026 invoice; the client's tax details are covered. The other real, published case on this site is <a href=\"caso-bar.html\">a bar in L'Hospitalet</a>. Everything else you will see here is an honest demo and says so on its own page.",
+      "<b>Estas cifras son reales.</b> Salen de una factura de agosto de 2026; los datos fiscales del cliente están tapados. El otro caso real y publicado de este sitio es <a href=\"caso-bar.html\">un bar de L'Hospitalet</a>. Todo lo demás que verás aquí es una demo honesta y lo dice en su propia página.")}</div>
     <div class="acciones sube">
       <a class="boton boton--lleno" href="{consulta(t('Automation enquiry','Consulta de automatización'))}">{t("Ask about a similar case","Consultar un caso parecido")}</a>
       <a class="boton" href="{consulta()}">{t("Talk to me","Hablamos")}</a>
@@ -1290,6 +1297,135 @@ f"""
 </section>
 </main>
 """, CSS_RESTO)
+
+# ═══════════════════════ CASO REAL · UN BAR ═══════════════════════════
+# Tres fotos del propio bar, no de un banco de imágenes. Van a 4:3 recortadas
+# con object-fit, así que la vertical del bolón no rompe la fila. El pie de
+# foto es parte del caso: dice de dónde salen, que es justo lo que se vende.
+CSS_CASO_BAR = """
+/* La fachada es 16:9 y los platos son casi cuadrados: forzar las tres a la
+   misma caja cortaba el rótulo por la mitad, que es justo lo que hay que
+   reconocer. Así la fachada manda arriba, entera, y los platos van debajo. */
+.fotos-caso{display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  border:1px solid var(--tinta);padding:8px;margin-top:36px;background:var(--blanco)}
+.fotos-caso img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;
+  background:var(--hueco)}
+.fotos-caso > :first-child{grid-column:1/-1;aspect-ratio:16/9}
+.lista-caso{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:0;
+  border:1px solid var(--tinta)}
+.lista-caso li{padding:20px 22px;border-bottom:1px solid var(--hilo)}
+.lista-caso li:last-child{border-bottom:0}
+.lista-caso b{display:block;margin-bottom:6px}
+.lista-caso p{color:var(--tinta-2);font-weight:300;font-size:15.5px;margin:0}
+.horario-caso{font-family:var(--mono);font-size:13px;line-height:1.9;
+  color:var(--tinta-2);margin:0}
+"""
+
+pagina("caso-bar.html",
+  t("A real case: a neighbourhood bar nobody could find on Google",
+    "Un caso real: un bar de barrio que no se encontraba en Google"),
+  t("Ecuadorian food in L’Hospitalet, open since 2006 and invisible on Google. A profile that says what is cooked, a one-page website and six photos taken in the bar. No visit figures are claimed.",
+    "Cocina ecuatoriana en L’Hospitalet, abierto desde 2006 e invisible en Google. Un perfil que dice qué se come, una web de una página y seis fotos hechas en el bar. Sin atribuirle cifras de visitas."),
+f"""
+<main id="principal">
+<section class="papel-sec" style="padding-top:132px">
+  <div class="env">
+    <h1>{t("Open since 2006.<br>Invisible on Google.","Abierto desde 2006.<br>Invisible en Google.")}</h1>
+    <p class="guia" style="margin-top:26px">{t(
+      "Bar El Dorado, in L’Hospitalet de Llobregat. The sign on the street says sandwiches, tapas and set meals. The kitchen makes <b>encebollado, seco de pollo and bolón de verde</b> — Ecuadorian home cooking. On Google it was filed as “bar”, with no menu, no website and an opening time nobody had checked.",
+      "Bar El Dorado, en L’Hospitalet de Llobregat. El rótulo de la calle dice bocadillos, tapas variadas y platos combinados. La cocina hace <b>encebollado, seco de pollo y bolón de verde</b>: comida ecuatoriana de casa. En Google constaba como «bar», sin carta, sin web y con un horario que nadie había comprobado.")}</p>
+    <p class="guia" style="margin-top:16px">{t(
+      "So anyone searching for Ecuadorian food nearby never found it, and anyone who did find it could not tell what was cooked inside.",
+      "Así que quien buscaba comida ecuatoriana cerca no lo encontraba, y quien lo encontraba no podía saber qué se comía dentro.")}</p>
+
+    <div class="numeros sube">
+      <div><span class="spec">{t("Dishes and drinks listed","Platos y bebidas en la carta")}</span><div class="dato">{num(19)}</div></div>
+      <div><span class="spec">{t("Photos taken in the bar","Fotos hechas en el bar")}</span><div class="dato">{num(6)}</div></div>
+      <div><span class="spec">{t("Opening times, one","Horarios, uno solo")}</span><div class="dato">{num(1)}</div></div>
+    </div>
+
+    <figure class="fotos-caso sube" style="margin:36px 0 0">
+      <img src="{A}img/bar-fachada.jpg" width="1000" height="562" loading="lazy" decoding="async"
+        alt="{t('The front of Bar El Dorado, with its sign and the Ecuadorian flag in the window.','La fachada del Bar El Dorado, con su rótulo y la bandera de Ecuador en la ventana.')}">
+      <img src="{A}img/bar-bolon.jpg" width="560" height="560" loading="lazy" decoding="async"
+        alt="{t('A bolón de verde with a fried egg and a cup of coffee on the bar counter.','Un bolón de verde con huevo frito y una taza de café sobre la barra.')}">
+      <img src="{A}img/bar-patacones.jpg" width="560" height="560" loading="lazy" decoding="async"
+        alt="{t('Fried meat with patacones, pickled cucumber and red onion.','Carne frita con patacones, curtido de pepino y cebolla morada.')}">
+    </figure>
+    <p class="nota" style="margin-top:12px">{t(
+      "Taken in the bar, on the bar’s own plates. No stock photography and no other restaurant’s food.",
+      "Hechas en el bar y en sus propios platos. Sin banco de imágenes y sin comida de otro restaurante.")}</p>
+  </div>
+</section>
+
+<section class="plate">
+  <span class="reticula" aria-hidden="true"></span>
+  <span class="chispa a" aria-hidden="true"></span>
+  <span class="chispa b" aria-hidden="true"></span>
+  <span class="pieza cromo" aria-hidden="true"><span class="chispa"></span></span>
+  <div class="env">
+    <h2 class="sube">{t("What did not<br>add up","Lo que no<br>cuadraba")}</h2>
+    <p class="guia sube" style="margin-top:26px">{t(
+      "Three things, and none of them was the design of the website.",
+      "Tres cosas, y ninguna era el diseño de la web.")}</p>
+    <p class="guia sube" style="margin-top:16px">{t(
+      "<b>The sign and the kitchen say different things.</b> The sign brings in the neighbour who wants a sandwich; the kitchen is why somebody crosses town. Google has to carry both, or you lose half your customers. The profile now sits under two categories: bar and Ecuadorian restaurant.",
+      "<b>El rótulo y la cocina dicen cosas distintas.</b> El rótulo trae al vecino que quiere un bocadillo; la cocina es por lo que alguien cruza la ciudad. Google tiene que llevar las dos, o pierdes a la mitad. El perfil está ahora en dos categorías: bar y restaurante ecuatoriano.")}</p>
+    <p class="guia sube" style="margin-top:16px">{t(
+      "<b>The opening times remembered at home were not the ones on the door.</b> They were checked before anything was touched, and the same ones now appear on the website and on Google. An hour that lies costs you a customer who turns up at a closed door — and that customer does not come back.",
+      "<b>El horario que se recordaba en casa no era el de la puerta.</b> Se comprobó antes de tocar nada, y es el mismo que aparece ahora en la web y en Google. Un horario que miente te cuesta un cliente delante de una persiana bajada, y ese cliente no vuelve.")}</p>
+    <p class="horario-caso sube" style="margin-top:18px">{t(
+      "Monday closed &nbsp;·&nbsp; Tuesday to Thursday 10:30–23:00 &nbsp;·&nbsp; Friday to Sunday 11:30–23:00",
+      "Lunes cerrado &nbsp;·&nbsp; Martes a jueves 10:30–23:00 &nbsp;·&nbsp; Viernes a domingo 11:30–23:00")}</p>
+    <p class="guia sube" style="margin-top:16px">{t(
+      "<b>There was no phone number to publish.</b> The one in use is a personal mobile, so it stays off the internet. Nothing was invented to fill the gap: the profile carries the address, the directions and the menu, and that is what it carries.",
+      "<b>No había un teléfono publicable.</b> El que se usa es un móvil personal, así que se queda fuera de internet. No se inventó nada para rellenar el hueco: la ficha lleva la dirección, cómo llegar y la carta, y eso es lo que lleva.")}</p>
+  </div>
+</section>
+
+<section class="papel-sec">
+  <div class="env">
+    <h2 class="sube">{t("What was delivered","Lo que se entregó")}</h2>
+    <div class="pasos sube" style="margin-top:32px">
+      <div class="paso"><span class="n">01</span><div>
+        <h3>{t("A Google profile that says what is cooked","Un perfil de Google que dice qué se come")}</h3>
+        <p>{t("Two categories, a written description, the real opening times, the website, and a menu of 19 dishes and drinks that can be read without leaving Google.",
+          "Dos categorías, una descripción escrita, el horario real, la web y una carta de 19 platos y bebidas que se lee sin salir de Google.")}</p></div></div>
+      <div class="paso"><span class="n">02</span><div>
+        <h3>{t("A one-page website, with the menu inside","Una web de una página, con la carta dentro")}</h3>
+        <p>{t("Menu, drinks, opening times and how to get there, made for a phone. Its own legal notice, with the owner’s name and tax number, because the law asks for it and a bar cannot invent one.",
+          "Carta, bebidas, horario y cómo llegar, pensada para el móvil. Con su aviso legal, con el nombre y el NIF de la titular, porque la ley lo pide y un bar no puede inventarlo.")}</p></div></div>
+      <div class="paso"><span class="n">03</span><div>
+        <h3>{t("Six photographs, taken in the bar","Seis fotografías, hechas en el bar")}</h3>
+        <p>{t("The front and five plates, on the bar’s own crockery and with no customers’ faces in them. They are what somebody deciding where to eat actually looks at.",
+          "La fachada y cinco platos, en la vajilla del bar y sin caras de clientes. Es lo que mira de verdad quien está decidiendo dónde comer.")}</p></div></div>
+    </div>
+
+    <ul class="lista-caso sube">
+      <li><b>{t("Time it took","Lo que llevó")}</b><p>{t(
+        "One afternoon in the bar for the photographs and the menu, and a day of work. The family approved every price and every dish name before anything was published.",
+        "Una tarde en el bar para las fotos y la carta, y un día de trabajo. La familia aprobó cada precio y cada nombre de plato antes de publicar nada.")}</p></li>
+      <li><b>{t("Who owns it","De quién es")}</b><p>{t(
+        "The website and the Google profile are the bar’s, under the owner’s name, not mine. That is how every job here works: you can walk away with it.",
+        "La web y el perfil de Google son del bar y están a nombre de su titular, no del mío. Así es cada trabajo de aquí: te lo puedes llevar.")}</p></li>
+      <li><b>{t("Still open","Lo que queda abierto")}</b><p>{t(
+        "Prices per dish, a photo for each remaining one, and replies to the reviews already on the profile. Written down with a date, not forgotten.",
+        "El precio de cada plato, una foto para los que faltan y responder las reseñas que ya hay en la ficha. Apuntado y con fecha, no olvidado.")}</p></li>
+    </ul>
+
+    <div class="aviso-demo sube">{t(
+      "<b>Bar El Dorado is my mother’s bar.</b> Saying it before you ask: the work is real and published, but this was not a customer who found me in the street. And there are no visit figures on this page, because the profile was brought up to date on 15 September 2026 and there are not yet two months to compare. When there are, they will come from Google’s own statistics, with their date on them.",
+      "<b>El Bar El Dorado es el bar de mi madre.</b> Lo digo antes de que lo preguntes: el trabajo es real y está publicado, pero no es un cliente que me encontrara por la calle. Y en esta página no hay cifras de visitas, porque el perfil se puso al día el 15 de septiembre de 2026 y todavía no hay dos meses que comparar. Cuando los haya, saldrán de las estadísticas de Google y con su fecha.")}</div>
+
+    <div class="acciones sube">
+      <a class="boton boton--lleno" href="{consulta(t('Enquiry from a bar or restaurant','Consulta de un bar o restaurante'))}">{t("I have a bar too","Yo tengo un bar")}</a>
+      <a class="boton" href="caso-factura.html">{t("The other real case","El otro caso real")}</a>
+    </div>
+    {informacion_contacto()}
+  </div>
+</section>
+</main>
+""", CSS_RESTO + CSS_CASO_BAR)
 
 pagina("panel-demo.html",
   t("How many people look you up on Google: the dashboard",

@@ -17,7 +17,7 @@ python3 _build.py es     # Spanish, into /es/
 |---|---|
 | `_build.py` | The generator. Content lives in `t(en, es)` calls; structure and motion are shared. |
 | `_sistema.css` | The visual system: tokens, type, plates, chrome, motion. |
-| `img/` | Seven images, 84 KB total. The "before" ones are the same photo darkened and blurred, not a different photo — the page says so. |
+| `img/` | Ten images, 204 KB total. Seven belong to the Google comparison — the "before" ones are the same photo darkened and blurred, not a different photo, and the page says so. The other three are photographs of Bar El Dorado, taken in the bar, used on `caso-bar.html`. |
 | `fuentes/` | The three typefaces, latin and latin-ext subsets, 8 files. A page pulls ~75 KB of them. All SIL OFL 1.1, which allows self-hosting. |
 | `_fuentes.css` | The `@font-face` rules, inlined into every page by the generator. |
 | `_estilo/` | The direction analysis and the Stitch prompt. |
